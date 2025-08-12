@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose"
 import jwt from 'jsonwebtoken'
+import { UserDocument } from "../types/auth.types.js";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<UserDocument>({
     username: {
         type:String,
         required: true,
@@ -34,10 +35,9 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default: false
     },
-    accessToken: String,
-    accessTokenExpiry: Date,
+    verificationToken: String,
+    verificationTokenExpiry: Date,
     refreshToken: String,
-    refreshTokenExpiry: Date,
 },{timestamps: true})
 
 userSchema.pre("save", async function(next){
@@ -60,8 +60,7 @@ userSchema.methods.generateAccessToken = async function(this){
     const payload = {
         _id: this._id,
         email: this.email,
-        username: this.username,
-        fullName: this.fullName
+        username: this.username
     }
     return jwt.sign(payload, secret, expiry)
 }
@@ -78,4 +77,4 @@ userSchema.methods.generateRefreshToken = async function(this){
 }
 
 
-export const User =  mongoose.model('User', userSchema);
+export const User =  mongoose.model<UserDocument>('User', userSchema);

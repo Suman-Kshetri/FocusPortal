@@ -1,8 +1,10 @@
+import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/email.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
+import { generateVerificationToken } from "../utils/generateVerificationTokenAndSetCookies.js";
 
 export const signup = asyncHandler(async (req, res) => {
    const { username, email, password, fullName } = req.body;
@@ -27,23 +29,85 @@ export const signup = asyncHandler(async (req, res) => {
       }
       const avatarImage = await uploadOnCloudinary(avatarLocalPath);
       if (!avatarImage || !avatarImage.url) {
-   throw new ApiError(500, "Image upload failed");
-}
+         throw new ApiError(500, "Image upload failed");
+      }
+      const verificationToken = generateVerificationToken();
+
+      if(!verificationToken){
+         throw new ApiError(500, "Verification token generate failed !!!");
+      }
       const user = await User.create({
          username: username.toLowerCase(),
          fullName,
          email,
          password,
          avatar: avatarImage.url,
+         verificationToken,
+         verificationTokenExpiry: Date.now() + 1 * 60 * 60 * 10000 //1hr
       });
-      const createdUser = await User.findOne({ _id: user._id }).select("-password -refreshToken");
+      const createdUser = await User.findOne({ _id: user._id }).select(
+         "-password -refreshToken"
+      );
+
+      await sendVerificationEmail(user.email, verificationToken);
       return res
          .status(201)
          .json(
-            new ApiResponse(200, "User Registered Sucessfully", createdUser)
+            new ApiResponse(201, "User Registered Sucessfully", createdUser)
          );
    } catch (error) {
       throw new ApiError(400, error.message);
+   }
+});
+
+export const verifyEmail = asyncHandler(async (req, res) => {
+   const {code} = req.body;
+   try {
+      const user = await User.findOne({
+         verificationToken : code,
+         verificationTokenExpiry: {$gt: Date.now()}
+      }).select("-password -refreshToken")
+      if(!user){
+         return res
+         .status(400)
+         .json(new ApiError(400,"Invalid or expired verification token !!!"))
+      }
+      user.isVerified = true;
+      user.verificationToken = undefined;
+      user.verificationTokenExpiry = undefined;
+      await user.save()
+      await sendWelcomeEmail(user.email, user.fullName)
+
+      return res.status(202)
+      .json(
+         new ApiResponse(202, "Email verified successfully.", user)
+      )
+   } catch (error) {
+      
+   }
+})
+
+const generateAccessAndRefreshToken = asyncHandler(async (userId) => {
+   try {
+      const user = await User.findById(userId);
+
+      if (!user) {
+         throw new ApiError(404, "User not found while generating tokens");
+      }
+
+      const accessToken = user.generateAccessToken();
+      const refreshToken = user.generateRefreshToken();
+
+      //save refresh token to db
+      user.refreshToken = refreshToken;
+      await user.save({ validateBeforeSave: false });
+
+      return { accessToken, refreshToken };
+   } catch (error) {
+      throw new ApiError(
+         503,
+         "Something went wrong while generating access and refresh token"
+      );
    }
 });
 
