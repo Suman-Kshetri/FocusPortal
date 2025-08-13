@@ -62,6 +62,8 @@ export const signup = asyncHandler(async (req, res) => {
 
 export const verifyEmail = asyncHandler(async (req, res) => {
    const {code} = req.body;
+   console.log(req.body);
+
    try {
       const user = await User.findOne({
          verificationToken : code,
