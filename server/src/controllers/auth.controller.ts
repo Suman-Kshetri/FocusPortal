@@ -98,8 +98,8 @@ const generateAccessAndRefreshToken = async (userId: mongoose.Types.ObjectId) =>
          throw new ApiError(404, "User not found while generating tokens");
       }
 
-      const accessToken = user.generateAccessToken();
-      const refreshToken = user.generateRefreshToken();
+      const accessToken = await user.generateAccessToken();
+      const refreshToken = await user.generateRefreshToken();
 
       //save refresh token to db
       user.refreshToken = refreshToken;
@@ -135,8 +135,8 @@ export const login = asyncHandler(async (req, res) => {
    .cookie("refreshToken", refreshToken, refreshCookieOptions)
    .json(new ApiResponse(200, "User logged in suggessfully",{
       user: loggedInUser,
-      refreshToken,
-      accessToken
+      accessToken,
+      refreshToken
    }))
 });
 

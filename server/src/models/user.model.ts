@@ -38,9 +38,9 @@ const userSchema = new mongoose.Schema<UserDocument>({
         type:Boolean,
         default: false
     },
-    verificationToken: String,
-    verificationTokenExpiry: Date,
     refreshToken: String,
+    verificationToken: String,
+    verificationTokenExpiry: Date
 },{timestamps: true})
 
 userSchema.pre("save", async function(next){
