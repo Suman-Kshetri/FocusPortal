@@ -2,6 +2,9 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose"
 import jwt from 'jsonwebtoken'
 import { UserDocument } from "../types/auth.types.js";
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const userSchema = new mongoose.Schema<UserDocument>({
     username: {
@@ -53,7 +56,7 @@ userSchema.methods.isPasswordCorrect = async function(this, password){
 
 userSchema.methods.generateAccessToken = async function(this){
     const secret = process.env.ACCESS_TOKEN_SECRET;
-    const expiry = process.env.ACCESS_TOEKN_EXPIRY;
+    const expiry = process.env.ACCESS_TOKEN_EXPIRY;
     if(!secret || !expiry){
         throw new Error("Access token or access token expiry not defined in enviroment variables ");
     }
@@ -62,18 +65,18 @@ userSchema.methods.generateAccessToken = async function(this){
         email: this.email,
         username: this.username
     }
-    return jwt.sign(payload, secret, expiry)
+    return jwt.sign(payload, secret,  {expiresIn: expiry })
 }
 userSchema.methods.generateRefreshToken = async function(this){
     const secret = process.env.REFRESH_TOKEN_SECRET;
-    const expiry = process.env.REFRESH_TOEKN_EXPIRY;
+    const expiry = process.env.REFRESH_TOKEN_EXPIRY;
     if(!secret || !expiry){
-        throw new Error("Access token or access token expiry not defined in enviroment variables ");
+        throw new Error("Refresh token or refresh token expiry not defined in enviroment variables ");
     }
     const payload = {
         _id: this._id,
     }
-    return jwt.sign(payload, secret, expiry)
+    return jwt.sign(payload, secret,  {expiresIn: expiry })
 }
 
 

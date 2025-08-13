@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/email.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
@@ -5,6 +6,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 import { generateVerificationToken } from "../utils/generateVerificationTokenAndSetCookies.js";
+import { accessCookieOptions, refreshCookieOptions } from "../types/cookies.types.js";
 
 export const signup = asyncHandler(async (req, res) => {
    const { username, email, password, fullName } = req.body;
@@ -88,7 +90,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
    }
 })
 
-const generateAccessAndRefreshToken = asyncHandler(async (userId) => {
+const generateAccessAndRefreshToken = async (userId: mongoose.Types.ObjectId) => {
    try {
       const user = await User.findById(userId);
 
@@ -110,12 +112,34 @@ const generateAccessAndRefreshToken = asyncHandler(async (userId) => {
          "Something went wrong while generating access and refresh token"
       );
    }
-});
+};
 
 export const login = asyncHandler(async (req, res) => {
-   res.send("login Route");
+   const {email, password} = req.body;
+   if(!email && !password){
+      throw new ApiError(400, "Email and Password field both are required!!!");
+   }
+   const user = await User.findOne({email});
+   if(!user){
+      throw new ApiError(404, "User doesn't exists")
+   }
+   const isPasswordalid = await user.isPasswordCorrect(password);
+   if(!isPasswordalid){
+      throw new ApiError(401, "Invalid user credentials !!!")
+   } 
+   const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+   const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+   return res
+   .status(200)
+   .cookie("accessToken", accessToken, accessCookieOptions)
+   .cookie("refreshToken", refreshToken, refreshCookieOptions)
+   .json(new ApiResponse(200, "User logged in suggessfully",{
+      user: loggedInUser,
+      refreshToken,
+      accessToken
+   }))
 });
 
 export const logout = asyncHandler(async (req, res) => {
-   res.send("logout Route");
+   const userId = req.user;
 });
