@@ -1,7 +1,7 @@
 const BRAND_PRIMARY = "#4CAF50";
 const BRAND_SECONDARY = "#45a049";
 const BRAND_NAME = "Focus Portal";
-const BRAND_LOGO = "https://res.cloudinary.com/dhhoe8u50/image/upload/v1754997321/focusportal.svg";
+const BRAND_LOGO = "https://res.cloudinary.com/dhhoe8u50/image/upload/f_png/v1754997321/focusportal";
 
 
 const emailHeader = (title) => `

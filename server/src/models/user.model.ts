@@ -40,7 +40,9 @@ const userSchema = new mongoose.Schema<UserDocument>({
     },
     refreshToken: String,
     verificationToken: String,
-    verificationTokenExpiry: Date
+    verificationTokenExpiry: Date,
+    resetPasswordToken : String,
+    resetPasswordTokenExpiry: Date,
 },{timestamps: true})
 
 userSchema.pre("save", async function(next){

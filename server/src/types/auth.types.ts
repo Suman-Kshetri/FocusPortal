@@ -11,6 +11,8 @@ export interface UserFields {
   verificationToken?: string;
   verificationTokenExpiry?: Date;
   refreshToken?: string;
+  resetPasswordToken?:string,
+  resetPasswordTokenExpiry?:Date
 }
 
 export interface UserDocument extends Document, UserFields {
