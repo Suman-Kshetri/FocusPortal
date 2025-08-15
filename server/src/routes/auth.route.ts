@@ -1,5 +1,5 @@
 import express from 'express';
-import { forgotPassword, login, logout, signup, verifyEmail,resetPassword } from '../controllers/auth.controller.js';
+import { forgotPassword, login, logout, signup, verifyEmail,resetPassword, refreshAccessToken, getUserProfile, changeCurrentPassword, updateUserDetails, updateUserAvatar, deleteUserAccount } from '../controllers/auth.controller.js';
 import { upload } from '../middlewares/multer.middleware.js';
 import { verifyJwt } from '../middlewares/auth.middleware.js';
 import { ApiResponse } from '../utils/apiResponse.js';
@@ -21,5 +21,15 @@ authRouter.get('/check-auth',verifyJwt,(req, res) => {
     })
   );
 });
-
+authRouter.route("/refresh-token").post(refreshAccessToken);
+authRouter.route('/profile').get(verifyJwt, getUserProfile);
+authRouter.route('/user/change-password').patch(verifyJwt, changeCurrentPassword);
+authRouter.route('/user/update-user-profile').patch(verifyJwt, updateUserDetails);
+authRouter.patch(
+  "/user/update-avatar",
+  verifyJwt,
+  upload.single("avatar"),
+  updateUserAvatar
+);
+authRouter.delete('/user/delete-user-profile',verifyJwt, deleteUserAccount);
 export default authRouter;
