@@ -12,6 +12,7 @@ export interface UserFields {
   verificationTokenExpiry?: Date;
   refreshToken?: string;
   resetPasswordToken?:string,
+  
   resetPasswordTokenExpiry?:Date
 }
 
