@@ -1,0 +1,86 @@
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+} from '@tanstack/react-router';
+import { useState } from 'react';
+
+// 👇 Explicitly declare search param type
+export const Route = createFileRoute('/posts/')<'/posts/', { q: string }>({
+  validateSearch: (search) => {
+    return {
+      q: (search.q as string) || '',
+    };
+  },
+  loaderDeps: ({ search: { q } }) => ({ q }),
+  loader: async ({ deps: { q } }) => {
+    const posts = ['post1', 'post2', 'post3'];
+    return {
+      posts: posts.filter((post) => post.includes(q)),
+    };
+  },
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const { posts } = Route.useLoaderData();
+  const { q } = Route.useSearch();
+  const navigate = useNavigate();
+
+  const [search, setSearch] = useState(q);
+
+  const handleSearch = () => {
+    // ✅ Valid search object
+    navigate({ search: { q: search } });
+  };
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: '1rem' }}>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleEnter}
+          placeholder="Search posts"
+          style={{
+            padding: '6px 10px',
+            marginRight: '8px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+          }}
+        />
+        <button
+          onClick={handleSearch}
+          style={{
+            padding: '6px 12px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+          }}
+        >
+          Search
+        </button>
+      </div>
+
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <div key={post}>
+            <Link to="/posts/$postId" params={{ postId: post }}>
+              {post}
+            </Link>
+          </div>
+        ))
+      ) : (
+        <div>No posts found.</div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,1 @@
+# 📦 MERN Stack:study manager application
