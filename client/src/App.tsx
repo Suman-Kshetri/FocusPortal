@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -5,10 +6,14 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+=======
+function App() {
+>>>>>>> 6e25a48 (resuming project)
 
   return (
     <>
       <div>
+<<<<<<< HEAD
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
@@ -28,6 +33,10 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+=======
+        <h1 className='text-blue-500 text-2xl'>hello world</h1>
+        </div>
+>>>>>>> 6e25a48 (resuming project)
     </>
   )
 }

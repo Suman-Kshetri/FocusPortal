@@ -313,7 +313,11 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
 });
 
 
+<<<<<<< HEAD
 export const updateUserAvatar = asyncHandler(async(req, res) => {
+=======
+export const updateUserAvatar = asyncHandler(async (req, res) => {
+>>>>>>> 6e25a48 (resuming project)
    const avatarLocalPath = req.file?.path;
    if(!avatarLocalPath){
       throw new ApiError(400, "Avatar file is missing");
@@ -342,7 +346,11 @@ export const updateUserAvatar = asyncHandler(async(req, res) => {
   )
 })
 
+<<<<<<< HEAD
 export const deleteUserAccount = asyncHandler(async(req, res) => {
+=======
+export const deleteUserAccount = asyncHandler(async (req, res) => {
+>>>>>>> 6e25a48 (resuming project)
    const currentUser = req.user;
    const {confirmation} = req.body;
    if(!currentUser){

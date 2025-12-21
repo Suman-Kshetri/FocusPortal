@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+<<<<<<< HEAD
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import './index.css'
@@ -26,3 +27,14 @@ if (!rootElement.innerHTML) {
     </StrictMode>,
   )
 }
+=======
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+>>>>>>> 6e25a48 (resuming project)
