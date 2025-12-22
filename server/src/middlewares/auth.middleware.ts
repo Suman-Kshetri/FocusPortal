@@ -16,7 +16,7 @@ export const verifyJwt = asyncHandler(async(req, res, next) => {
       );
     }
   
-    const decodedToken = jwt.verify(token, secret) ;
+    const decodedToken = jwt.verify(token, secret) as jwt.JwtPayload;
   
     const user = await User.findById(decodedToken?._id).select("-password -refreshToken");
   

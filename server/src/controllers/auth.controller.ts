@@ -68,7 +68,9 @@ export const signup = asyncHandler(async (req, res) => {
             new ApiResponse(201, "User Registered Sucessfully", createdUser)
          );
    } catch (error) {
-      throw new ApiError(400, error.message);
+      const message =
+         error instanceof Error ? error.message : String(error ?? "Unknown error");
+      throw new ApiError(400, message);
    }
 });
 
@@ -146,8 +148,8 @@ export const login = asyncHandler(async (req, res) => {
    );
    return res
       .status(200)
-      .cookie("accessToken", accessToken, accessCookieOptions)
-      .cookie("refreshToken", refreshToken, refreshCookieOptions)
+      .cookie("accessToken", accessToken, accessCookieOptions as any)
+      .cookie("refreshToken", refreshToken, refreshCookieOptions as any)
       .json(
          new ApiResponse(200, "User logged in suggessfully", {
             user: loggedInUser,
@@ -209,8 +211,8 @@ export const logout = asyncHandler(async (req, res) => {
    );
    return res
       .status(200)
-      .clearCookie("accessToken", accessCookieOptions)
-      .clearCookie("refreshToken", refreshCookieOptions)
+      .clearCookie("accessToken", accessCookieOptions as any)
+      .clearCookie("refreshToken", refreshCookieOptions as any)
       .json(new ApiResponse(200, "User Logged Out Successfully", {}));
 });
 
@@ -228,7 +230,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
       );
    }
    try {
-      const decodedToken = jwt.verify(incomingRefreshToken, refreshTokenSecret);
+      const decodedToken = jwt.verify(incomingRefreshToken, refreshTokenSecret) as jwt.JwtPayload;
       const user = await User.findById(decodedToken._id);
 
       if (!user) {
@@ -243,8 +245,8 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
       );
 
       res.status(200)
-         .cookie("accessToken", accessToken, accessCookieOptions)
-         .cookie("refreshToken", refreshToken, refreshCookieOptions)
+         .cookie("accessToken", accessToken, accessCookieOptions as any)
+         .cookie("refreshToken", refreshToken, refreshCookieOptions as any)
          .json(
             new ApiResponse(200, "Access Token Refreshed Successfully", {})
          );
@@ -313,11 +315,7 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
 });
 
 
-<<<<<<< HEAD
 export const updateUserAvatar = asyncHandler(async(req, res) => {
-=======
-export const updateUserAvatar = asyncHandler(async (req, res) => {
->>>>>>> 6e25a48 (resuming project)
    const avatarLocalPath = req.file?.path;
    if(!avatarLocalPath){
       throw new ApiError(400, "Avatar file is missing");
@@ -346,11 +344,7 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
   )
 })
 
-<<<<<<< HEAD
 export const deleteUserAccount = asyncHandler(async(req, res) => {
-=======
-export const deleteUserAccount = asyncHandler(async (req, res) => {
->>>>>>> 6e25a48 (resuming project)
    const currentUser = req.user;
    const {confirmation} = req.body;
    if(!currentUser){

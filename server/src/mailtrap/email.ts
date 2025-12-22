@@ -20,13 +20,12 @@ export const sendVerificationEmail = async (
       console.error(`Error in sending email verification: ${error}`);
       throw new ApiError(
          501,
-         "Error sending verification email !!!",
-         error?.message
+         error instanceof Error ? error.message : String(error)
       );
    }
 };
 
-export const sendWelcomeEmail = async (email, fullname) => {
+export const sendWelcomeEmail = async (email: string, fullname: string) => {
    const recepient = [{ email }];
    try {
       const response = await mailtrapClient.send({
@@ -46,11 +45,11 @@ export const sendWelcomeEmail = async (email, fullname) => {
       });
       console.log("Welcome email sent seccessfully ");
    } catch (error) {
-    console.error("Error in sending welcome email !!", error?.message);
+    console.error("Error in sending welcome email !!", error instanceof Error ? error.message : String(error));
    }
 };
 
-export const sendPsswordResetEmail = async(email, resetUrl) => {
+export const sendPsswordResetEmail = async(email: string, resetUrl: string) => {
    const recepient = [{email}];
    try {
       const response = await mailtrapClient.send({
@@ -62,11 +61,11 @@ export const sendPsswordResetEmail = async(email, resetUrl) => {
 
       })
    } catch (error) {
-      throw new ApiError(503,"Error in sending reset password email");
+      throw new ApiError(503, error instanceof Error ? error.message : String(error));
    }
 }
 
-export const resetPasswordSuccessEmail = async(email) => {
+export const resetPasswordSuccessEmail = async(email: string) => {
    const recepient = [{email}];
    try {
       const response = await mailtrapClient.send({
@@ -77,6 +76,6 @@ export const resetPasswordSuccessEmail = async(email) => {
          category: "Reset Password"
       })
    } catch (error) {
-      throw new ApiError(503,"Error in sending reset password successfull email !!");
+      throw new ApiError(503, error instanceof Error ? error.message : String(error));
    }
 }

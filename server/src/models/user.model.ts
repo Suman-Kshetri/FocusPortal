@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose"
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions } from 'jsonwebtoken'
 import { UserDocument } from "../types/auth.types.js";
 import dotenv from 'dotenv'
 
@@ -52,11 +52,11 @@ userSchema.pre("save", async function(next){
     next();
 })
 
-userSchema.methods.isPasswordCorrect = async function(this, password){
+userSchema.methods.isPasswordCorrect = async function(this: any, password: string){
     return await bcrypt.compare(password, this.password);
 }
 
-userSchema.methods.generateAccessToken = async function(this){
+userSchema.methods.generateAccessToken = function(this){
     const secret = process.env.ACCESS_TOKEN_SECRET;
     const expiry = process.env.ACCESS_TOKEN_EXPIRY;
     if(!secret || !expiry){
@@ -67,9 +67,10 @@ userSchema.methods.generateAccessToken = async function(this){
         email: this.email,
         username: this.username
     }
-    return jwt.sign(payload, secret,  {expiresIn: expiry })
+    const options: SignOptions = { expiresIn: expiry as jwt.SignOptions['expiresIn'] };
+    return jwt.sign(payload, secret as string, options)
 }
-userSchema.methods.generateRefreshToken = async function(this){
+userSchema.methods.generateRefreshToken = function(this){
     const secret = process.env.REFRESH_TOKEN_SECRET;
     const expiry = process.env.REFRESH_TOKEN_EXPIRY;
     if(!secret || !expiry){
@@ -78,8 +79,8 @@ userSchema.methods.generateRefreshToken = async function(this){
     const payload = {
         _id: this._id,
     }
-    return jwt.sign(payload, secret,  {expiresIn: expiry })
+    const options: SignOptions = { expiresIn: expiry as jwt.SignOptions['expiresIn'] };
+    return jwt.sign(payload, secret as string, options)
 }
-
 
 export const User =  mongoose.model<UserDocument>('User', userSchema);

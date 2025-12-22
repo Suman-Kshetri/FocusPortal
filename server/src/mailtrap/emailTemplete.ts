@@ -4,7 +4,7 @@ const BRAND_NAME = "Focus Portal";
 const BRAND_LOGO = "https://res.cloudinary.com/dhhoe8u50/image/upload/f_png/v1754997321/focusportal";
 
 
-const emailHeader = (title) => `
+const emailHeader = (title:string) => `
   <div style="background: linear-gradient(to right, ${BRAND_PRIMARY}, ${BRAND_SECONDARY}); padding: 20px; text-align: center;">
     ${BRAND_LOGO ? `<img src="${BRAND_LOGO}" alt="${BRAND_NAME} Logo" style="max-width: 120px; margin-bottom: 10px;" />` : ""}
     <h1 style="color: white; margin: 0;">${title}</h1>
@@ -18,7 +18,7 @@ const emailFooter = `
   </div>
 `;
 
-export const verificationEmailTemplate = (verificationCode) => `
+export const verificationEmailTemplate = (verificationCode: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +45,7 @@ export const verificationEmailTemplate = (verificationCode) => `
 `;
 
 
-export const passwordResetRequestTemplate = (resetURL) => `
+export const passwordResetRequestTemplate = (resetURL : string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>

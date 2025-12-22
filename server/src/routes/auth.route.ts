@@ -1,8 +1,16 @@
-import express from 'express';
+import express, { Request } from 'express';
 import { forgotPassword, login, logout, signup, verifyEmail,resetPassword, refreshAccessToken, getUserProfile, changeCurrentPassword, updateUserDetails, updateUserAvatar, deleteUserAccount } from '../controllers/auth.controller.js';
 import { upload } from '../middlewares/multer.middleware.js';
 import { verifyJwt } from '../middlewares/auth.middleware.js';
 import { ApiResponse } from '../utils/apiResponse.js';
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
 
 const authRouter = express.Router();
 
