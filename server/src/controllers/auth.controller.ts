@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {
    sendVerificationEmail,
    sendWelcomeEmail,
-   sendPsswordResetEmail,
+   sendPasswordResetEmail,
    resetPasswordSuccessEmail,
 } from "../mailtrap/email.js";
 import { User } from "../models/user.model.js";
@@ -169,7 +169,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
    user.resetPasswordTokenExpiry = resetTokenExpiry;
    await user.save();
    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-   await sendPsswordResetEmail((await user).email, resetUrl);
+   await sendPasswordResetEmail((await user).email, resetUrl);
    return res
       .status(200)
       .json(new ApiResponse(200, "Reset Password link send to your email", {}));

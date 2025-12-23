@@ -49,7 +49,7 @@ export const sendWelcomeEmail = async (email: string, fullname: string) => {
    }
 };
 
-export const sendPsswordResetEmail = async(email: string, resetUrl: string) => {
+export const sendPasswordResetEmail = async(email: string, resetUrl: string) => {
    const recepient = [{email}];
    try {
       const response = await mailtrapClient.send({
