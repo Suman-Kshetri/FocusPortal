@@ -1,10 +1,37 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import DashboardLayout from "./pages/dashboard/DashboardLayout";
+import Profile from "./pages/dashboard/Profile";
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 
 function App() {
   return (
-    <>
-    <h1>Hello world</h1>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            {/*
+            <Route path="courses" element={<Courses />} />
+            <Route path="tools" element={<Tools />} /> 
+            */}
+            <Route path="profile" element={<Profile />} />
+          </Route>
+        </Route>
+
+        {/* 404 */}
+        <Route path="*" element={<h1>404 Not Found</h1>} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
