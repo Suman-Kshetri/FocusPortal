@@ -30,7 +30,7 @@ authRouter.get('/check-auth',verifyJwt,(req, res) => {
   );
 });
 authRouter.route("/refresh-token").post(refreshAccessToken);
-authRouter.route('/profile').get(verifyJwt, getUserProfile);
+authRouter.route('/user/me').get(verifyJwt, getUserProfile);
 authRouter.route('/user/change-password').patch(verifyJwt, changeCurrentPassword);
 authRouter.route('/user/update-user-profile').patch(verifyJwt, updateUserDetails);
 authRouter.patch(

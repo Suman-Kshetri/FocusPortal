@@ -8,79 +8,103 @@ dotenv.config();
 
 const userSchema = new mongoose.Schema<UserDocument>({
     username: {
-        type:String,
+        type: String,
         required: true,
         unique: true,
+        lowercase: true,
+        trim: true,
+        index: true
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
         required: true,
-        unique: true,
+        // Remove unique: true - passwords shouldn't be unique
     },
     fullName: {
-        type:String,
-        required:true,
+        type: String,
+        required: true,
+        trim: true
     },
     avatar: {
         type: String,
         required: true,
     },
+    avatarPublicId: {
+        type: String,
+        required: true,
+    },
     lastLogin: {
-        type:Date,
+        type: Date,
         default: Date.now
     },
-    isVerified : {
-        type:Boolean,
+    isVerified: {
+        type: Boolean,
         default: false
     },
     refreshToken: String,
     verificationToken: String,
     verificationTokenExpiry: Date,
-    resetPasswordToken : String,
+    resetPasswordToken: String,
     resetPasswordTokenExpiry: Date,
-},{timestamps: true})
+}, { timestamps: true })
 
-userSchema.pre("save", async function(next){
-    if(!this.isModified("password") || !this.password)
+// Hash password before saving
+userSchema.pre("save", async function(next) {
+    if (!this.isModified("password") || !this.password)
         return next();
+    
     this.password = await bcrypt.hash(this.password, 12);
     next();
 })
 
-userSchema.methods.isPasswordCorrect = async function(this: any, password: string){
+// Compare password method
+userSchema.methods.isPasswordCorrect = async function(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password);
 }
 
-userSchema.methods.generateAccessToken = function(this){
+// Generate Access Token (synchronous)
+userSchema.methods.generateAccessToken = function(): string {
     const secret = process.env.ACCESS_TOKEN_SECRET;
     const expiry = process.env.ACCESS_TOKEN_EXPIRY;
-    if(!secret || !expiry){
-        throw new Error("Access token or access token expiry not defined in enviroment variables ");
+    
+    if (!secret || !expiry) {
+        throw new Error("Access token secret or expiry not defined in environment variables");
     }
+    
     const payload = {
         _id: this._id,
         email: this.email,
         username: this.username
     }
+    
     const options: SignOptions = { expiresIn: expiry as jwt.SignOptions['expiresIn'] };
-    return jwt.sign(payload, secret as string, options)
+    
+    return jwt.sign(payload, secret, options);
 }
-userSchema.methods.generateRefreshToken = function(this){
+
+// Generate Refresh Token (synchronous)
+userSchema.methods.generateRefreshToken = function(): string {
     const secret = process.env.REFRESH_TOKEN_SECRET;
     const expiry = process.env.REFRESH_TOKEN_EXPIRY;
-    if(!secret || !expiry){
-        throw new Error("Refresh token or refresh token expiry not defined in enviroment variables ");
+    
+    if (!secret || !expiry) {
+        throw new Error("Refresh token secret or expiry not defined in environment variables");
     }
+    
     const payload = {
         _id: this._id,
     }
+    
     const options: SignOptions = { expiresIn: expiry as jwt.SignOptions['expiresIn'] };
-    return jwt.sign(payload, secret as string, options)
+    
+    return jwt.sign(payload, secret, options);
 }
 
-export const User =  mongoose.model<UserDocument>('User', userSchema);
+export const User = mongoose.model<UserDocument>('User', userSchema);

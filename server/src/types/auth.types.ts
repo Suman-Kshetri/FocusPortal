@@ -1,24 +1,24 @@
+
 import { Document, Types } from 'mongoose';
 
-export interface UserFields {
-  username: string;
-  fullName: string;
-  email: string;
-  password: string;
-  avatar: string;
-  lastLogin: Date;
-  isVerified: boolean;
-  verificationToken?: string;
-  verificationTokenExpiry?: Date;
-  refreshToken?: string;
-  resetPasswordToken?:string,
-  
-  resetPasswordTokenExpiry?:Date
-}
-
-export interface UserDocument extends Document, UserFields {
-   _id: Types.ObjectId;
-  isPasswordCorrect(password: string): Promise<boolean>;
-  generateAccessToken(): string;
-  generateRefreshToken(): string;
+export interface UserDocument extends Document {
+  _id: Types.ObjectId;
+    username: string;
+    email: string;
+    password: string;
+    fullName: string;
+    avatar: string;
+    avatarPublicId: string;
+    lastLogin: Date;
+    isVerified: boolean;
+    refreshToken?: string;
+    verificationToken?: string;
+    verificationTokenExpiry?: Date;
+    resetPasswordToken?: string;
+    resetPasswordTokenExpiry?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    isPasswordCorrect(password: string): Promise<boolean>;
+    generateAccessToken(): string;
+    generateRefreshToken(): string;
 }
