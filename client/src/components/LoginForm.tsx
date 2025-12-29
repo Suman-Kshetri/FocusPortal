@@ -16,10 +16,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { UseFormReturn } from "react-hook-form";
-import type { LoginFormData } from "../pages/Login";
+import type { LoginFormData } from "@/server/api/auth/use-login";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -95,14 +95,16 @@ const LoginForm = ({ form, onSubmit, isLoading, error }: LoginFormProps) => {
                       />
                       <Button
                         type="button"
+                        variant="ghost"
                         onClick={togglePasswordVisibility}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
                         disabled={isLoading}
                       >
                         {showPassword ? (
-                          <Eye className="h-4 w-4" />
-                        ) : (
                           <EyeOff className="h-4 w-4" />
+                        ) : (
+                          
+                          <Eye className="h-4 w-4" />
                         )}
                       </Button>
                     </div>
