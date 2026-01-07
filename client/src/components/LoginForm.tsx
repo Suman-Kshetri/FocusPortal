@@ -22,6 +22,7 @@ import type { UseFormReturn } from "react-hook-form";
 import type { LoginFormData } from "@/server/api/auth/use-login";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import {toast} from 'sonner'
 
 interface LoginFormProps {
   form: UseFormReturn<LoginFormData>;
@@ -36,7 +37,9 @@ const LoginForm = ({ form, onSubmit, isLoading, error }: LoginFormProps) => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+  const handleLogin = () => {
+    toast.success("Login Successfull!!!")
+  }
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
@@ -114,7 +117,9 @@ const LoginForm = ({ form, onSubmit, isLoading, error }: LoginFormProps) => {
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}
+            onClick={handleLogin}
+            >
               {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>

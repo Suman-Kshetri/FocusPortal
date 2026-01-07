@@ -1,73 +1,136 @@
-# React + TypeScript + Vite
+# 🧪 TanStack Query – `useMutation` Notes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 What is `useMutation`?
 
-Currently, two official plugins are available:
+`useMutation` is used for actions that **change data on the server**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Examples:
+- Login / Register
+- Create / Update / Delete data
+- Submit forms
+- Logout
 
-## React Compiler
+> If the request **modifies server state**, use `useMutation`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ❌ What `useMutation` is NOT for
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Fetching page data
+- GET requests for displaying content
+- Routing
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+👉 For fetching data → use **route loaders** or **`useQuery`**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## ✅ When to use `useMutation`
+
+Use it when:
+- You send **POST, PUT, PATCH, DELETE**
+- You submit a form
+- You need **success / error handling**
+- You want **loading states**
+
+---
+
+## 🧠 Basic Structure
+
+```ts
+const mutation = useMutation({
+  mutationFn: apiFunction,
+  onSuccess: (data) => {},
+  onError: (error) => {},
+});
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🧩 Example: Login Mutation
+```ts
+const loginMutation = useMutation({
+  mutationFn: authApi.login,
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
+  onSuccess: (response) => {
+    localStorage.setItem("token", response.token);
+    toast.success("Login successful");
+    navigate({ to: "/dashboard" });
   },
-])
+
+  onError: (error) => {
+    toast.error("Login failed");
+  },
+});
 ```
+## Trigger mutation
+```ts
+loginMutation.mutate(formData);
+🔄 mutate vs mutateAsync
+mutate
+Fire-and-forget
+```
+
+## Handle result in onSuccess
+
+```ts
+mutation.mutate(data);
+mutateAsync
+Await result
+```
+## Useful inside async / await
+
+```ts
+await mutation.mutateAsync(data);
+```
+
+## 📊 Important States
+State	Meaning
+isPending	Request in progress
+isSuccess	Request succeeded
+isError	Request failed
+error	Error object
+data	Success response
+
+Example
+```ts 
+if (mutation.isPending) {
+  // show loader
+}
+```
+## 🔐 Common Real-World Pattern (Auth)
+
+| Task	         |      Tool         |
+|----------------|-------------------|
+| Page routing	 |   TanStack Router |
+| Fetch page data|	Route loader     |
+| Submit form	   |   useMutation     |
+| Auth check	   |   beforeLoad      |
+| Toast feedback |  Sonner           |
+
+## 🚫 Common Mistakes
+❌ Using useMutation for GET requests
+
+❌ Putting navigation logic inside components instead of onSuccess
+
+❌ Sending invalid form data (skipping validation)
+
+## ✅ Best Practices
+✔ Validate input before mutation (Zod / React Hook Form)
+
+✔ Handle redirects in onSuccess
+
+✔ Keep mutation logic in custom hooks
+
+✔ Keep UI components dumb
+
+🧠 Simple Rule to Remember
+```graphql
+Fetching data  → Query / Loader
+Changing data  → Mutation
+```
+## 🏁 Summary
+useMutation is for server-side changes
+
+Perfect for login, forms, CRUD
+
+Works best with TanStack Router + RHF
+
+Essential for real-world React apps
