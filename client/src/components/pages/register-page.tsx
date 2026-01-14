@@ -3,10 +3,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import RegisterForm from "../registerForm";
+import { useRegister } from "@/server/api/auth/useRegister";
 
 
 const step1Schema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
+  username: z.string().trim().min(4,"Username must be at least of minimum 4 characters").toLowerCase(),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string()
@@ -33,11 +35,12 @@ const Register = () => {
   const [step1Data, setStep1Data] = useState<Step1FormData | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const {onSubmit} = useRegister();
   const step1Form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
     defaultValues: {
       fullName: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: ""
@@ -54,13 +57,19 @@ const Register = () => {
   };
 
   const onStep2Submit = (data: Step2FormData) => {
-    const finalData = {
-      ...step1Data,
-      profilePicture: data.profilePicture?.[0]
-    };
+    if (!step1Data) return;
 
-    console.log("Final registration data:", finalData);
-    alert("Registration successful!");
+  const finalData = {
+    fullName: step1Data.fullName,
+    email: step1Data.email,
+    username: step1Data.username,
+    password: step1Data.password,
+    avatar: data.profilePicture?.[0],
+  };
+
+  console.log("Final registration data:", finalData);
+
+  onSubmit(finalData);
   };
 
   return (

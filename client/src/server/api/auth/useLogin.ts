@@ -5,7 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/server/api/auth/hook";
 import { AxiosError } from "axios";
-import {toast} from 'sonner'
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -31,7 +31,8 @@ export const useLogin = () => {
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (response) => {
-      localStorage.setItem("token", response.token);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
 
       navigate({ to: "/dashboard" });
 
@@ -39,7 +40,6 @@ export const useLogin = () => {
     },
     onError: (error: AxiosError<{ message: string }>) => {
       toast.error(error.response?.data?.message || "Login failed");
-      console.error("Login error:", error);
     },
   });
 

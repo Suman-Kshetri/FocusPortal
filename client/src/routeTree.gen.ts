@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
 import { Route as DashboardDashboardProfileRouteImport } from './routes/_dashboard/dashboard/profile'
+import { Route as AuthAuthVerifyEmailRouteImport } from './routes/_auth/auth/verify-email'
 import { Route as AuthAuthRegisterRouteImport } from './routes/_auth/auth/register'
 import { Route as AuthAuthLoginRouteImport } from './routes/_auth/auth/login'
 import { Route as AuthAuthForgotPasswordRouteImport } from './routes/_auth/auth/forgot-password'
@@ -42,6 +43,11 @@ const DashboardDashboardProfileRoute =
     path: '/dashboard/profile',
     getParentRoute: () => DashboardRoute,
   } as any)
+const AuthAuthVerifyEmailRoute = AuthAuthVerifyEmailRouteImport.update({
+  id: '/auth/verify-email',
+  path: '/auth/verify-email',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthAuthRegisterRoute = AuthAuthRegisterRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthAuthForgotPasswordRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
+  '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
 }
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthAuthForgotPasswordRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
+  '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
 }
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/_auth/auth/forgot-password': typeof AuthAuthForgotPasswordRoute
   '/_auth/auth/login': typeof AuthAuthLoginRoute
   '/_auth/auth/register': typeof AuthAuthRegisterRoute
+  '/_auth/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/_dashboard/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
 }
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/verify-email'
     | '/dashboard/profile'
     | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/verify-email'
     | '/dashboard/profile'
     | '/dashboard'
   id:
@@ -110,6 +121,7 @@ export interface FileRouteTypes {
     | '/_auth/auth/forgot-password'
     | '/_auth/auth/login'
     | '/_auth/auth/register'
+    | '/_auth/auth/verify-email'
     | '/_dashboard/dashboard/profile'
     | '/_dashboard/dashboard/'
   fileRoutesById: FileRoutesById
@@ -157,6 +169,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDashboardProfileRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_auth/auth/verify-email': {
+      id: '/_auth/auth/verify-email'
+      path: '/auth/verify-email'
+      fullPath: '/auth/verify-email'
+      preLoaderRoute: typeof AuthAuthVerifyEmailRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/auth/register': {
       id: '/_auth/auth/register'
       path: '/auth/register'
@@ -185,12 +204,14 @@ interface AuthRouteChildren {
   AuthAuthForgotPasswordRoute: typeof AuthAuthForgotPasswordRoute
   AuthAuthLoginRoute: typeof AuthAuthLoginRoute
   AuthAuthRegisterRoute: typeof AuthAuthRegisterRoute
+  AuthAuthVerifyEmailRoute: typeof AuthAuthVerifyEmailRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAuthForgotPasswordRoute: AuthAuthForgotPasswordRoute,
   AuthAuthLoginRoute: AuthAuthLoginRoute,
   AuthAuthRegisterRoute: AuthAuthRegisterRoute,
+  AuthAuthVerifyEmailRoute: AuthAuthVerifyEmailRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
