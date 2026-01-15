@@ -38,9 +38,9 @@ export const useLogin = () => {
 
       toast.success("Login successful!");
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toast.error(error.response?.data?.message || "Login failed");
-    },
+      onError: (error: AxiosError<{ message: string }>) => {
+        toast.error(error.response?.data?.message || "Login failed");
+      },
   });
 
   const onSubmit = (data: LoginFormData) => {

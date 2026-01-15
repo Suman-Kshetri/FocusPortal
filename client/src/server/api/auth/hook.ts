@@ -1,3 +1,4 @@
+import type { ForgotPasswordType } from "@/components/pages/forgot-pasword-page";
 import axiosInstance from "@/config/api/axios.config";
 import type { userLoginDataType } from "@/types/authType";
 
@@ -22,5 +23,9 @@ export const authApi = {
   verifyEmail: async(data: { code: string }) => {
     const response = await axiosInstance.post("/auth/verify-email", data)
     return response.data;
-  }
+  },
+  forgotPassword : async(data: ForgotPasswordType) => {
+    const response = await axiosInstance.post("/auth/forgot-password", data);
+    return response.data;
+  },
 };
