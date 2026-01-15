@@ -25,7 +25,6 @@ function RouteComponent() {
           )}
           className="space-y-4"
         >
-          {/* New Password */}
           <div className="space-y-1">
             <label className="text-sm font-medium">New Password</label>
             <input
@@ -43,7 +42,6 @@ function RouteComponent() {
             )}
           </div>
 
-          {/* Confirm Password */}
           <div className="space-y-1">
             <label className="text-sm font-medium">Confirm Password</label>
             <input
