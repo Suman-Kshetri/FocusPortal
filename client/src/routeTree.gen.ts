@@ -18,6 +18,7 @@ import { Route as AuthAuthVerifyEmailRouteImport } from './routes/_auth/auth/ver
 import { Route as AuthAuthRegisterRouteImport } from './routes/_auth/auth/register'
 import { Route as AuthAuthLoginRouteImport } from './routes/_auth/auth/login'
 import { Route as AuthAuthForgotPasswordRouteImport } from './routes/_auth/auth/forgot-password'
+import { Route as AuthAuthResetPasswordResetIdRouteImport } from './routes/_auth/auth/reset-password/$reset-id'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
@@ -63,6 +64,12 @@ const AuthAuthForgotPasswordRoute = AuthAuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthAuthResetPasswordResetIdRoute =
+  AuthAuthResetPasswordResetIdRouteImport.update({
+    id: '/auth/reset-password/$reset-id',
+    path: '/auth/reset-password/$reset-id',
+    getParentRoute: () => AuthRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
+  '/auth/reset-password/$reset-id': typeof AuthAuthResetPasswordResetIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -81,6 +89,7 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
+  '/auth/reset-password/$reset-id': typeof AuthAuthResetPasswordResetIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,6 +102,7 @@ export interface FileRoutesById {
   '/_auth/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/_dashboard/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
+  '/_auth/auth/reset-password/$reset-id': typeof AuthAuthResetPasswordResetIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/auth/reset-password/$reset-id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/auth/reset-password/$reset-id'
   id:
     | '__root__'
     | '/'
@@ -124,6 +136,7 @@ export interface FileRouteTypes {
     | '/_auth/auth/verify-email'
     | '/_dashboard/dashboard/profile'
     | '/_dashboard/dashboard/'
+    | '/_auth/auth/reset-password/$reset-id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -197,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/auth/reset-password/$reset-id': {
+      id: '/_auth/auth/reset-password/$reset-id'
+      path: '/auth/reset-password/$reset-id'
+      fullPath: '/auth/reset-password/$reset-id'
+      preLoaderRoute: typeof AuthAuthResetPasswordResetIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
@@ -205,6 +225,7 @@ interface AuthRouteChildren {
   AuthAuthLoginRoute: typeof AuthAuthLoginRoute
   AuthAuthRegisterRoute: typeof AuthAuthRegisterRoute
   AuthAuthVerifyEmailRoute: typeof AuthAuthVerifyEmailRoute
+  AuthAuthResetPasswordResetIdRoute: typeof AuthAuthResetPasswordResetIdRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -212,6 +233,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthAuthLoginRoute: AuthAuthLoginRoute,
   AuthAuthRegisterRoute: AuthAuthRegisterRoute,
   AuthAuthVerifyEmailRoute: AuthAuthVerifyEmailRoute,
+  AuthAuthResetPasswordResetIdRoute: AuthAuthResetPasswordResetIdRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

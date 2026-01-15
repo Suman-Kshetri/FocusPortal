@@ -1,6 +1,7 @@
 import type { ForgotPasswordType } from "@/components/pages/forgot-pasword-page";
 import axiosInstance from "@/config/api/axios.config";
 import type { userLoginDataType } from "@/types/authType";
+import type { resetPasswordType } from "./useResetPassword";
 
 export const authApi = {
   login: async (Credentials: userLoginDataType) => {
@@ -28,4 +29,8 @@ export const authApi = {
     const response = await axiosInstance.post("/auth/forgot-password", data);
     return response.data;
   },
+  resetPassword: async(data: resetPasswordType)  => {
+    const response = await axiosInstance.post(`/auth/reset-password/${data.token}`, data)
+    return response.data;
+  }
 };

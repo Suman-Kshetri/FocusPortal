@@ -192,7 +192,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
    user.resetPasswordTokenExpiry = resetTokenExpiry;
    await user.save({ validateBeforeSave: false });
 
-   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+   const resetUrl = `${process.env.CLIENT_URL}/auth/reset-password/${resetToken}`;
    await sendPasswordResetEmail(user.email, resetUrl);
 
    return res
@@ -201,15 +201,14 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 });
 
 export const resetPassword = asyncHandler(async (req, res) => {
-   const { token } = req.params;
-   const { password } = req.body;
+   const { token, password } = req.body;
 
-   if (!password) {
-      throw new ApiError(400, "Password is required");
+   if (!password || !token) {
+      throw new ApiError(400, "Password and token are required");
    }
 
-   if (password.length < 6) {
-      throw new ApiError(400, "Password must be at least 6 characters long");
+   if (password.length < 8) {
+      throw new ApiError(400, "Password must be at least 8 characters long");
    }
 
    const user = await User.findOne({
