@@ -18,6 +18,11 @@ import {
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
+export const adminTest = asyncHandler(async (req, res) => {
+   const user = await User.find()
+   return res.status(200).json(new ApiResponse(200, "This is admin", user))
+})
+
 export const signup = asyncHandler(async (req, res) => {
    const { username, email, password, fullName } = req.body;
    

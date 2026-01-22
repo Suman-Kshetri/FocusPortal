@@ -3,6 +3,8 @@ import { forgotPassword, login, logout, signup, verifyEmail,resetPassword, refre
 import { upload } from '../middlewares/multer.middleware.js';
 import { verifyJwt } from '../middlewares/auth.middleware.js';
 import { ApiResponse } from '../utils/apiResponse.js';
+import { authorizeRoles } from '../middlewares/auth.authorize.js';
+import { adminTest } from '../controllers/auth.controller.js';
 
 declare global {
   namespace Express {
@@ -15,6 +17,7 @@ declare global {
 const authRouter = express.Router();
 
 authRouter.post('/register', upload.single("avatar") ,signup);
+authRouter.post("/admin", verifyJwt, authorizeRoles("admin"), adminTest);
 authRouter.route('/login').post(login);
 authRouter.route('/logout').post(verifyJwt, logout);
 

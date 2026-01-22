@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_dashboard/dashboard/')({
 function DashboardIndex() {
   return (
     <div>
-      <h1>Dashboard Home</h1>
+      <h1>User Dashboard Home</h1>
       {/* Or redirect to profile */}
     </div>
   )
