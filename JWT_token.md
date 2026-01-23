@@ -251,7 +251,7 @@ const uploadAvatar = async (file: File) => {
   const formData = new FormData();
   formData.append('avatar', file);
 
-  const response = await apiService.fetchWithAuth('/user/update-avatar', {
+  const response = await apiService.fetchWithAuth('/users/update-avatar', {
     method: 'PATCH',
     body: formData,
     headers: {
@@ -267,7 +267,7 @@ const uploadAvatar = async (file: File) => {
 ### 3. Update User Details
 ```typescript
 const updateProfile = async (fullName: string, email: string) => {
-  const response = await apiService.fetchWithAuth('/user/update-user-profile', {
+  const response = await apiService.fetchWithAuth('/users/update-user-profile', {
     method: 'PATCH',
     body: JSON.stringify({ fullName, email })
   });

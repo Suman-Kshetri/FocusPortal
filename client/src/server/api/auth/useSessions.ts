@@ -16,7 +16,7 @@ export const useSession = () => {
     queryKey: ["session"],
     queryFn: async () => {
       const token = localStorage.getItem("accessToken");
-      const {data} = await axiosInstance.get("/auth/user/me", {
+      const {data} = await axiosInstance.get("/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       return data.data;
