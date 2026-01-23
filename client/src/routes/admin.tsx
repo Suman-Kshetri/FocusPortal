@@ -15,7 +15,7 @@ function RouteComponent() {
   useEffect(() => {
     if (isPending) return;
     if (error || !response?.role) navigate({ to: "/auth/login" });
-    if (response?.role === "student") navigate({ to: "/" });
+    if (response?.role === "user") navigate({ to: "/" });
   }, [isPending, response, error]);
 
   if (isPending) {

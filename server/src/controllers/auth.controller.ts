@@ -4,7 +4,7 @@ import {
    sendWelcomeEmail,
    sendPasswordResetEmail,
    resetPasswordSuccessEmail,
-} from "../mailtrap/email.js";
+} from "../mailtrap/email.service.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";

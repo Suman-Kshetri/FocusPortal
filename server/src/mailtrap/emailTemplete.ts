@@ -3,14 +3,12 @@ const BRAND_SECONDARY = "#45a049";
 const BRAND_NAME = "Focus Portal";
 const BRAND_LOGO = "https://res.cloudinary.com/dhhoe8u50/image/upload/f_png/v1754997321/focusportal";
 
-
-const emailHeader = (title:string) => `
+const emailHeader = (title: string) => `
   <div style="background: linear-gradient(to right, ${BRAND_PRIMARY}, ${BRAND_SECONDARY}); padding: 20px; text-align: center;">
     ${BRAND_LOGO ? `<img src="${BRAND_LOGO}" alt="${BRAND_NAME} Logo" style="max-width: 120px; margin-bottom: 10px;" />` : ""}
     <h1 style="color: white; margin: 0;">${title}</h1>
   </div>
 `;
-
 
 const emailFooter = `
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
@@ -44,8 +42,44 @@ export const verificationEmailTemplate = (verificationCode: string) => `
 </html>
 `;
 
+export const welcomeEmailTemplate = (fullname: string) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ${BRAND_NAME}</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  ${emailHeader("Welcome to Focus Portal!")}
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p>Hello ${fullname},</p>
+    <p>Welcome to Focus Portal! We're thrilled to have you on board. 🎉</p>
+    <p>You're all set to start using our platform and unlock your full potential. Here's what you can do next:</p>
+    <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Complete your profile</li>
+        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Explore our features</li>
+        <li style="padding: 8px 0;">✓ Start your first project</li>
+      </ul>
+    </div>
+    <p>If you have any questions or need assistance, our support team is always here to help.</p>
+    <p>Thank you for choosing Focus Portal. Let's make great things happen together!</p>
+    <p>Best regards,<br>${BRAND_NAME} Team</p>
+    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+    <p style="color: #888; font-size: 0.85em; margin: 0;">
+      ${BRAND_NAME}<br>
+      Pokhara-5 malepatan<br>
+      Pokhara, 696969<br>
+      Nepal
+    </p>
+  </div>
+  ${emailFooter}
+</body>
+</html>
+`;
 
-export const passwordResetRequestTemplate = (resetURL : string) => `
+export const passwordResetRequestTemplate = (resetURL: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,7 +96,7 @@ export const passwordResetRequestTemplate = (resetURL : string) => `
     <div style="text-align: center; margin: 30px 0;">
       <a href="${resetURL}" style="background-color: ${BRAND_PRIMARY}; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
     </div>
-    <p>If the button above doesn’t work, copy and paste this link into your browser:</p>
+    <p>If the button above doesn't work, copy and paste this link into your browser:</p>
     <p style="word-break: break-word; color: ${BRAND_PRIMARY};">${resetURL}</p>
     <p>This link will expire in 1 hour for security reasons.</p>
     <p>Best regards,<br>${BRAND_NAME}</p>
@@ -71,7 +105,6 @@ export const passwordResetRequestTemplate = (resetURL : string) => `
 </body>
 </html>
 `;
-
 
 export const passwordResetSuccessTemplate = () => `
 <!DOCTYPE html>

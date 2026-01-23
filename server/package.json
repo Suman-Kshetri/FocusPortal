@@ -39,6 +39,7 @@
     "mongoose": "^8.17.1",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "resend": "^6.8.0"
   }
 }

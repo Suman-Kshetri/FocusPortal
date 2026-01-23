@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export interface User {
   _id: string;
   email: string;
-  role: "student" | "admin";
+  role: "user" | "admin";
   fullName: string;
   avatar?: string;
 }

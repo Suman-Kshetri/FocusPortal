@@ -5,7 +5,7 @@ export interface UserDocument extends Document {
   _id: Types.ObjectId;
     username: string;
     email: string;
-    role:'student' | 'admin';
+    role:'user' | 'admin';
     password: string;
     fullName: string;
     avatar: string;
@@ -23,4 +23,4 @@ export interface UserDocument extends Document {
     generateAccessToken(): string;
     generateRefreshToken(): string;
 }
-export type UserRole = 'student' | 'admin';
+export type UserRole = 'user' | 'admin';
