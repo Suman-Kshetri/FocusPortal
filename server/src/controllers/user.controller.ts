@@ -179,10 +179,10 @@ export const deleteUserAccount = asyncHandler(async (req, res) => {
 export const followUser = asyncHandler(async (req, res) => {
    try {
       const currentUserId = req.user._id;
-      const usernmaeToFollow = req.params.username;
+      const usernameToFollow = req.params.username;
 
       const userToFollow = await User.findOne({
-         username: usernmaeToFollow.toLowerCase(),
+         username: usernameToFollow.toLowerCase(),
       });
 
       if (!userToFollow) {
@@ -198,10 +198,10 @@ export const followUser = asyncHandler(async (req, res) => {
       }
 
       await User.findByIdAndUpdate(userToFollow._id, {
-         $push: { followers: currentUserId },
+         $addToSet: { followers: currentUserId },
       });
       await User.findByIdAndUpdate(currentUserId, {
-         $push: { following: userToFollow._id },
+         $addToSet: { following: userToFollow._id },
       });
 
       if (userToFollow.notificationSettings.followers) {
@@ -214,7 +214,7 @@ export const followUser = asyncHandler(async (req, res) => {
       }
 
       res.status(200).json(
-         new ApiResponse(200, `You are now following ${usernmaeToFollow}`, {})
+         new ApiResponse(200, `You are now following ${usernameToFollow}`, {})
       );
    } catch (err) {
       throw new ApiError(500, "Error following user");
@@ -224,9 +224,6 @@ export const unFollowUser = asyncHandler(async (req, res) => {
    const usernameToUnfollow = req.params.username;
    const currentUserId = req.user._id;
 
-   if (!currentUserId) {
-      throw new ApiError(401, "Unauthorized Access");
-   }
    const userToUnfollow = await User.findOne({
       username: usernameToUnfollow.toLowerCase(),
    });
