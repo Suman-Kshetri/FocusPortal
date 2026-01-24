@@ -24,7 +24,7 @@ export const useLogout = () => {
   });
 
   return {
-    logout: () => logoutMutation.mutate(), // ✅ wrap in function
+    logout: () => logoutMutation.mutate(), 
     isLoading: logoutMutation.isPending,
   };
 };

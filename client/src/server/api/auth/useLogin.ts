@@ -30,12 +30,12 @@ export const useLogin = () => {
 
   const loginMutation = useMutation({
     mutationFn: authApi.login,
-    onSuccess: (data) => {
-      // Since authApi.login returns response.data, the tokens are directly in data
-      console.log("Login response:", data); // Debug: check the structure
+    onSuccess: (response) => {
+     
+      console.log("Login response:", response);
       
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
       
       toast.success("Login successful!");
       navigate({ to: "/dashboard" });

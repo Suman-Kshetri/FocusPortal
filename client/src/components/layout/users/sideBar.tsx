@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 export const SidebarApp = ({ isOpen, selectedItem, onSelectItem }: any) => {
   const items = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
-    { title: "Profile", url: "/dashboard/profile", icon: User },
+    { title: "My Profile", url: "/dashboard/profile", icon: User },
   ];
 
   const footerItems = [{ title: "Setting", url: "/dashboard", icon: Settings }];

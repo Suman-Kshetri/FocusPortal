@@ -1,4 +1,5 @@
 import { useLogout } from "@/server/api/auth/useLogout";
+import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
 import { Link } from "@tanstack/react-router";
 import {
   PanelLeft,
@@ -18,11 +19,12 @@ export const Navbar = ({
 }: any) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { logout, isLoading } = useLogout();
+  const { userData: user } = useGetUserProfile();
   const handleLogout = () => {
-    if (!isLoading) { 
-    setIsDropdownOpen(false);
-    logout();
-  }
+    if (!isLoading) {
+      setIsDropdownOpen(false);
+      logout();
+    }
   };
 
   return (
@@ -36,7 +38,7 @@ export const Navbar = ({
             <div className="flex items-center gap-20">
               <button
                 onClick={onToggleSidebar}
-                className="p-2 rounded-lg hover:bg-accent transition-colors"
+                className="p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
                 aria-label="Toggle Sidebar"
               >
                 <PanelLeft className="w-5 h-5 text-foreground" />
@@ -50,7 +52,7 @@ export const Navbar = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onToggleTheme}
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
+              className="p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
               aria-label="Toggle theme"
             >
               {isDarkMode ? (
@@ -61,27 +63,28 @@ export const Navbar = ({
             </button>
 
             <div className="relative">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 p-1 rounded-lg hover:bg-accent transition-colors"
-                aria-expanded={isDropdownOpen}
-              >
-                <img
-                  className="w-8 h-8 rounded-full ring-2 ring-border"
-                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                  alt="user photo"
-                />
-              </button>
-
+              {user && (
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center gap-2 p-1 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                  aria-expanded={isDropdownOpen}
+                >
+                  <img
+                    className="w-8 h-8 rounded-full ring-2 ring-border"
+                    src={user.avatar}
+                    alt={user.fullName}
+                  />
+                </button>
+              )}
               {/* Dropdown Menu */}
               {isDropdownOpen && (
                 <div className="absolute right-0 top-12 z-50 bg-popover border border-border rounded-lg shadow-lg w-56">
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-popover-foreground">
-                      Neil Sims
+                      {user.fullName}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
-                      neil.sims@flowbite.com
+                      {user.email}
                     </p>
                   </div>
                   <ul className="p-2 text-sm">
@@ -107,7 +110,7 @@ export const Navbar = ({
                       <button
                         onClick={handleLogout}
                         disabled={isLoading}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-destructive hover:bg-destructive/10 rounded transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 w-full px-3 py-2 text-destructive hover:bg-destructive/10 rounded transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
                         {isLoading ? "Signing out..." : "Sign out"}
