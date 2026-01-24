@@ -1,27 +1,49 @@
-import { PanelLeft, Sun, Moon, LayoutDashboard, Settings, LogOut } from "lucide-react";
+import { useLogout } from "@/server/api/auth/useLogout";
+import { Link } from "@tanstack/react-router";
+import {
+  PanelLeft,
+  Sun,
+  Moon,
+  LayoutDashboard,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { useState } from "react";
 
-export const Navbar = ({ selectedItem, onToggleSidebar, isDarkMode, onToggleTheme }:any) => {
+export const Navbar = ({
+  selectedItem,
+  onToggleSidebar,
+  isDarkMode,
+  onToggleTheme,
+}: any) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { logout, isLoading } = useLogout();
+  const handleLogout = () => {
+    if (!isLoading) { 
+    setIsDropdownOpen(false);
+    logout();
+  }
+  };
 
   return (
     <nav className="fixed top-0 z-50 w-full bg-background border-b border-border">
       <div className="px-4 py-3">
         <div className="flex items-center justify-between">
-        
           <div className="flex items-center gap-10">
-            <h1 className="text-lg font-semibold text-foreground">Focus Portal</h1>
-            <div className="flex items-center gap-15">
-            <button
-              onClick={onToggleSidebar}
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
-              aria-label="Toggle Sidebar"
-            >
-              <PanelLeft className="w-5 h-5 text-foreground" />
-            </button>
-            <h1 className="text-md font-semibold text-foreground">
-              {selectedItem}
+            <h1 className="text-lg font-semibold text-foreground">
+              Focus Portal
             </h1>
+            <div className="flex items-center gap-20">
+              <button
+                onClick={onToggleSidebar}
+                className="p-2 rounded-lg hover:bg-accent transition-colors"
+                aria-label="Toggle Sidebar"
+              >
+                <PanelLeft className="w-5 h-5 text-foreground" />
+              </button>
+              <h1 className="text-md font-semibold text-foreground">
+                {selectedItem}
+              </h1>
             </div>
           </div>
 
@@ -64,31 +86,32 @@ export const Navbar = ({ selectedItem, onToggleSidebar, isDarkMode, onToggleThem
                   </div>
                   <ul className="p-2 text-sm">
                     <li>
-                      <a
-                        href="#"
+                      <Link
+                        to="/dashboard"
                         className="flex items-center gap-2 w-full px-3 py-2 text-popover-foreground hover:bg-accent rounded transition-colors"
                       >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
-                        href="#"
+                      <Link
+                        to="/dashboard"
                         className="flex items-center gap-2 w-full px-3 py-2 text-popover-foreground hover:bg-accent rounded transition-colors"
                       >
                         <Settings className="w-4 h-4" />
                         Settings
-                      </a>
+                      </Link>
                     </li>
                     <li className="border-t border-border mt-2 pt-2">
-                      <a
-                        href="#"
-                        className="flex items-center gap-2 w-full px-3 py-2 text-destructive hover:bg-destructive/10 rounded transition-colors"
+                      <button
+                        onClick={handleLogout}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-destructive hover:bg-destructive/10 rounded transition-colors disabled:opacity-50"
                       >
                         <LogOut className="w-4 h-4" />
-                        Sign out
-                      </a>
+                        {isLoading ? "Signing out..." : "Sign out"}
+                      </button>
                     </li>
                   </ul>
                 </div>

@@ -1,8 +1,9 @@
 import { Home, Inbox, Calendar, Search, Settings } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const SidebarApp = ({ isOpen, selectedItem, onSelectItem }:any) => {
   const items = [
-    { title: "Home", url: "#", icon: Home },
+    { title: "Dashboard", url: "#", icon: Home },
     { title: "Inbox", url: "#", icon: Inbox },
     { title: "Calendar", url: "#", icon: Calendar },
     { title: "Search", url: "#", icon: Search },
@@ -36,10 +37,9 @@ export const SidebarApp = ({ isOpen, selectedItem, onSelectItem }:any) => {
           <ul className="space-y-1">
             {items.map((item, index) => (
               <li key={index}>
-                <a
-                  href={item.url}
-                  onClick={(e) => {
-                    e.preventDefault();
+                <Link
+                  to={item.url}
+                  onClick={() => {
                     onSelectItem(item.title);
                   }}
                   className={`flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${
@@ -65,7 +65,7 @@ export const SidebarApp = ({ isOpen, selectedItem, onSelectItem }:any) => {
                   >
                     {item.title}
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

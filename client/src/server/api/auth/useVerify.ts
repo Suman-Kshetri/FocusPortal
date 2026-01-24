@@ -23,6 +23,7 @@ export const useVerify = () => {
     }
     return {
         onSubmit,
-        isSuccess: verifyEmailMutation.isSuccess    
+        isSuccess: verifyEmailMutation.isSuccess,
+        isLoading: verifyEmailMutation.isPending
     }
 }

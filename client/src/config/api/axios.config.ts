@@ -7,8 +7,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-
+    const token = localStorage.getItem('accessToken'); 
     if (
       token &&
       !config.url?.includes('/auth/login') &&
@@ -22,12 +21,19 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
+    if (
+      error.response?.status === 401 &&
+      !error.config?.url?.includes('/auth/login') &&
+      !error.config?.url?.includes('/auth/register') &&
+      !error.config?.url?.includes('/auth/verify-email') &&
+      !error.config?.url?.includes('/auth/forgot-password') &&
+      !error.config?.url?.includes('/auth/reset-password')
+    ) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       window.location.href = '/auth/login';
     }
     return Promise.reject(error);

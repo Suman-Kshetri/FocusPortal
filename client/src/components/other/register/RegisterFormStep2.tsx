@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 import type {RegisterFormStep2Props} from "@/types/formType";
 
 
-const RegisterFormStep2 = ({ form, onSubmit, onBack }: RegisterFormStep2Props) => {
+const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormStep2Props) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
@@ -146,7 +146,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack }: RegisterFormStep2Props) =
             className="flex-1 bg-green-600 hover:bg-green-700 cursor-pointer"
             type="button"
           >
-            Register
+            {isLoading ? "Registering.." : "Register"}
           </Button>
         </div>
       </div>

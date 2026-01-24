@@ -3,7 +3,7 @@ import LoginForm from "@/components/LoginForm";
 
 
 const Login = () => {
-  const { form, onSubmit, isLoading, error } = useLogin();
+  const { form, onSubmit, isLoading } = useLogin();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -11,7 +11,6 @@ const Login = () => {
         form={form}
         onSubmit={onSubmit}
         isLoading={isLoading}
-        error={error}
       />
     </div>
   );

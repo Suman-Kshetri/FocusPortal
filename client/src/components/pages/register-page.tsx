@@ -35,7 +35,7 @@ const Register = () => {
   const [step1Data, setStep1Data] = useState<Step1FormData | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const {onSubmit} = useRegister();
+  const {onSubmit,isLoading} = useRegister();
   const step1Form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
     defaultValues: {
@@ -85,6 +85,7 @@ const Register = () => {
         setShowPassword={setShowPassword}
         showConfirmPassword={showConfirmPassword}
         setShowConfirmPassword={setShowConfirmPassword}
+        isLoading={isLoading}
       />
     </div>
   );

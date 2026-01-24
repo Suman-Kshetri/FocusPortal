@@ -22,6 +22,7 @@ const RegisterForm = ({
   setShowPassword,
   showConfirmPassword,
   setShowConfirmPassword,
+  isLoading,
 }: RegisterFormProps) => {
   return (
     <Card className="w-full max-w-md">
@@ -67,6 +68,7 @@ const RegisterForm = ({
             form={step2Form}
             onSubmit={onStep2Submit}
             onBack={() => setStep(1)}
+            isLoading={isLoading}
           />
         )}
       </CardContent>

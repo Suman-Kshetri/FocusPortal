@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import DashboardLayout from '../components/pages/dashboard/DashboardLayout'
+import {UserLayout} from '../components/layout/users/index'
 
 export const Route = createFileRoute('/_dashboard')({
   beforeLoad: async () => {
@@ -17,8 +17,8 @@ export const Route = createFileRoute('/_dashboard')({
 
 function DashboardLayoutWrapper() {
   return (
-    <DashboardLayout>
+    <UserLayout>
       <Outlet />
-    </DashboardLayout>
+    </UserLayout>
   )
 }

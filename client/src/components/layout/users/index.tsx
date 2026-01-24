@@ -6,7 +6,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function AdminLayout({ children }: Props) {
+export function UserLayout({ children }: Props) {
     const [isOpen, setIsOpen] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Dashboard");
 

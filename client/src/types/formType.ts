@@ -11,6 +11,7 @@ export interface RegisterFormStep2Props {
   form: any;
   onSubmit: (data: any) => void;
   onBack: () => void;
+  isLoading: boolean;
 }
 
 export interface RegisterFormProps {
@@ -24,4 +25,5 @@ export interface RegisterFormProps {
   setShowPassword: (value: boolean) => void;
   showConfirmPassword: boolean;
   setShowConfirmPassword: (value: boolean) => void;
+  isLoading: boolean;
 }

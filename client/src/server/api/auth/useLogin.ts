@@ -30,17 +30,21 @@ export const useLogin = () => {
 
   const loginMutation = useMutation({
     mutationFn: authApi.login,
-    onSuccess: (response) => {
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
-
-      navigate({ to: "/dashboard" });
-
+    onSuccess: (data) => {
+      // Since authApi.login returns response.data, the tokens are directly in data
+      console.log("Login response:", data); // Debug: check the structure
+      
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      
       toast.success("Login successful!");
+      navigate({ to: "/dashboard" });
     },
-      onError: (error: AxiosError<{ message: string }>) => {
-        toast.error(error.response?.data?.message || "Login failed");
-      },
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.error("Login error:", error); // Debug logging
+      const errorMsg = error.response?.data?.message || "Login failed. Please check your credentials.";
+      toast.error(errorMsg);
+    },
   });
 
   const onSubmit = (data: LoginFormData) => {
@@ -49,7 +53,7 @@ export const useLogin = () => {
 
   const errorMessage = loginMutation.error
     ? (loginMutation.error as AxiosError<{ message: string }>).response?.data
-        ?.message || "!! Login failed. Please check your credentials."
+        ?.message || "Login failed. Please check your credentials."
     : null;
 
   return {

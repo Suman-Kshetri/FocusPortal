@@ -403,3 +403,112 @@ REACT_APP_API_URL=http://localhost:5000/api/v1
 5. Call `apiService.fetchWithAuth()` for protected routes
 
 That's it! Your JWT authentication is ready to use.
+
+
+
+
+
+## Complete Flow Comparison
+```typescript
+const token = req.header("Authorization")?.replace("Bearer ", "");
+// Frontend sets header (YOUR CURRENT APPROACH)
+```
+GET /api/courses
+Headers: { Authorization: "Bearer eyJhbGc..." }
+
+```
+
+**Your axios interceptor uses Option 2 (Authorization Header)**, which is the standard approach for SPAs (Single Page Applications).
+
+---
+
+## How It Works Together
+
+### **Frontend → Backend Flow**
+```
+┌─────────────────────────────────────────────────────────┐
+│ FRONTEND: Login Successful                              │
+│ localStorage.setItem('accessToken', 'eyJhbGc...')       │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ USER: Navigates to /dashboard                           │
+│ Component calls: getCourses()                           │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ AXIOS INTERCEPTOR (Request)                             │
+│ const token = localStorage.getItem('accessToken');      │
+│ config.headers.Authorization = `Bearer ${token}`;       │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ HTTP REQUEST                                            │
+│ GET /api/courses                                        │
+│ Headers: {                                              │
+│   Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI..."│
+│ }                                                       │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ BACKEND: verifyJwt Middleware                           │
+│                                                         │
+│ Step 1: Extract token                                   │
+│ const token = req.cookies?.accessToken ||               │
+│              req.header("Authorization")                │
+│                 ?.replace("Bearer ", "");               │
+│                                                         │
+│ Result: token = "eyJhbGciOiJIUzI1NiIsInR5cCI..."        │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ Step 2: Verify JWT                                      │
+│ const decodedToken = jwt.verify(token, SECRET);         │
+│                                                         │
+│ Decoded: {                                              │
+│   _id: "507f1f77bcf86cd799439011",                      │
+│   email: "user@example.com",                            │
+│   iat: 1674567890,                                      │
+│   exp: 1674654290                                       │
+│ }                                                       │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ Step 3: Find User in Database                           │
+│ const user = await User.findById("507f1f77...")         │
+│   .select("-password -refreshToken");                   │
+│                                                         │
+│ Found: {                                                │
+│   _id: "507f1f77...",                                   │
+│   email: "user@example.com",                            │
+│   name: "John Doe",                                     │
+│   role: "student"                                       │
+│   // password excluded ✅                               │
+│   // refreshToken excluded ✅                           │
+│ }                                                       │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ Step 4: Attach User to Request                          │
+│ req.user = user;                                        │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ Step 5: Call next()                                     │
+│ Proceed to route handler                                │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ ROUTE HANDLER                                           │
+│ router.get('/courses', verifyJwt, async (req, res) => { │
+│   const userId = req.user._id; // Available! ✅         │
+│   const courses = await Course.find({ userId });        │
+│   res.json(courses);                                    │
+│ });                                                     │
+└────────────────┬────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│ RESPONSE                                                │
+│ 200 OK                                                  │
+│ [{ id: 1, name: "Math" }, { id: 2, name: "Physics" }]   │
+└─────────────────────────────────────────────────────────┘

@@ -238,17 +238,24 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-   const userId = req.user?._id;
+   const token = req.cookies?.accessToken || 
+                 req.header("Authorization")?.replace("Bearer ", "");
    
-   if (!userId) {
-      throw new ApiError(401, "Unauthorized: User not found");
+   if (token) {
+      try {
+         const secret = process.env.ACCESS_TOKEN_SECRET;
+         if (secret) {
+            const decodedToken = jwt.verify(token, secret) as jwt.JwtPayload;
+            await User.findByIdAndUpdate(
+               decodedToken._id,
+               { $unset: { refreshToken: 1 } },
+               { new: true }
+            );
+         }
+      } catch (error) {
+         console.log("Token verification failed during logout:", error);
+      }
    }
-
-   await User.findByIdAndUpdate(
-      userId,
-      { $unset: { refreshToken: 1 } },
-      { new: true }
-   );
 
    return res
       .status(200)
@@ -297,4 +304,175 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
    } catch (error) {
       throw new ApiError(401, "Invalid or expired refresh token");
    }
+});
+
+export const getUserProfile = asyncHandler(async (req, res) => {
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(200, "User profile fetched successfully", req.user)
+      );
+});
+
+export const changeCurrentPassword = asyncHandler(async (req, res) => {
+   const { oldPassword, newPassword } = req.body;
+   const currentUser = req.user;
+
+   if (!oldPassword || !newPassword) {
+      throw new ApiError(400, "Both old and new passwords are required");
+   }
+
+   if (newPassword.length < 6) {
+      throw new ApiError(400, "New password must be at least 6 characters long");
+   }
+
+   if (!currentUser) {
+      throw new ApiError(401, "Unauthorized access");
+   }
+
+   const user = await User.findById(currentUser._id);
+   if (!user) {
+      throw new ApiError(404, "User not found");
+   }
+
+   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+   if (!isPasswordCorrect) {
+      throw new ApiError(400, "Incorrect current password");
+   }
+
+   user.password = newPassword;
+   await user.save();
+
+   return res
+      .status(200)
+      .json(new ApiResponse(200, "Password changed successfully", {}));
+});
+
+export const updateUserDetails = asyncHandler(async (req, res) => {
+   const { fullName, email, username } = req.body;
+   
+   if (!fullName && !email && !username) {
+      throw new ApiError(400, "At least one field is required to update");
+   }
+
+   const currentUser = req.user;
+   if (!currentUser) {
+      throw new ApiError(401, "Unauthorized access");
+   }
+
+   // Check if email or username is already taken by another user
+   if (email || username) {
+      const existingUser = await User.findOne({
+         $and: [
+            { _id: { $ne: currentUser._id } },
+            {
+               $or: [
+                  ...(email ? [{ email: email.toLowerCase() }] : []),
+                  ...(username ? [{ username: username.toLowerCase() }] : [])
+               ]
+            }
+         ]
+      });
+
+      if (existingUser) {
+         throw new ApiError(409, "Email or username already in use");
+      }
+   }
+
+   const updateData: any = {};
+   if (fullName) updateData.fullName = fullName;
+   if (email) updateData.email = email.toLowerCase();
+   if (username) updateData.username = username.toLowerCase();
+
+   const user = await User.findByIdAndUpdate(
+      currentUser._id,
+      { $set: updateData },
+      { new: true }
+   ).select("-password -refreshToken");
+
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(200, "Account details updated successfully", user)
+      );
+});
+
+export const updateUserAvatar = asyncHandler(async (req, res) => {
+   const avatarLocalPath = req.file?.path;
+   
+   if (!avatarLocalPath) {
+      throw new ApiError(400, "Avatar file is missing");
+   }
+
+   const currentUser = req.user;
+   if (!currentUser) {
+      throw new ApiError(401, "Unauthorized access");
+   }
+
+   const avatar = await uploadOnCloudinary(avatarLocalPath);
+   if (!avatar || !avatar.url) {
+      throw new ApiError(500, "Error while uploading to Cloudinary");
+   }
+
+   if (currentUser.avatarPublicId) {
+      try {
+         await deleteFromCloudinary(currentUser.avatarPublicId);
+      } catch (error) {
+         console.error("Error deleting old avatar from Cloudinary:", error);
+      }
+   }
+
+   const user = await User.findByIdAndUpdate(
+      currentUser._id,
+      {
+         $set: {
+            avatar: avatar.url,
+            avatarPublicId: avatar.public_id
+         }
+      },
+      { new: true }
+   ).select("-password -refreshToken");
+
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(200, "Profile picture updated successfully", user)
+      );
+});
+
+export const deleteUserAccount = asyncHandler(async (req, res) => {
+   const currentUser = req.user;
+   const { confirmation } = req.body;
+
+   if (!currentUser) {
+      throw new ApiError(401, "Unauthorized access");
+   }
+
+   const expected = `delete ${currentUser.username} account`;
+   if (confirmation !== expected) {
+      throw new ApiError(400, "Confirmation text does not match");
+   }
+
+   const user = await User.findById(currentUser._id);
+   if (!user) {
+      throw new ApiError(404, "User not found");
+   }
+
+   if (user.avatarPublicId) {
+      try {
+         await deleteFromCloudinary(user.avatarPublicId);
+      } catch (err) {
+         console.error("Error deleting avatar from Cloudinary:", err);
+      }
+   }
+
+   await User.findByIdAndDelete(user._id);
+
+   return res
+      .status(200)
+      .clearCookie("accessToken", accessCookieOptions as any)
+      .clearCookie("refreshToken", refreshCookieOptions as any)
+      .json(
+         new ApiResponse(200, "User account deleted successfully", {})
+      );
 });

@@ -5,7 +5,7 @@ import { useVerify } from '@/server/api/auth/useVerify';
 
 export const VerifyEmail = () => {
   const [otpValue, setOtpValue] = useState('');
-  const {onSubmit} = useVerify();
+  const {onSubmit,isLoading} = useVerify();
 
   const handleOtpComplete = async (otp: string) => {
     onSubmit(otp)
@@ -43,7 +43,7 @@ export const VerifyEmail = () => {
         }
       `}
     >
-      Verify
+       {isLoading ? "Verifying..." : "Verify"}
     </button>
 
   </div>
