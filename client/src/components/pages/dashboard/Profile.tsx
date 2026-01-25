@@ -19,8 +19,8 @@ export const Profile = () => {
 
   useEffect(() => {
     if (userData) {
-      setUser(userData);
-      console.log(userData)
+      setUser(userData.data);
+      console.log("USER DATA:",userData)
     }
   }, [userData]);
 

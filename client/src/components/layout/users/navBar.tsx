@@ -71,8 +71,8 @@ export const Navbar = ({
                 >
                   <img
                     className="w-8 h-8 rounded-full ring-2 ring-border"
-                    src={user.avatar}
-                    alt={user.fullName}
+                    src={user.data.avatar}
+                    alt={user.data.fullName}
                   />
                 </button>
               )}
@@ -81,10 +81,10 @@ export const Navbar = ({
                 <div className="absolute right-0 top-12 z-50 bg-popover border border-border rounded-lg shadow-lg w-56">
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-popover-foreground">
-                      {user.fullName}
+                      {user.data.fullName}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {user.email}
+                      {user.data.email}
                     </p>
                   </div>
                   <ul className="p-2 text-sm">
