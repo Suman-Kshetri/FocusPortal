@@ -70,7 +70,7 @@ export const Navbar = ({
                   aria-expanded={isDropdownOpen}
                 >
                   <img
-                    className="w-8 h-8 rounded-full ring-2 ring-border"
+                    className="w-8 h-8 rounded-full ring-2 ring-border object-cover"
                     src={user.data.avatar}
                     alt={user.data.fullName}
                   />

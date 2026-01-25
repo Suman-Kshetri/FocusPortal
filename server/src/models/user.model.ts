@@ -56,8 +56,8 @@ const userSchema = new mongoose.Schema<UserDocument>(
          enum: [
             "middle school",
             "high school",
-            "bachelor's degree",
-            "master's degree",
+            "undergraduate",
+            "Graduate",
             "other",
             "None",
          ],

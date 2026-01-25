@@ -7,13 +7,12 @@ export interface NotificationSettings {
    system: boolean;
 }
 export type EducationLevel =
-    "middle school"
+   | "middle school"
    | "high school"
-   | "bachelor's degree"
-   | "master's degree"
+   | "undergraduate"
+   | "Graduate"
    | "other"
    | "None";
-
 
 export interface UserDocument extends Document {
    _id: Types.ObjectId;
@@ -25,7 +24,7 @@ export interface UserDocument extends Document {
    avatar: string;
    avatarPublicId: string;
    bio: String;
-   educationLevel:EducationLevel;
+   educationLevel: EducationLevel;
    subjects: string[];
    points: Number;
    questionsAsked: Number;

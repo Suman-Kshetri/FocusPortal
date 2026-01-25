@@ -7,16 +7,15 @@ import {
   MessageSquare,
   Upload,
   Users,
-  Edit2,
   GraduationCap,
 } from "lucide-react";
 import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
+import EditProfileDialog from "@/components/dialog/edit-profile-dialog";
+import { AvatarUpload } from "@/components/updateAvatar";
 
 export const Profile = () => {
   const { userData, isLoading, error } = useGetUserProfile();
   const [user, setUser] = useState<any>(null);
-  const [isEditing, setIsEditing] = useState(false);
-
   useEffect(() => {
     if (userData) {
       setUser(userData.data);
@@ -26,12 +25,6 @@ export const Profile = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error || !user) return <div>Error loading profile</div>;
-
-  const handleEditProfile = () => {
-    setIsEditing(!isEditing);
-    alert("Edit profile");
-    console.log(user);
-  };
 
   // Badges calculation
   const getBadges = () => {
@@ -60,7 +53,7 @@ export const Profile = () => {
   const displayBio = user.bio && user.bio !== "Not Set" ? user.bio : "No bio available";
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4 relative">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Profile Card */}
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
@@ -68,14 +61,10 @@ export const Profile = () => {
           <div className="px-6 pb-6">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               {/* Avatar */}
-              <div className="relative">
-                <img
-                  src={user.avatar}
-                  alt={user.fullName}
-                  className="w-32 h-32 rounded-full border-4 border-card shadow-xl bg-card"
-                />
-               </div>
-
+                <div className="w-32 h-32 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden">
+                  <AvatarUpload src={user.avatar} alt={user.fullName}/>
+                </div>
+               
               {/* User Info */}
               <div className="flex-1">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -88,12 +77,9 @@ export const Profile = () => {
                     </div>
                   </div>
 
-                    <button
-                      onClick={handleEditProfile}
-                      className="flex mt-6 items-center gap-2 px-5 py-2 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/80 transition-all cursor-pointer"
-                    >
-                      <Edit2 className="w-4 h-4" /> Edit Profile
-                    </button>
+                    <div>
+                      <EditProfileDialog/>
+                    </div>
                 </div>
               </div>
             </div>
@@ -171,10 +157,10 @@ export const Profile = () => {
             </div>
 
             <div className="space-y-3">
-              <StatCard icon={<Award className="w-4 h-4 text-yellow-600" />} color="bg-yellow-100" label="Total Points" value={user.points} />
+              <StatCard icon={<Award className="w-5 h-5 text-yellow-600" />} color="bg-yellow-100" label="Total Points" value={user.points} />
               <StatCard icon={<MessageSquare className="w-4 h-4 text-blue-600" />} color="bg-blue-100" label="Questions Asked" value={user.questionsAsked} />
-              <StatCard icon={<Users className="w-4 h-4 text-green-600" />} color="bg-green-100" label="Answers Given" value={user.answersGiven} />
-              <StatCard icon={<Upload className="w-4 h-4 text-purple-600" />} color="bg-purple-100" label="Resources Shared" value={user.resourcesUploaded} />
+              <StatCard icon={<Users className="w-5 h-5 text-green-600" />} color="bg-green-100" label="Answers Given" value={user.answersGiven} />
+              <StatCard icon={<Upload className="w-5 h-5 text-purple-600" />} color="bg-purple-100" label="Resources Shared" value={user.resourcesUploaded} />
             </div>
           </div>
         </div>
@@ -186,8 +172,8 @@ const StatCard = ({ icon, color, label, value }: any) => (
   <div className={`flex items-start gap-3 rounded-lg px-3 py-2.5 ${color} flex-nowrap`}>
     <div className={`w-7 h-7 rounded-md flex items-center justify-center mt-0.5`}>{icon}</div>
     <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-black text-sm font-semibold">{value}</p>
+      <p className="text-xs text-gray-700">{label}</p>
+      <p className="text-gray-800 text-sm font-semibold">{value}</p>
     </div>
   </div>
 );

@@ -58,10 +58,10 @@ export const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 export const updateProfileDetails = asyncHandler(async (req, res) => {
-   const { fullName, email, username, bio, educationLevel, subjects } =
+   const { fullName, username, bio, educationLevel, subjects } =
       req.body;
 
-   if (!fullName && !email && !username) {
+   if (!fullName && !username) {
       throw new ApiError(400, "At least one field is required to update");
    }
 
