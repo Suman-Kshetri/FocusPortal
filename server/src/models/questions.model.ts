@@ -9,7 +9,6 @@ export interface QuestionSchemaTypes {
    category: string;
    tags: string[];
    images: string[];
-   views: number;
    upvotes: number;
    downvotes: number;
    acceptedAnswer: mongoose.Schema.Types.ObjectId;
@@ -28,7 +27,6 @@ const questionSchema = new mongoose.Schema(
       category: { type: String, required: true },
       tags: [{ type: String }],
       images: [{ type: String }],
-      views: { type: Number, default: 0 },
       upvotes: { type: Number, default: 0 },
       downvotes: { type: Number, default: 0 },
       acceptedAnswer: { type: mongoose.Schema.Types.ObjectId, ref: "Answer" },

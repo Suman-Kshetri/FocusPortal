@@ -1,12 +1,15 @@
 import { PlusCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ImageUpload } from "@/components/imageUpload";
+import { useCreateQuestion } from "@/server/api/questions/createQuestions";
+import type { QuestionFormData } from "@/types/questionType";
 
 export const CreateQuestions = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const { onSubmit } = useCreateQuestion();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<QuestionFormData>({
     title: "",
     content: "",
     category: "",
@@ -63,12 +66,7 @@ export const CreateQuestions = () => {
       payload.append("images", file);
     });
 
-    console.log("CREATE QUESTION PAYLOAD:");
-    console.log("Title:", formData.title);
-    console.log("Content:", formData.content);
-    console.log("Category:", formData.category);
-    console.log("Tags:", tagsArray);
-    console.log("Images:", imageFiles);
+    onSubmit(payload);
 
     closeDialog();
   };
@@ -186,11 +184,11 @@ export const CreateQuestions = () => {
                   value={formData.category}
                   onChange={handleChange}
                   className="
-                    w-full px-4 py-2.5
+                    w-full px-4 py-2.5 bg-background
                     border border-border rounded-lg
                     focus:ring-2 focus:ring-primary
                     focus:border-transparent
-                    transition-shadow
+                    transition-shadow 
                   "
                   required
                 >
