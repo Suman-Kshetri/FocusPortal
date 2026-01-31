@@ -8,7 +8,6 @@ function DashboardIndex() {
   return (
     <div>
       <h1>User Dashboard Home</h1>
-      {/* Or redirect to profile */}
     </div>
   )
 }

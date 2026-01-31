@@ -1,6 +1,5 @@
 import { useLogout } from "@/server/api/auth/useLogout";
 import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
-import { Link } from "@tanstack/react-router";
 import {
   PanelLeft,
   Sun,
@@ -9,17 +8,28 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+
+type NavbarProps = {
+  title: string;
+  onToggleSidebar: () => void;
+  isDarkMode: boolean;
+  onToggleTheme: () => void;
+};
 
 export const Navbar = ({
-  selectedItem,
+  title,
   onToggleSidebar,
   isDarkMode,
   onToggleTheme,
-}: any) => {
+}: NavbarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const { logout, isLoading } = useLogout();
   const { userData: user } = useGetUserProfile();
+
   const handleLogout = () => {
     if (!isLoading) {
       setIsDropdownOpen(false);
@@ -27,90 +37,99 @@ export const Navbar = ({
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
   return (
     <nav className="fixed top-0 z-50 w-full bg-background border-b border-border">
-      <div className="px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-10">
-            <h1 className="text-lg font-semibold text-foreground">
-              Focus Portal
-            </h1>
-            <div className="flex items-center gap-20">
+      <div className="px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <h1 className="text-lg font-semibold">Focus Portal</h1>
+
+          <button
+            onClick={onToggleSidebar}
+            className="p-2 rounded-lg hover:bg-accent"
+          >
+            <PanelLeft className="w-5 h-5" />
+          </button>
+
+          <h2 className="text-md font-semibold">{title}</h2>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleTheme}
+            className="p-2 rounded-lg hover:bg-accent"
+          >
+            {isDarkMode ? <Sun /> : <Moon />}
+          </button>
+
+          {user && (
+            <div className="relative" ref={dropdownRef}>
               <button
-                onClick={onToggleSidebar}
-                className="p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
-                aria-label="Toggle Sidebar"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="p-1 rounded-lg hover:bg-accent"
               >
-                <PanelLeft className="w-5 h-5 text-foreground" />
+                <img
+                  src={user.data.avatar}
+                  alt={user.data.fullName}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
               </button>
-              <h1 className="text-md font-semibold text-foreground">
-                {selectedItem}
-              </h1>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onToggleTheme}
-              className="p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
-              aria-label="Toggle theme"
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5 text-foreground" />
-              ) : (
-                <Moon className="w-5 h-5 text-foreground" />
-              )}
-            </button>
-
-            <div className="relative">
-              {user && (
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 p-1 rounded-lg hover:bg-accent transition-colors cursor-pointer"
-                  aria-expanded={isDropdownOpen}
-                >
-                  <img
-                    className="w-8 h-8 rounded-full ring-2 ring-border object-cover"
-                    src={user.data.avatar}
-                    alt={user.data.fullName}
-                  />
-                </button>
-              )}
-              {/* Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="absolute right-0 top-12 z-50 bg-popover border border-border rounded-lg shadow-lg w-56">
-                  <div className="px-4 py-3 border-b border-border">
-                    <p className="text-sm font-medium text-popover-foreground">
-                      {user.data.fullName}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
+                <div className="absolute right-0 mt-2 w-56 bg-popover border rounded-lg shadow-lg">
+                  <div className="px-4 py-3 border-b">
+                    <p className="text-sm font-medium">{user.data.fullName}</p>
+                    <p className="text-xs text-muted-foreground">
                       {user.data.email}
                     </p>
                   </div>
+
                   <ul className="p-2 text-sm">
                     <li>
                       <Link
                         to="/dashboard"
-                        className="flex items-center gap-2 w-full px-3 py-2 text-popover-foreground hover:bg-accent rounded transition-colors"
+                        className="flex gap-2 px-3 py-2 rounded hover:bg-accent"
                       >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
                       </Link>
                     </li>
+
                     <li>
                       <Link
-                        to="/dashboard"
-                        className="flex items-center gap-2 w-full px-3 py-2 text-popover-foreground hover:bg-accent rounded transition-colors"
+                        to="/dashboard/settings"
+                        className="flex gap-2 px-3 py-2 rounded hover:bg-accent"
                       >
                         <Settings className="w-4 h-4" />
                         Settings
                       </Link>
                     </li>
-                    <li className="border-t border-border mt-2 pt-2">
+
+                    <li className="border-t mt-2 pt-2">
                       <button
                         onClick={handleLogout}
                         disabled={isLoading}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-destructive hover:bg-destructive/10 rounded transition-colors disabled:opacity-50 cursor-pointer"
+                        className="flex gap-2 px-3 py-2 w-full text-destructive hover:bg-destructive/10 rounded"
                       >
                         <LogOut className="w-4 h-4" />
                         {isLoading ? "Signing out..." : "Sign out"}
@@ -120,7 +139,7 @@ export const Navbar = ({
                 </div>
               )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </nav>

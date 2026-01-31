@@ -14,6 +14,8 @@ import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
+import { Route as DashboardDashboardSettingsRouteImport } from './routes/_dashboard/dashboard/settings'
+import { Route as DashboardDashboardQuestionsRouteImport } from './routes/_dashboard/dashboard/questions'
 import { Route as DashboardDashboardProfileRouteImport } from './routes/_dashboard/dashboard/profile'
 import { Route as AuthAuthVerifyEmailRouteImport } from './routes/_auth/auth/verify-email'
 import { Route as AuthAuthRegisterRouteImport } from './routes/_auth/auth/register'
@@ -44,6 +46,18 @@ const DashboardDashboardIndexRoute = DashboardDashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardDashboardSettingsRoute =
+  DashboardDashboardSettingsRouteImport.update({
+    id: '/dashboard/settings',
+    path: '/dashboard/settings',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardDashboardQuestionsRoute =
+  DashboardDashboardQuestionsRouteImport.update({
+    id: '/dashboard/questions',
+    path: '/dashboard/questions',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardDashboardProfileRoute =
   DashboardDashboardProfileRouteImport.update({
     id: '/dashboard/profile',
@@ -85,6 +99,8 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
+  '/dashboard/questions': typeof DashboardDashboardQuestionsRoute
+  '/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
   '/auth/reset-password/$reset-id': typeof AuthAuthResetPasswordResetIdRoute
 }
@@ -96,6 +112,8 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
+  '/dashboard/questions': typeof DashboardDashboardQuestionsRoute
+  '/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
   '/auth/reset-password/$reset-id': typeof AuthAuthResetPasswordResetIdRoute
 }
@@ -110,6 +128,8 @@ export interface FileRoutesById {
   '/_auth/auth/register': typeof AuthAuthRegisterRoute
   '/_auth/auth/verify-email': typeof AuthAuthVerifyEmailRoute
   '/_dashboard/dashboard/profile': typeof DashboardDashboardProfileRoute
+  '/_dashboard/dashboard/questions': typeof DashboardDashboardQuestionsRoute
+  '/_dashboard/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
   '/_auth/auth/reset-password/$reset-id': typeof AuthAuthResetPasswordResetIdRoute
 }
@@ -123,6 +143,8 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/verify-email'
     | '/dashboard/profile'
+    | '/dashboard/questions'
+    | '/dashboard/settings'
     | '/dashboard'
     | '/auth/reset-password/$reset-id'
   fileRoutesByTo: FileRoutesByTo
@@ -134,6 +156,8 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/verify-email'
     | '/dashboard/profile'
+    | '/dashboard/questions'
+    | '/dashboard/settings'
     | '/dashboard'
     | '/auth/reset-password/$reset-id'
   id:
@@ -147,6 +171,8 @@ export interface FileRouteTypes {
     | '/_auth/auth/register'
     | '/_auth/auth/verify-email'
     | '/_dashboard/dashboard/profile'
+    | '/_dashboard/dashboard/questions'
+    | '/_dashboard/dashboard/settings'
     | '/_dashboard/dashboard/'
     | '/_auth/auth/reset-password/$reset-id'
   fileRoutesById: FileRoutesById
@@ -193,6 +219,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardDashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/dashboard/settings': {
+      id: '/_dashboard/dashboard/settings'
+      path: '/dashboard/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardDashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/dashboard/questions': {
+      id: '/_dashboard/dashboard/questions'
+      path: '/dashboard/questions'
+      fullPath: '/dashboard/questions'
+      preLoaderRoute: typeof DashboardDashboardQuestionsRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/dashboard/profile': {
@@ -260,11 +300,15 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
   DashboardDashboardProfileRoute: typeof DashboardDashboardProfileRoute
+  DashboardDashboardQuestionsRoute: typeof DashboardDashboardQuestionsRoute
+  DashboardDashboardSettingsRoute: typeof DashboardDashboardSettingsRoute
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardDashboardProfileRoute: DashboardDashboardProfileRoute,
+  DashboardDashboardQuestionsRoute: DashboardDashboardQuestionsRoute,
+  DashboardDashboardSettingsRoute: DashboardDashboardSettingsRoute,
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
 }
 

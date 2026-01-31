@@ -1,57 +1,53 @@
-import { SidebarApp } from "./sideBar";
 import { Navbar } from "./navBar";
+import { SidebarApp } from "./sideBar";
 import { useEffect, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export function UserLayout({ children }: Props) {
-    const [isOpen, setIsOpen] = useState(true);
-  const [selectedItem, setSelectedItem] = useState("Dashboard");
+  const [isOpen, setIsOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
 
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark';
-  });
+  const { location } = useRouterState();
+  const pathname = location.pathname;
+
+  const routeTitleMap: Record<string, string> = {
+    "/dashboard": "Dashboard",
+    "/dashboard/questions": "Q&A",
+    "/dashboard/profile": "My Profile",
+    "/dashboard/settings": "Settings",
+  };
+
+  const title = routeTitleMap[pathname] ?? "Dashboard";
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
+    document.documentElement.classList.toggle("dark", isDarkMode);
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
 
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-    document.documentElement.classList.toggle("dark");
-    
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-  };
-    return(
-        <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       <Navbar
-        selectedItem={selectedItem}
+        title={title}
         onToggleSidebar={() => setIsOpen(!isOpen)}
         isDarkMode={isDarkMode}
-        onToggleTheme={toggleTheme}
+        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
       />
 
-      <SidebarApp
-        isOpen={isOpen}
-        selectedItem={selectedItem}
-        onSelectItem={setSelectedItem}
-      />
+      <SidebarApp isOpen={isOpen} />
 
       <main
-        className={`mt-16 p-8 transition-all duration-300 ${
+        className={`pt-20 p-8 transition-all duration-300 ${
           isOpen ? "ml-64" : "ml-16"
         }`}
       >
         {children}
       </main>
     </div>
-    )
+  );
 }
