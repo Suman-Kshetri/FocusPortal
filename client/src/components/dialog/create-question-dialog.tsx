@@ -249,9 +249,8 @@ export const CreateQuestions = () => {
             <div
               className="
                 sticky bottom-0
-                bg-background
-                border-t border-border
-                px-6 py-4
+                bg-background/80
+                px-5 py-2
                 flex justify-end gap-3
               "
             >
