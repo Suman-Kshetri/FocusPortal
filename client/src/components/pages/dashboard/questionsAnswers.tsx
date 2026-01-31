@@ -1,11 +1,10 @@
 import { CreateQuestions } from "@/components/dialog/create-question-dialog";
 import { QuestionsFeed } from "./questions/questionFeed";
-import { Search, TrendingUp, Clock, Award, Filter } from "lucide-react";
+import { TrendingUp, Clock, Award, Filter } from "lucide-react";
 import { useState } from "react";
 
 export const QuestionsAnswers = () => {
   const [activeFilter, setActiveFilter] = useState("recent");
-  const [searchQuery, setSearchQuery] = useState("");
 
   const filters = [
     { id: "recent", label: "Recent", icon: Clock },
@@ -15,7 +14,6 @@ export const QuestionsAnswers = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Hero Section with Search and Create Button */}
       <div className="bg-background border-b border-border shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-8">
           <div className="text-center mb-6">
@@ -30,27 +28,7 @@ export const QuestionsAnswers = () => {
           {/* Search Bar and Create Button */}
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search questions, tags, or topics..."
-                className="
-                  w-full pl-12 pr-4 py-3.5
-                  bg-background border border-border
-                  rounded-xl
-                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                  transition-all
-                  text-sm
-                "
-              />
-            </div>
-            <CreateQuestions />
-          </div>
-
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2">
+              <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2">
             <Filter className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             {filters.map((filter) => {
               const Icon = filter.icon;
@@ -75,13 +53,16 @@ export const QuestionsAnswers = () => {
               );
             })}
           </div>
+            </div>
+            <CreateQuestions />
+          </div>
+          
         </div>
       </div>
 
       {/* Stats Bar */}
       <div className="bg-background/50 border-b border-border">
         <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-6 text-muted-foreground">
               <span>
                 <strong className="text-foreground">1,247</strong> Questions
@@ -92,11 +73,6 @@ export const QuestionsAnswers = () => {
               <span>
                 <strong className="text-foreground">892</strong> Active Users
               </span>
-            </div>
-            <button className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-              <Filter className="w-4 h-4" />
-              More Filters
-            </button>
           </div>
         </div>
       </div>
