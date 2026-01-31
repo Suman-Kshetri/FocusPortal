@@ -57,6 +57,7 @@ const mockQuestions = [
 export const QuestionsFeed = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-4 py-6">
+      
       {mockQuestions.map((question) => (
         <QuestionCard key={question.id} question={question} />
       ))}
