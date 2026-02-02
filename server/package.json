@@ -20,6 +20,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.2.1",
+    "@types/socket.io": "^3.0.2",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
@@ -40,6 +41,7 @@
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
     "prettier": "^3.6.2",
-    "resend": "^6.8.0"
+    "resend": "^6.8.0",
+    "socket.io": "^4.8.3"
   }
 }

@@ -1,66 +1,72 @@
 import { QuestionCard } from "./questionCard";
-
-const mockQuestions = [
-  {
-    id: "1",
-    title: "How does MongoDB indexing work?",
-    content: "I'm trying to optimize my MongoDB queries and I've heard that indexing can help. Can someone explain how indexing works in MongoDB and what are the best practices for creating indexes?",
-    category: "Databases",
-    tags: ["mongodb", "database", "indexing", "performance"],
-    images: [],
-    author: {
-      name: "Alex Johnson",
-      avatar: "",
-    },
-    createdAt: "2 hours ago",
-    likes: 24,
-    dislikes: 2,
-    commentsCount: 8,
-  },
-  {
-    id: "2",
-    title: "React useEffect cleanup function not working",
-    content: "I have a React component where I'm setting up a WebSocket connection in useEffect. The cleanup function should close the connection when the component unmounts, but it's not being called. Here's my code:\n\nuseEffect(() => {\n  const ws = new WebSocket('ws://localhost:8080');\n  return () => ws.close();\n}, []);\n\nWhat am I doing wrong?",
-    category: "Frontend",
-    tags: ["react", "hooks", "useEffect", "websocket"],
-    images: ["https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80"],
-    author: {
-      name: "Sarah Chen",
-      avatar: "",
-    },
-    createdAt: "5 hours ago",
-    likes: 45,
-    dislikes: 3,
-    commentsCount: 12,
-  },
-  {
-    id: "3",
-    title: "Best practices for Docker multi-stage builds?",
-    content: "I'm working on optimizing our Docker images and want to implement multi-stage builds. What are the best practices and common pitfalls to avoid?",
-    category: "DevOps",
-    tags: ["docker", "devops", "containers"],
-    images: [
-      "https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800&q=80",
-      "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800&q=80"
-    ],
-    author: {
-      name: "Mike Rodriguez",
-      avatar: "",
-    },
-    createdAt: "1 day ago",
-    likes: 67,
-    dislikes: 5,
-    commentsCount: 23,
-  },
-];
+import { useEffect, useState } from "react";
+import { useSocket } from "@/context/socketContext";
+import { useGetAllQuestions } from "@/server/api/questions/getAllQuestions";
+import type { Question } from "@/types/questionType";
+import { QuestionCardSkeleton } from "@/components/skeleton/questionCardSkeleton";
+import { toast } from "sonner";
 
 export const QuestionsFeed = () => {
+  const socket = useSocket();
+  const { data, isLoading, error } = useGetAllQuestions();
+  const [questions, setQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    if (data?.data) {
+      setQuestions(data.data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewQuestion = (newQuestion: Question) => {
+      setQuestions((prev) => {
+        if (prev.some((q) => q._id === newQuestion._id)) return prev;
+        toast.success(`New question: ${newQuestion.title}`);
+        return [newQuestion, ...prev];
+      });
+    };
+
+    socket.on("question:created", handleNewQuestion);
+
+    return () => {
+      socket.off("question:created", handleNewQuestion);
+    };
+  }, [socket]);
+
+  if (isLoading) {
+    return <QuestionCardSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-destructive p-4">
+        Error loading questions. Please try again.
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-3xl mx-auto space-y-4 py-6">
-      
-      {mockQuestions.map((question) => (
-        <QuestionCard key={question.id} question={question} />
-      ))}
+    <div className="max-w-4xl mx-auto p-6 space-y-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">All Questions</h1>
+        <span className="text-sm text-muted-foreground">
+          {questions.length} questions
+        </span>
+      </div>
+
+      {questions.length === 0 ? (
+        <div className="text-center text-muted-foreground p-8">
+          No questions yet. Be the first to ask!
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {questions.map((question) => (
+            <QuestionCard key={question._id} question={question} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

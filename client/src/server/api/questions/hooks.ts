@@ -7,5 +7,9 @@ export const questionApis = {
         "Content-Type": "multipart/form-data",
       }})
         return response.data;
+    },
+    getAllQuestions: async() => {
+      const response = await axiosInstance.get("/question/get-all-questions");
+        return response.data;
     }
 }

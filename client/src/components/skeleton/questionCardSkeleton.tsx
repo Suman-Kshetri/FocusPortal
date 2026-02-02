@@ -3,7 +3,6 @@ export const QuestionCardSkeleton = () => {
   return (
     <div className="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
       <div className="animate-shimmer">
-        {/* Header */}
         <div className="p-4 flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-r  via-muted/50 to-muted bg-[length:200%_100%]" />
           <div className="flex-1 space-y-2">
@@ -15,7 +14,6 @@ export const QuestionCardSkeleton = () => {
           </div>
         </div>
 
-        {/* Question Content */}
         <div className="px-4 pb-3 space-y-3">
           <div className="h-5 bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%] rounded w-3/4" />
           <div className="space-y-2">
@@ -24,7 +22,6 @@ export const QuestionCardSkeleton = () => {
             <div className="h-4 bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%] rounded w-4/6" />
           </div>
 
-          {/* Tags */}
           <div className="flex gap-2 pt-2">
             <div className="h-6 bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%] rounded-md w-16" />
             <div className="h-6 bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%] rounded-md w-20" />
@@ -32,7 +29,6 @@ export const QuestionCardSkeleton = () => {
           </div>
         </div>
 
-        {/* Stats Bar */}
         <div className="px-4 py-2 flex items-center justify-between border-t border-b border-border">
           <div className="flex gap-3">
             <div className="h-3 bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%] rounded w-16" />

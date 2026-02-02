@@ -2,40 +2,30 @@ export interface QuestionFormData {
   title: string;
   content: string;
   category: string;
-  tags: string; 
+  tags: string;
 }
 
-// API payload sent to backend
-export interface CreateQuestionPayload {
-  title: string;
-  content: string;
-  category: string;
-  tags: string;
-  images?: File[];
+export interface Author {
+  _id: string;
+  fullName: string;
+  email: string;
+  avatar?: string;
 }
-//from backend
+
+export type QuestionStatus = "open" | "closed" | "answered";
+
 export interface Question {
   _id: string;
   title: string;
   content: string;
   category: string;
   tags: string[];
-  images: string[]; // image paths
+  images: string[];
+  author: Author;
+  upvotes: number;
+  downvotes: number;
+  acceptedAnswer?: string;
+  status: QuestionStatus;
   createdAt: string;
   updatedAt: string;
-}
-// API success response wrapper
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-  statusCode: number;
-}
-
-// API error response
-export interface ApiErrorResponse {
-  success: false;
-  message: string;
-  statusCode: number;
-  errors?: any[];
 }
