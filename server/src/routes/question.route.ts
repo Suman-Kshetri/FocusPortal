@@ -1,7 +1,6 @@
-// routes/question.route.ts
 import express from "express";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
-import { createQuestions, getAllQuestions } from "../controllers/question.controller.js";
+import { createQuestions, getAllQuestions, questionVote, removeVote } from "../controllers/question.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const questionRoute = express.Router();
@@ -13,6 +12,11 @@ questionRoute.post(
    createQuestions
 );
 
-questionRoute.get("/get-all-questions", getAllQuestions);
+questionRoute.get("/get-all-questions",verifyJwt, getAllQuestions);
+
+
+questionRoute.post("/:id/vote", verifyJwt, questionVote);
+questionRoute.delete("/:id/vote", verifyJwt, removeVote);
+
 
 export default questionRoute;

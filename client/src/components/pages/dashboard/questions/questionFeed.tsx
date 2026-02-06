@@ -5,11 +5,20 @@ import { useGetAllQuestions } from "@/server/api/questions/getAllQuestions";
 import type { Question } from "@/types/questionType";
 import { QuestionCardSkeleton } from "@/components/skeleton/questionCardSkeleton";
 import { toast } from "sonner";
+import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
 
 export const QuestionsFeed = () => {
   const socket = useSocket();
   const { data, isLoading, error } = useGetAllQuestions();
   const [questions, setQuestions] = useState<Question[]>([]);
+  const {userData} = useGetUserProfile();
+  const [currentUserId, setCurrentUserId] = useState("");
+
+  useEffect(() => {
+    if (userData?.data) {
+      setCurrentUserId(userData.data._id);
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (data?.data) {
@@ -34,7 +43,7 @@ export const QuestionsFeed = () => {
       socket.off("question:created", handleNewQuestion);
     };
   }, [socket]);
-
+  
   if (isLoading) {
     return <QuestionCardSkeleton />;
   }
@@ -63,7 +72,11 @@ export const QuestionsFeed = () => {
       ) : (
         <div className="space-y-4">
           {questions.map((question) => (
-            <QuestionCard key={question._id} question={question} />
+            <QuestionCard 
+              key={question._id} 
+              question={question}
+              currentUserId={currentUserId}
+            />
           ))}
         </div>
       )}

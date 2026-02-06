@@ -18,14 +18,19 @@ export interface Question {
   _id: string;
   title: string;
   content: string;
+  author: {
+    _id: string;
+    fullName: string;
+    avatar?: string;
+    email?: string;
+    username?: string;
+  };
   category: string;
   tags: string[];
-  images: string[];
-  author: Author;
-  upvotes: number;
-  downvotes: number;
-  acceptedAnswer?: string;
+  images?: string[];
+  upvotedBy: string[];
+  downvotedBy: string[];
   status: QuestionStatus;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }

@@ -81,7 +81,7 @@ export const CreateQuestions = () => {
           rounded-lg font-semibold text-sm
           hover:bg-primary/90
           hover-lift transition-all
-          shadow-sm
+          shadow-md
         "
       >
         <PlusCircle className="w-5 h-5" />
@@ -92,7 +92,7 @@ export const CreateQuestions = () => {
         <div
           className="
             fixed inset-0
-            bg-black/90 backdrop-blur-sm
+            bg-background/60 backdrop-blur-md
             flex items-center justify-center
             p-4 z-50 
             animate-fade-in
@@ -102,25 +102,27 @@ export const CreateQuestions = () => {
           <div
             onClick={(e) => e.stopPropagation()}
             className="
-              bg-background border border-border/50
-              rounded-2xl shadow-2xl
+              bg-card
+              rounded-2xl shadow-xl
               max-w-2xl w-full max-h-[90vh]
               overflow-hidden
-              card-elevated animate-scale-in
+              animate-scale-in
+              border border-border
             "
           >
+            {/* Header */}
             <div
               className="
                 sticky top-0
-                bg-gradient-to-r from-primary/10 to-primary/5
-                border-b border-border/50
+                bg-gradient-to-r from-primary/10 via-primary/5 to-transparent
+                border-b border-border
                 px-8 py-5
                 flex justify-between items-center
               "
             >
               <div>
-                <h2 className="text-2xl font-bold">Ask a Question</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <h2 className="text-2xl font-bold text-foreground">Ask a Question</h2>
+                <p className="text-sm text-muted-foreground mt-1">
                   Share your problem and get help from the community
                 </p>
               </div>
@@ -138,9 +140,10 @@ export const CreateQuestions = () => {
               </button>
             </div>
 
-            <div className="p-8 space-y-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+            {/* Form */}
+            <div className="p-8 space-y-6 overflow-y-auto max-h-[calc(90vh-180px)] scrollbar-thin">
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-sm font-semibold mb-2 text-foreground">
                   Question Title <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -151,18 +154,20 @@ export const CreateQuestions = () => {
                   placeholder="e.g. How does MongoDB indexing work?"
                   className="
                     w-full px-4 py-3
-                    border border-border rounded-xl
+                    bg-background
+                    border border-border rounded-lg
                     focus:ring-2 focus:ring-primary/50
                     focus:border-primary
                     transition-all
-                    placeholder:text-muted-foreground/50
+                    text-foreground
+                    placeholder:text-muted-foreground/60
                   "
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-sm font-semibold mb-2 text-foreground">
                   Description <span className="text-destructive">*</span>
                 </label>
                 <textarea
@@ -173,18 +178,20 @@ export const CreateQuestions = () => {
                   placeholder="Explain your problem clearly. Include what you've tried and what you expect to happen..."
                   className="
                     w-full px-4 py-3
-                    border border-border rounded-xl
+                    bg-background
+                    border border-border rounded-lg
                     focus:ring-2 focus:ring-primary/50
                     focus:border-primary
                     resize-none transition-all
-                    placeholder:text-muted-foreground/50
+                    text-foreground
+                    placeholder:text-muted-foreground/60
                   "
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-sm font-semibold mb-2 text-foreground">
                   Category <span className="text-destructive">*</span>
                 </label>
                 <select
@@ -193,11 +200,12 @@ export const CreateQuestions = () => {
                   onChange={handleChange}
                   className="
                     w-full px-4 py-3 bg-background
-                    border border-border rounded-xl
+                    border border-border rounded-lg
                     focus:ring-2 focus:ring-primary/50
                     focus:border-primary
                     transition-all
                     cursor-pointer
+                    text-foreground
                   "
                   required
                 >
@@ -213,7 +221,7 @@ export const CreateQuestions = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-sm font-semibold mb-2 text-foreground">
                   Tags{" "}
                   <span className="text-muted-foreground text-xs font-normal">
                     (comma separated)
@@ -227,11 +235,13 @@ export const CreateQuestions = () => {
                   placeholder="react, mongodb, nodejs"
                   className="
                     w-full px-4 py-3
-                    border border-border rounded-xl
+                    bg-background
+                    border border-border rounded-lg
                     focus:ring-2 focus:ring-primary/50
                     focus:border-primary
                     transition-all
-                    placeholder:text-muted-foreground/50
+                    text-foreground
+                    placeholder:text-muted-foreground/60
                   "
                 />
                 <p className="text-xs text-muted-foreground mt-2">
@@ -240,7 +250,7 @@ export const CreateQuestions = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-sm font-semibold mb-2 text-foreground">
                   Supporting Images{" "}
                   <span className="text-muted-foreground text-xs font-normal">
                     (optional - helps explain your problem)
@@ -254,11 +264,12 @@ export const CreateQuestions = () => {
               </div>
             </div>
 
+            {/* Footer */}
             <div
               className="
                 sticky bottom-0
-                bg-muted/30 backdrop-blur-sm
-                border-t border-border/50
+                bg-card/95 backdrop-blur-sm
+                border-t border-border
                 px-8 py-4
                 flex justify-end gap-3
               "
@@ -267,9 +278,9 @@ export const CreateQuestions = () => {
                 onClick={closeDialog}
                 className="
                   px-6 py-2.5
-                  bg-muted text-foreground
-                  rounded-xl font-medium
-                  hover:bg-muted/80
+                  bg-secondary text-secondary-foreground
+                  rounded-lg font-medium
+                  hover:bg-accent
                   transition-all
                 "
               >
@@ -283,12 +294,12 @@ export const CreateQuestions = () => {
                 className="
                   px-6 py-2.5
                   bg-primary text-primary-foreground
-                  rounded-xl font-semibold
+                  rounded-lg font-semibold
                   hover:bg-primary/90
                   disabled:opacity-50
                   disabled:cursor-not-allowed
                   hover-lift transition-all
-                  shadow-sm
+                  shadow-md
                 "
               >
                 Post Question

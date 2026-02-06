@@ -9,8 +9,8 @@ export interface QuestionSchemaTypes {
    category: string;
    tags: string[];
    images: string[];
-   upvotes: number;
-   downvotes: number;
+   upvotes: mongoose.Types.ObjectId;
+   downvotes: mongoose.Types.ObjectId;
    acceptedAnswer: mongoose.Schema.Types.ObjectId;
    status: QuestionStatus;
 }
@@ -27,8 +27,12 @@ const questionSchema = new mongoose.Schema(
       category: { type: String, required: true },
       tags: [{ type: String }],
       images: [{ type: String }],
-      upvotes: { type: Number, default: 0 },
-      downvotes: { type: Number, default: 0 },
+      upvotedBy: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    ],
+    downvotedBy: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    ],
       acceptedAnswer: { type: mongoose.Schema.Types.ObjectId, ref: "Answer" },
       status: {
          type: String,

@@ -1,4 +1,3 @@
-// src/components/questionCard.tsx
 import {
   ThumbsUp,
   ThumbsDown,
@@ -6,8 +5,11 @@ import {
   Share2,
   CheckCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Question } from "@/types/questionType";
+import { useVoteQuestion } from "@/server/api/questions/voteQuestions";
+import { useSocket } from "@/context/socketContext";
+import { toast } from "sonner";
 
 interface Comment {
   id: string;
@@ -22,49 +24,109 @@ interface Comment {
 
 interface QuestionCardProps {
   question: Question;
+  currentUserId?: string;
 }
 
-export const QuestionCard = ({ question }: QuestionCardProps) => {
-  const [upvoted, setUpvoted] = useState(false);
-  const [downvoted, setDownvoted] = useState(false);
-  const [upvotes, setUpvotes] = useState(question.upvotes || 0);
-  const [downvotes, setDownvotes] = useState(question.downvotes || 0);
+export const QuestionCard = ({ question, currentUserId }: QuestionCardProps) => {
+  const socket = useSocket();
+  const { onSubmit: voteQuestion, onRemove: removeVote, isLoading: isVoting } = useVoteQuestion();
+  const [upvoted, setUpvoted] = useState(
+    currentUserId ? question.upvotedBy?.includes(currentUserId) : false
+  );
+  const [downvoted, setDownvoted] = useState(
+    currentUserId ? question.downvotedBy?.includes(currentUserId) : false
+  );
+  const [upvotes, setUpvotes] = useState(question.upvotedBy?.length || 0);
+  const [downvotes, setDownvotes] = useState(question.downvotedBy?.length || 0);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleVoteUpdate = (payload: {
+      questionId: string;
+      upvotes: number;
+      downvotes: number;
+      userId?: string;
+      action?: string;
+    }) => {
+      if (payload.questionId === question._id) {
+        setUpvotes(payload.upvotes);
+        setDownvotes(payload.downvotes);
+
+        if (payload.userId === currentUserId) {
+          if (payload.action === "upvote") {
+            setUpvoted(true);
+            setDownvoted(false);
+          } else if (payload.action === "downvote") {
+            setUpvoted(false);
+            setDownvoted(true);
+          } else if (payload.action === "remove") {
+            setUpvoted(false);
+            setDownvoted(false);
+          }
+        }
+      }
+    };
+
+    socket.on("question:voted", handleVoteUpdate);
+
+    return () => {
+      socket.off("question:voted", handleVoteUpdate);
+    };
+  }, [socket, question._id, currentUserId]);
+
   const handleUpvote = () => {
+    if (!currentUserId) {
+      toast.error("Please login to vote");
+      return;
+    }
+
     if (upvoted) {
-      setUpvotes(upvotes - 1);
+      // Remove upvote
+      removeVote(question._id);
+      setUpvotes((prev) => prev - 1);
       setUpvoted(false);
     } else {
-      setUpvotes(upvotes + 1);
+      // Add upvote
+      voteQuestion(question._id, "upvote");
+      setUpvotes((prev) => prev + 1);
       setUpvoted(true);
+
       if (downvoted) {
-        setDownvotes(downvotes - 1);
+        setDownvotes((prev) => prev - 1);
         setDownvoted(false);
       }
     }
-    // TODO: Call API to update vote on backend
   };
 
   const handleDownvote = () => {
+    if (!currentUserId) {
+      toast.error("Please login to vote");
+      return;
+    }
+
     if (downvoted) {
-      setDownvotes(downvotes - 1);
+      // Remove downvote
+      removeVote(question._id);
+      setDownvotes((prev) => prev - 1);
       setDownvoted(false);
     } else {
-      setDownvotes(downvotes + 1);
+      // Add downvote
+      voteQuestion(question._id, "downvote");
+      setDownvotes((prev) => prev + 1);
       setDownvoted(true);
+
       if (upvoted) {
-        setUpvotes(upvotes - 1);
+        setUpvotes((prev) => prev - 1);
         setUpvoted(false);
       }
     }
-    // TODO: Call API to update vote on backend
   };
 
   const handleComment = () => {
-    console.log("Question, question:", question);
     if (commentText.trim()) {
       const newComment: Comment = {
         id: Date.now().toString(),
@@ -197,9 +259,11 @@ export const QuestionCard = ({ question }: QuestionCardProps) => {
       <div className="px-2 py-1 flex items-center justify-around">
         <button
           onClick={handleUpvote}
+          disabled={isVoting}
           className={`
             flex items-center gap-2 px-4 py-2 rounded-lg
             hover:bg-accent transition-colors flex-1
+            disabled:opacity-50 disabled:cursor-not-allowed
             ${upvoted ? "text-primary font-semibold" : "text-muted-foreground"}
           `}
         >
@@ -212,9 +276,11 @@ export const QuestionCard = ({ question }: QuestionCardProps) => {
 
         <button
           onClick={handleDownvote}
+          disabled={isVoting}
           className={`
             flex items-center gap-2 px-4 py-2 rounded-lg
             hover:bg-accent transition-colors flex-1
+            disabled:opacity-50 disabled:cursor-not-allowed
             ${downvoted ? "text-destructive font-semibold" : "text-muted-foreground"}
           `}
         >
