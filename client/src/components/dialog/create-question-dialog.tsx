@@ -71,19 +71,20 @@ export const CreateQuestions = () => {
     closeDialog();
   };
 
-  return (
+   return (
     <div>
       <button
         onClick={openDialog}
         className="
-          flex items-center gap-2 px-5 py-2
+          flex items-center gap-2 px-6 py-2.5
           bg-primary text-primary-foreground
-          rounded-lg font-semibold
+          rounded-lg font-semibold text-sm
           hover:bg-primary/90
           hover-lift transition-all
+          shadow-sm
         "
       >
-        <PlusCircle className="w-4 h-4" />
+        <PlusCircle className="w-5 h-5" />
         Ask Question
       </button>
 
@@ -91,7 +92,7 @@ export const CreateQuestions = () => {
         <div
           className="
             fixed inset-0
-            bg-background/90 backdrop-blur-sm
+            bg-black/90 backdrop-blur-sm
             flex items-center justify-center
             p-4 z-50 
             animate-fade-in
@@ -101,40 +102,45 @@ export const CreateQuestions = () => {
           <div
             onClick={(e) => e.stopPropagation()}
             className="
-              bg-background border border-border
-              rounded-xl shadow-2xl
-              max-w-3xl w-full max-h-[90vh]
-              overflow-y-auto scrollbar-hide
+              bg-background border border-border/50
+              rounded-2xl shadow-2xl
+              max-w-2xl w-full max-h-[90vh]
+              overflow-hidden
               card-elevated animate-scale-in
             "
           >
-            {/* Header */}
             <div
               className="
                 sticky top-0
-                bg-background
-                border-b border-border
-                px-6 py-4
+                bg-gradient-to-r from-primary/10 to-primary/5
+                border-b border-border/50
+                px-8 py-5
                 flex justify-between items-center
               "
             >
-              <h2 className="text-xl font-bold">Ask a Question</h2>
+              <div>
+                <h2 className="text-2xl font-bold">Ask a Question</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Share your problem and get help from the community
+                </p>
+              </div>
               <button
                 onClick={closeDialog}
                 className="
+                  w-9 h-9 flex items-center justify-center
                   text-muted-foreground
-                  hover:text-red-500
-                  transition-colors
+                  hover:text-foreground hover:bg-muted
+                  rounded-full
+                  transition-all
                 "
               >
                 ✕
               </button>
             </div>
 
-            {/* Form */}
-            <div className="p-6 space-y-5">
+            <div className="p-8 space-y-6 overflow-y-auto max-h-[calc(90vh-180px)]">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Question Title <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -144,39 +150,41 @@ export const CreateQuestions = () => {
                   onChange={handleChange}
                   placeholder="e.g. How does MongoDB indexing work?"
                   className="
-                    w-full px-4 py-2.5
-                    border border-border rounded-lg
-                    focus:ring-2 focus:ring-primary
-                    focus:border-transparent
-                    transition-shadow
+                    w-full px-4 py-3
+                    border border-border rounded-xl
+                    focus:ring-2 focus:ring-primary/50
+                    focus:border-primary
+                    transition-all
+                    placeholder:text-muted-foreground/50
                   "
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Description <span className="text-destructive">*</span>
                 </label>
                 <textarea
                   name="content"
                   value={formData.content}
                   onChange={handleChange}
-                  rows={6}
+                  rows={5}
                   placeholder="Explain your problem clearly. Include what you've tried and what you expect to happen..."
                   className="
-                    w-full px-4 py-2.5
-                    border border-border rounded-lg
-                    focus:ring-2 focus:ring-primary
-                    focus:border-transparent
-                    resize-none transition-shadow
+                    w-full px-4 py-3
+                    border border-border rounded-xl
+                    focus:ring-2 focus:ring-primary/50
+                    focus:border-primary
+                    resize-none transition-all
+                    placeholder:text-muted-foreground/50
                   "
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Category <span className="text-destructive">*</span>
                 </label>
                 <select
@@ -184,11 +192,12 @@ export const CreateQuestions = () => {
                   value={formData.category}
                   onChange={handleChange}
                   className="
-                    w-full px-4 py-2.5 bg-background
-                    border border-border rounded-lg
-                    focus:ring-2 focus:ring-primary
-                    focus:border-transparent
-                    transition-shadow 
+                    w-full px-4 py-3 bg-background
+                    border border-border rounded-xl
+                    focus:ring-2 focus:ring-primary/50
+                    focus:border-primary
+                    transition-all
+                    cursor-pointer
                   "
                   required
                 >
@@ -204,9 +213,9 @@ export const CreateQuestions = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Tags{" "}
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-muted-foreground text-xs font-normal">
                     (comma separated)
                   </span>
                 </label>
@@ -217,20 +226,21 @@ export const CreateQuestions = () => {
                   onChange={handleChange}
                   placeholder="react, mongodb, nodejs"
                   className="
-                    w-full px-4 py-2.5
-                    border border-border rounded-lg
-                    focus:ring-2 focus:ring-primary
-                    focus:border-transparent
-                    transition-shadow
+                    w-full px-4 py-3
+                    border border-border rounded-xl
+                    focus:ring-2 focus:ring-primary/50
+                    focus:border-primary
+                    transition-all
+                    placeholder:text-muted-foreground/50
                   "
                 />
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-2">
                   Add relevant tags to help others find your question
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Supporting Images{" "}
                   <span className="text-muted-foreground text-xs font-normal">
                     (optional - helps explain your problem)
@@ -247,19 +257,20 @@ export const CreateQuestions = () => {
             <div
               className="
                 sticky bottom-0
-                bg-background/80
-                px-5 py-2
+                bg-muted/30 backdrop-blur-sm
+                border-t border-border/50
+                px-8 py-4
                 flex justify-end gap-3
               "
             >
               <button
                 onClick={closeDialog}
                 className="
-                  px-5 py-2.5
-                  bg-secondary text-secondary-foreground
-                  rounded-lg
-                  hover:bg-accent
-                  transition-colors
+                  px-6 py-2.5
+                  bg-muted text-foreground
+                  rounded-xl font-medium
+                  hover:bg-muted/80
+                  transition-all
                 "
               >
                 Cancel
@@ -270,13 +281,14 @@ export const CreateQuestions = () => {
                   !formData.title || !formData.content || !formData.category
                 }
                 className="
-                  px-5 py-2.5
+                  px-6 py-2.5
                   bg-primary text-primary-foreground
-                  rounded-lg
+                  rounded-xl font-semibold
                   hover:bg-primary/90
                   disabled:opacity-50
                   disabled:cursor-not-allowed
                   hover-lift transition-all
+                  shadow-sm
                 "
               >
                 Post Question
