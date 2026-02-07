@@ -1,4 +1,4 @@
-import { QuestionCard } from "./questionCard";
+import { QuestionCard } from "./QuestionCard";
 import { useEffect, useState } from "react";
 import { useSocket } from "@/context/socketContext";
 import { useGetAllQuestions } from "@/server/api/questions/getAllQuestions";

@@ -7,6 +7,7 @@ import questionRoute from './routes/question.route.js';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import {registerSocketRoutes} from './socket/index.js'
+import commentRoute from './routes/comment.route.js';
 
 const app = express();
 const server = createServer(app);
@@ -32,6 +33,7 @@ app.use(cookieParser());
 app.use('/api/auth',authRoutes);
 app.use("/api/users",userRoute);
 app.use("/api/question", questionRoute)
+app.use("/api/comment", commentRoute);
 
 
 registerSocketRoutes(io);
