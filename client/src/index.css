@@ -209,6 +209,9 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
   }
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 /* Custom Utility Classes */

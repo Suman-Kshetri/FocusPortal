@@ -61,7 +61,7 @@ export const QuestionActions = ({
         <MessageSquare className="w-4 h-4" />
         <span className="text-sm">Comment</span>
       </button>
-
+{/* 
       <button
         className="
           flex items-center gap-2 px-4 py-2 rounded-lg
@@ -71,7 +71,7 @@ export const QuestionActions = ({
       >
         <Share2 className="w-4 h-4" />
         <span className="text-sm">Share</span>
-      </button>
+      </button> */}
     </div>
   );
 };

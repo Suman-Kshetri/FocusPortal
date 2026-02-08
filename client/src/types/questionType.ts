@@ -18,6 +18,7 @@ export interface Question {
   _id: string;
   title: string;
   content: string;
+  commentCount?:number;
   author: {
     _id: string;
     fullName: string;

@@ -34,7 +34,9 @@ export const QuestionCard = ({
   const [upvotes, setUpvotes] = useState(question.upvotedBy?.length || 0);
   const [downvotes, setDownvotes] = useState(question.downvotedBy?.length || 0);
   const [showComments, setShowComments] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(
+  question.commentCount ?? 0
+);
 
   useEffect(() => {
     if (!socket) return;

@@ -68,9 +68,54 @@ export const createQuestions = asyncHandler(async (req, res) => {
 });
 
 export const getAllQuestions = asyncHandler(async (req, res) => {
-   const questions = await Question.find()
-      .populate("author", "fullName email avatar username")
-      .sort({ createdAt: -1 });
+   const questions = await Question.aggregate([
+      {
+         $sort: { createdAt: -1 },
+      },
+      { //look for the author._id in the users database then created [{"_id": ...., "fullName": ...,}]
+         $lookup: {
+            from: "users",
+            localField: "author",
+            foreignField: "_id",
+            as: "author",
+         },
+      },
+      { //converts array to object
+         $unwind: "$author",
+      },
+      {
+         $lookup: {
+            from: "comments",
+            let: { questionId: "$_id" },
+            pipeline: [
+               {
+                  $match: {
+                     $expr: {
+                        $and: [
+                           { $eq: ["$commentableId", "$$questionId"] },
+                           { $eq: ["$commentableType", "Question"] },
+                        ],
+                     },
+                  },
+               },
+            ],
+            as: "comments",
+         },
+      },
+      {
+         $addFields: {
+            commentCount: { $size: "$comments" },
+         },
+      },
+
+      {
+         $project: {
+            comments: 0,
+            "author.password": 0,
+            "author.__v": 0,
+         },
+      },
+   ]);
 
    res.status(200).json(
       new ApiResponse(200, "Questions fetched successfully", questions)
@@ -78,95 +123,96 @@ export const getAllQuestions = asyncHandler(async (req, res) => {
 });
 
 export const questionVote = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { type } = req.body; 
-  const userId = req.user._id;
+   const { id } = req.params;
+   const { type } = req.body;
+   const userId = req.user._id;
 
-  if (!userId) {
-    throw new ApiError(403, "Unauthorized access");
-  }
-  if (!["upvote", "downvote"].includes(type)) {
-    throw new ApiError(400, "Invalid vote type. Must be 'upvote' or 'downvote'");
-  }
+   if (!userId) {
+      throw new ApiError(403, "Unauthorized access");
+   }
+   if (!["upvote", "downvote"].includes(type)) {
+      throw new ApiError(
+         400,
+         "Invalid vote type. Must be 'upvote' or 'downvote'"
+      );
+   }
 
-  const question = await Question.findById(id);
-  if (!question) {
-    throw new ApiError(404, "Question not found");
-  }
+   const question = await Question.findById(id);
+   if (!question) {
+      throw new ApiError(404, "Question not found");
+   }
 
-  const userIdStr = userId.toString();
+   const userIdStr = userId.toString();
 
-  question.upvotedBy = question.upvotedBy.filter(
-    (id :string) => id.toString() !== userIdStr
-  );
-  question.downvotedBy = question.downvotedBy.filter(
-    (id:string) => id.toString() !== userIdStr
-  );
+   question.upvotedBy = question.upvotedBy.filter(
+      (id: string) => id.toString() !== userIdStr
+   );
+   question.downvotedBy = question.downvotedBy.filter(
+      (id: string) => id.toString() !== userIdStr
+   );
 
-  if (type === "upvote") {
-    question.upvotedBy.push(userId);
-  } else if (type === "downvote") {
-    question.downvotedBy.push(userId);
-  }
+   if (type === "upvote") {
+      question.upvotedBy.push(userId);
+   } else if (type === "downvote") {
+      question.downvotedBy.push(userId);
+   }
 
-  await question.save();
+   await question.save();
 
-  const payload = {
-    questionId: question._id,
-    upvotes: question.upvotedBy.length,
-    downvotes: question.downvotedBy.length,
-  };
+   const payload = {
+      questionId: question._id,
+      upvotes: question.upvotedBy.length,
+      downvotes: question.downvotedBy.length,
+   };
 
-  const io = req.app.get("io");
-  if (io) {
-    io.to("questions-feed").emit("question:voted", payload);
-    console.log(`Vote emitted for question ${question._id}:`, payload);
-  }
+   const io = req.app.get("io");
+   if (io) {
+      io.to("questions-feed").emit("question:voted", payload);
+      console.log(`Vote emitted for question ${question._id}:`, payload);
+   }
 
-  res.status(200).json(
-    new ApiResponse(200, "Voted successfully", payload)
-  );
+   res.status(200).json(new ApiResponse(200, "Voted successfully", payload));
 });
 
 export const removeVote = asyncHandler(async (req, res) => {
    const { id } = req.params;
-  const userId = req.user?._id;
+   const userId = req.user?._id;
 
-  if (!userId) {
-    throw new ApiError(403, "Unauthorized access");
-  }
+   if (!userId) {
+      throw new ApiError(403, "Unauthorized access");
+   }
 
-  const question = await Question.findById(id);
-  if (!question) {
-    throw new ApiError(404, "Question not found");
-  }
+   const question = await Question.findById(id);
+   if (!question) {
+      throw new ApiError(404, "Question not found");
+   }
 
-  const userIdStr = userId.toString();
+   const userIdStr = userId.toString();
 
-  question.upvotedBy = question.upvotedBy.filter(
-    (id: any) => id.toString() !== userIdStr
-  );
-  question.downvotedBy = question.downvotedBy.filter(
-    (id: any) => id.toString() !== userIdStr
-  );
+   question.upvotedBy = question.upvotedBy.filter(
+      (id: any) => id.toString() !== userIdStr
+   );
+   question.downvotedBy = question.downvotedBy.filter(
+      (id: any) => id.toString() !== userIdStr
+   );
 
-  await question.save();
+   await question.save();
 
-  const payload = {
-    questionId: question._id,
-    upvotes: question.upvotedBy.length,
-    downvotes: question.downvotedBy.length,
-    userId: userIdStr,
-    action: "remove",
-  };
+   const payload = {
+      questionId: question._id,
+      upvotes: question.upvotedBy.length,
+      downvotes: question.downvotedBy.length,
+      userId: userIdStr,
+      action: "remove",
+   };
 
-  const io = req.app.get("io");
-  if (io) {
-    io.to("questions-feed").emit("question:voted", payload);
-    console.log(`Vote removed for question ${question._id}:`, payload);
-  }
+   const io = req.app.get("io");
+   if (io) {
+      io.to("questions-feed").emit("question:voted", payload);
+      console.log(`Vote removed for question ${question._id}:`, payload);
+   }
 
-  res.status(200).json(
-    new ApiResponse(200, "Vote removed successfully", payload)
-  );
-})
+   res.status(200).json(
+      new ApiResponse(200, "Vote removed successfully", payload)
+   );
+});
