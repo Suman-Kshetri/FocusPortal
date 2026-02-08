@@ -1,4 +1,4 @@
-import { useMutation} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { commentApis } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
@@ -10,20 +10,17 @@ interface UpdateCommentParams {
 }
 
 export const useUpdateComment = () => {
-
   const updateCommentMutation = useMutation({
     mutationFn: ({ commentId, data }: UpdateCommentParams) =>
       commentApis.updateComment(commentId, data),
-    onSuccess: (response) => {
-      console.log("Comment updated successfully", response.data);
+
+    onSuccess: () => {
       toast.success("Comment updated successfully");
     },
+
     onError: (error: AxiosError<any>) => {
-      console.error("Update comment error:", error);
       const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to update comment. Please try again.";
+        error.response?.data?.message || "Failed to update comment";
       toast.error(errorMessage);
     },
   });

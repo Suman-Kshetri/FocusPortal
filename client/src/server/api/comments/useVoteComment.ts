@@ -1,17 +1,17 @@
 import { useMutation } from "@tanstack/react-query";
-import { questionApis } from "./hooks";
+import { commentApis } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
 
 interface VoteParams {
-  questionId: string;
+  commentId: string;
   type: "upvote" | "downvote";
 }
 
-export const useVoteQuestion = () => {
-  const voteQuestionMutation = useMutation({
+export const useVoteComment = () => {
+  const voteCommentMutation = useMutation({
     mutationFn: (params: VoteParams) =>
-      questionApis.voteQuestion(params.questionId, { type: params.type }),
+      commentApis.voteComment(params.commentId, { type: params.type }),
 
     onError: (error: AxiosError<any>) => {
       const errorMessage = error.response?.data?.message || "Failed to vote";
@@ -20,7 +20,7 @@ export const useVoteQuestion = () => {
   });
 
   const removeVoteMutation = useMutation({
-    mutationFn: (questionId: string) => questionApis.removeVote(questionId),
+    mutationFn: (commentId: string) => commentApis.removeVote(commentId),
 
     onError: (error: AxiosError<any>) => {
       const errorMessage =
@@ -29,18 +29,18 @@ export const useVoteQuestion = () => {
     },
   });
 
-  const onSubmit = (questionId: string, type: "upvote" | "downvote") => {
-    voteQuestionMutation.mutate({ questionId, type });
+  const onSubmit = (commentId: string, type: "upvote" | "downvote") => {
+    voteCommentMutation.mutate({ commentId, type });
   };
 
-  const onRemove = (questionId: string) => {
-    removeVoteMutation.mutate(questionId);
+  const onRemove = (commentId: string) => {
+    removeVoteMutation.mutate(commentId);
   };
 
   return {
     onSubmit,
     onRemove,
-    isLoading: voteQuestionMutation.isPending || removeVoteMutation.isPending,
-    error: voteQuestionMutation.error || removeVoteMutation.error,
+    isLoading: voteCommentMutation.isPending || removeVoteMutation.isPending,
+    error: voteCommentMutation.error || removeVoteMutation.error,
   };
 };

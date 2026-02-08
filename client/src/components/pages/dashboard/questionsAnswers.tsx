@@ -1,17 +1,9 @@
 import { CreateQuestions } from "@/components/dialog/create-question-dialog";
 import { QuestionsFeed } from "./questions/questionFeed";
-import { TrendingUp, Clock, Award, Filter } from "lucide-react";
-import { useState } from "react";
+import { Award } from "lucide-react";
+import { useEffect } from "react";
 
 export const QuestionsAnswers = () => {
-  const [activeFilter, setActiveFilter] = useState("recent");
-
-  const filters = [
-    { id: "recent", label: "Recent", icon: Clock },
-    { id: "trending", label: "Trending", icon: TrendingUp },
-    { id: "top", label: "Top Rated", icon: Award },
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="bg-background border-b border-border shadow-sm">
@@ -24,71 +16,37 @@ export const QuestionsAnswers = () => {
               Get help from the community, share your knowledge
             </p>
           </div>
-
-          {/* Search Bar and Create Button */}
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <div className="relative flex-1 w-full">
               <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2">
-            <Filter className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            {filters.map((filter) => {
-              const Icon = filter.icon;
-              return (
-                <button
-                  key={filter.id}
-                  onClick={() => setActiveFilter(filter.id)}
-                  className={`
-                    flex items-center gap-2 px-4 py-2
-                    rounded-lg font-medium text-sm
-                    transition-all flex-shrink-0
-                    ${
-                      activeFilter === filter.id
-                        ? "bg-primary text-primary-foreground shadow-md"
-                        : "bg-secondary text-secondary-foreground hover:bg-accent"
-                    }
-                  `}
-                >
-                  <Icon className="w-4 h-4" />
-                  {filter.label}
-                </button>
-              );
-            })}
-          </div>
+                
+              </div>
             </div>
             <CreateQuestions />
           </div>
-          
         </div>
       </div>
-
-      {/* Stats Bar */}
       <div className="bg-background/50 border-b border-border">
         <div className="max-w-5xl mx-auto px-4 py-4">
-            <div className="flex items-center gap-6 text-muted-foreground">
-              <span>
-                <strong className="text-foreground">1,247</strong> Questions
-              </span>
-              <span>
-                <strong className="text-foreground">3,892</strong> Answers
-              </span>
-              <span>
-                <strong className="text-foreground">892</strong> Active Users
-              </span>
+          <div className="flex items-center gap-6 text-muted-foreground">
+            <span>
+              <strong className="text-foreground">1,247</strong> Questions
+            </span>
+            <span>
+              <strong className="text-foreground">3,892</strong> Answers
+            </span>
+            <span>
+              <strong className="text-foreground">892</strong> Active Users
+            </span>
           </div>
         </div>
       </div>
-
-      {/* Main Content Area */}
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* Side-by-side layout for desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Feed */}
           <div className="lg:col-span-8">
             <QuestionsFeed />
           </div>
-
-          {/* Sidebar */}
           <aside className="lg:col-span-4 space-y-4">
-            {/* Top Contributors */}
             <div className="bg-background border border-border rounded-xl p-5 shadow-sm">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Award className="w-4 h-4 text-primary" />
@@ -117,7 +75,13 @@ export const QuestionsAnswers = () => {
                       </p>
                     </div>
                     <div className="text-xl">
-                      {idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "⭐"}
+                      {idx === 0
+                        ? "🥇"
+                        : idx === 1
+                          ? "🥈"
+                          : idx === 2
+                            ? "🥉"
+                            : "⭐"}
                     </div>
                   </div>
                 ))}
@@ -157,7 +121,9 @@ export const QuestionsAnswers = () => {
 
             {/* Tips Card */}
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-5">
-              <h3 className="font-semibold mb-2 text-primary">💡 Asking Tips</h3>
+              <h3 className="font-semibold mb-2 text-primary">
+                💡 Asking Tips
+              </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex gap-2">
                   <span>•</span>

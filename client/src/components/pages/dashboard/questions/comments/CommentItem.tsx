@@ -1,6 +1,7 @@
 import { MoreVertical, Edit2, Trash2 } from "lucide-react";
 import type { Comment } from "@/types/commentType";
 import { getTimeAgo } from "@/utils/timeUtils";
+import { CommentVoteButtons } from "./CommentVoteButtons";
 
 interface CommentItemProps {
   comment: Comment;
@@ -147,12 +148,19 @@ export const CommentItem = ({
                 )}
               </div>
             </div>
+
             <div className="flex items-center gap-4 mt-1 px-4 text-xs text-muted-foreground">
               <span>{getTimeAgo(comment.createdAt)}</span>
               {comment.updatedAt && comment.updatedAt !== comment.createdAt && (
                 <span className="italic">(edited)</span>
               )}
             </div>
+
+            {/* ✅ Add vote buttons */}
+            <CommentVoteButtons
+              comment={comment}
+              currentUserId={currentUserId}
+            />
           </>
         )}
       </div>

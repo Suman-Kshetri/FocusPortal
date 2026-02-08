@@ -1,22 +1,19 @@
-import { useMutation} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { commentApis } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
 
 export const useDeleteComment = () => {
-
   const deleteCommentMutation = useMutation({
     mutationFn: (commentId: string) => commentApis.deleteComment(commentId),
-    onSuccess: (response) => {
-      console.log("Comment deleted successfully", response.data);
+
+    onSuccess: () => {
       toast.success("Comment deleted successfully");
     },
+
     onError: (error: AxiosError<any>) => {
-      console.error("Delete comment error:", error);
       const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to delete comment. Please try again.";
+        error.response?.data?.message || "Failed to delete comment";
       toast.error(errorMessage);
     },
   });

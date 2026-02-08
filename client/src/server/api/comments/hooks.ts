@@ -4,30 +4,47 @@ import type { CreateCommentData } from "@/types/commentType";
 export const commentApis = {
   createComment: async (questionId: string, data: CreateCommentData) => {
     const response = await axiosInstance.post(
-      `/comment/${questionId}/comments`,
-      data
+      `/comments/${questionId}/create-comments`,
+      data,
     );
     return response.data;
   },
 
   getCommentsByQuestion: async (questionId: string) => {
     const response = await axiosInstance.get(
-      `/comment/${questionId}/comments`
+      `/comments/${questionId}/all-comments`,
     );
     return response.data;
   },
 
   updateComment: async (commentId: string, data: CreateCommentData) => {
     const response = await axiosInstance.put(
-      `/comment/comments/${commentId}`,
-      data
+      `/comments/${commentId}/update`,
+      data,
     );
     return response.data;
   },
 
   deleteComment: async (commentId: string) => {
     const response = await axiosInstance.delete(
-      `/comment/comments/${commentId}`
+      `/comments/${commentId}/delete`,
+    );
+    return response.data;
+  },
+  voteComment: async (
+    commentId: string,
+    data: { type: "upvote" | "downvote" },
+  ) => {
+    const response = await axiosInstance.post(
+      `/comments/${commentId}/vote`,
+      data,
+    );
+    return response.data;
+  },
+
+  removeVote: async (commentId: string) => {
+    const response = await axiosInstance.delete(
+      `/comments/${commentId}/remove-vote`,
     );
     return response.data;
   },

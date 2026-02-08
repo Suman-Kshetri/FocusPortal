@@ -5,6 +5,7 @@ import { useGetComments } from "@/server/api/comments/useGetComment";
 import { useUpdateComment } from "@/server/api/comments/useUpdateComment";
 import { useDeleteComment } from "@/server/api/comments/useDeleteComment";
 import { useSocket } from "@/context/socketContext";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CommentInput } from "./CommentInput";
 import { CommentList } from "./CommentList";
@@ -21,6 +22,8 @@ export const CommentSection = ({
   showComments,
 }: CommentSectionProps) => {
   const socket = useSocket();
+  const queryClient = useQueryClient();
+
   const { onSubmit: createComment, isLoading: isCreatingComment } =
     useCreateComment();
   const { onSubmit: updateComment, isLoading: isUpdatingComment } =
@@ -29,25 +32,21 @@ export const CommentSection = ({
     useDeleteComment();
 
   const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState<Comment[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentText, setEditingCommentText] = useState("");
   const [activeCommentMenu, setActiveCommentMenu] = useState<string | null>(
-    null
+    null,
   );
 
-  const {
-    data: commentsData,
-    isLoading: isLoadingComments,
-  } = useGetComments(questionId, showComments);
+  const { data: commentsData, isLoading: isLoadingComments } = useGetComments(
+    questionId,
+    showComments,
+  );
 
-  useEffect(() => {
-    if (commentsData?.data) {
-      setComments(commentsData.data);
-    }
-  }, [commentsData]);
+  // ✅ Use React Query data directly - single source of truth
+  const comments = commentsData?.data ?? [];
 
-  // Listen for real-time comment updates
+  // ✅ Socket.IO updates React Query cache only
   useEffect(() => {
     if (!socket) return;
 
@@ -55,44 +54,104 @@ export const CommentSection = ({
       comment: Comment;
       questionId: string;
     }) => {
-      if (payload.questionId === questionId) {
-        setComments((prev) => {
-          if (prev.some((c) => c._id === payload.comment._id)) return prev;
-          return [payload.comment, ...prev];
-        });
-      }
+      if (payload.questionId !== questionId) return;
+
+      queryClient.setQueryData(["comments", questionId], (old: any) => {
+        if (!old?.data) return old;
+
+        // Prevent duplicates
+        if (old.data.some((c: Comment) => c._id === payload.comment._id)) {
+          return old;
+        }
+
+        return {
+          ...old,
+          data: [payload.comment, ...old.data],
+        };
+      });
     };
 
     const handleCommentUpdated = (payload: {
       comment: Comment;
       questionId: string;
     }) => {
-      if (payload.questionId === questionId) {
-        setComments((prev) =>
-          prev.map((c) => (c._id === payload.comment._id ? payload.comment : c))
-        );
-      }
+      if (payload.questionId !== questionId) return;
+
+      queryClient.setQueryData(["comments", questionId], (old: any) => {
+        if (!old?.data) return old;
+
+        return {
+          ...old,
+          data: old.data.map((c: Comment) =>
+            c._id === payload.comment._id ? payload.comment : c,
+          ),
+        };
+      });
     };
 
     const handleCommentDeleted = (payload: {
       commentId: string;
       questionId: string;
     }) => {
-      if (payload.questionId === questionId) {
-        setComments((prev) => prev.filter((c) => c._id !== payload.commentId));
-      }
+      if (payload.questionId !== questionId) return;
+
+      queryClient.setQueryData(["comments", questionId], (old: any) => {
+        if (!old?.data) return old;
+
+        return {
+          ...old,
+          data: old.data.filter((c: Comment) => c._id !== payload.commentId),
+        };
+      });
+    };
+    const handleCommentVoted = (payload: {
+      commentId: string;
+      upvotes: number;
+      downvotes: number;
+      questionId: string;
+      userId: string;
+      action: "upvote" | "downvote" | "remove";
+    }) => {
+      if (payload.questionId !== questionId) return;
+
+      queryClient.setQueryData(["comments", questionId], (old: any) => {
+        if (!old?.data) return old;
+
+        return {
+          ...old,
+          data: old.data.map((c: Comment) => {
+            if (c._id !== payload.commentId) return c;
+
+            return {
+              ...c,
+              upvotes: payload.upvotes,
+              downvotes: payload.downvotes,
+              userVote:
+                payload.userId === currentUserId
+                  ? payload.action === "upvote"
+                    ? "up"
+                    : payload.action === "downvote"
+                      ? "down"
+                      : null
+                  : c.userVote,
+            };
+          }),
+        };
+      });
     };
 
     socket.on("comment:created", handleCommentCreated);
     socket.on("comment:updated", handleCommentUpdated);
     socket.on("comment:deleted", handleCommentDeleted);
+    socket.on("comment:voted", handleCommentVoted);
 
     return () => {
       socket.off("comment:created", handleCommentCreated);
       socket.off("comment:updated", handleCommentUpdated);
       socket.off("comment:deleted", handleCommentDeleted);
+      socket.off("comment:voted", handleCommentVoted);
     };
-  }, [socket, questionId]);
+  }, [socket, questionId, queryClient]);
 
   const handleCreateComment = () => {
     if (!currentUserId) {

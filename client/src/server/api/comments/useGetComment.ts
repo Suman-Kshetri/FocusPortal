@@ -6,5 +6,6 @@ export const useGetComments = (questionId: string, enabled: boolean = true) => {
     queryKey: ["comments", questionId],
     queryFn: () => commentApis.getCommentsByQuestion(questionId),
     enabled: enabled && !!questionId,
+    staleTime: 1000 * 60 * 5,
   });
 };

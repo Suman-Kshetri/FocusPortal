@@ -23,8 +23,18 @@ const answerSchema = new mongoose.Schema(
          required: true,
       },
       isAccepted: { type: Boolean, default: false },
-      upvotes: { type: Number, default: 0 },
-      downvotes: { type: Number, default: 0 },
+      upvotedBy: [
+         {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+         },
+      ],
+      downvotedBy: [
+         {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+         },
+      ],
    },
    { timestamps: true }
 );

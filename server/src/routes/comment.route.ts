@@ -5,13 +5,17 @@ import {
    getCommentsByQuestion,
    deleteComment,
    updateComment,
+   commentVote,
+   removeCommentVote,
 } from "../controllers/comment.controller.js";
 
 const commentRoute = express.Router();
 
-commentRoute.post("/:questionId/comments", verifyJwt, createComment);
-commentRoute.get("/:questionId/comments", getCommentsByQuestion);
-commentRoute.put("/comments/:commentId", verifyJwt, updateComment);
-commentRoute.delete("/comments/:commentId", verifyJwt, deleteComment);
+commentRoute.post("/:questionId/create-comments", verifyJwt, createComment);
+commentRoute.get("/:questionId/all-comments", getCommentsByQuestion);
+commentRoute.put("/:commentId/update", verifyJwt, updateComment);
+commentRoute.delete("/:commentId/delete", verifyJwt, deleteComment);
+commentRoute.post("/:commentId/vote", verifyJwt, commentVote);
+commentRoute.delete("/:commentId/remove-vote", verifyJwt, removeCommentVote);
 
 export default commentRoute;

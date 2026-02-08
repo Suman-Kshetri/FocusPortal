@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { commentApis } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
@@ -10,20 +10,21 @@ interface CreateCommentParams {
 }
 
 export const useCreateComment = () => {
+  const queryClient = useQueryClient();
 
   const createCommentMutation = useMutation({
     mutationFn: ({ questionId, data }: CreateCommentParams) =>
       commentApis.createComment(questionId, data),
-    onSuccess: (response) => {
-      console.log("Comment created successfully", response.data);
+
+    onSuccess: (response, { questionId }) => {
       toast.success("Comment posted successfully");
+      console.log("Response of comment", response);
+      queryClient.invalidateQueries({ queryKey: ["comments", questionId] });
     },
+
     onError: (error: AxiosError<any>) => {
-      console.error("Create comment error:", error);
       const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to post comment. Please try again.";
+        error.response?.data?.message || "Failed to post comment";
       toast.error(errorMessage);
     },
   });

@@ -1,60 +1,50 @@
-import { QuestionCard } from "./QuestionCard";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSocket } from "@/context/socketContext";
 import { useGetAllQuestions } from "@/server/api/questions/getAllQuestions";
-import type { Question } from "@/types/questionType";
-import { QuestionCardSkeleton } from "@/components/skeleton/questionCardSkeleton";
-import { toast } from "sonner";
 import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import type { Question } from "@/types/questionType";
+import { QuestionCard } from "./QuestionCard";
+import { QuestionCardSkeleton } from "@/components/skeleton/questionCardSkeleton";
 
 export const QuestionsFeed = () => {
   const socket = useSocket();
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useGetAllQuestions();
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const {userData} = useGetUserProfile();
-  const [currentUserId, setCurrentUserId] = useState("");
+  const { userData } = useGetUserProfile();
 
-  useEffect(() => {
-    if (userData?.data) {
-      setCurrentUserId(userData.data._id);
-    }
-  }, [userData]);
+  const questions = data?.data ?? [];
+  const currentUserId = userData?.data?._id ?? "";
 
-  useEffect(() => {
-    if (data?.data) {
-      setQuestions(data.data);
-    }
-  }, [data]);
-
+  // ✅ Socket updates cache
   useEffect(() => {
     if (!socket) return;
 
     const handleNewQuestion = (newQuestion: Question) => {
-      setQuestions((prev) => {
-        if (prev.some((q) => q._id === newQuestion._id)) return prev;
+      queryClient.setQueryData(["questions"], (old: any) => {
+        if (!old?.data) return old;
+        if (old.data.some((q: Question) => q._id === newQuestion._id))
+          return old;
+
         toast.success(`New question: ${newQuestion.title}`);
-        return [newQuestion, ...prev];
+        return { ...old, data: [newQuestion, ...old.data] };
       });
     };
 
     socket.on("question:created", handleNewQuestion);
-
     return () => {
       socket.off("question:created", handleNewQuestion);
     };
-  }, [socket]);
-  
-  if (isLoading) {
-    return <QuestionCardSkeleton />;
-  }
+  }, [socket, queryClient]);
 
-  if (error) {
+  if (isLoading) return <QuestionCardSkeleton />;
+  if (error)
     return (
       <div className="text-center text-destructive p-4">
-        Error loading questions. Please try again.
+        Error loading questions
       </div>
     );
-  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-4">
@@ -71,9 +61,9 @@ export const QuestionsFeed = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {questions.map((question) => (
-            <QuestionCard 
-              key={question._id} 
+          {questions.map((question: Question) => (
+            <QuestionCard
+              key={question._id}
               question={question}
               currentUserId={currentUserId}
             />
