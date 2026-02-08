@@ -58,13 +58,13 @@ const EditProfileDialog = () => {
         .map((s) => s.trim())
         .filter(Boolean),
     };
-    console.log(payload)
+    console.log(payload);
     onSubmit(payload);
     closeDialog();
   };
 
   return (
-    <div>
+    <div className="relative">
       <button
         onClick={openDialog}
         className="flex items-center mt-6 gap-2 px-5 py-2 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/80 transition-all cursor-pointer"
@@ -74,11 +74,13 @@ const EditProfileDialog = () => {
 
       {isOpen && (
         <div
-          className="fixed  inset-0  bg-background/80 bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={closeDialog}
+          className="fixed inset-0 bg-background/80 bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={closeDialog} // closes ONLY when clicking backdrop
         >
           <div
-            className="bg-background border-2 border-border mt-[1vh] rounded-lg shadow-2xl  max-w-2xl w-full p-6 ">
+            className="bg-background border-2 border-border mt-[1vh] rounded-lg shadow-2xl max-w-2xl w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-foreground">
                 Edit Profile Details

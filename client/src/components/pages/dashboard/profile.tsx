@@ -8,35 +8,68 @@ import {
   Upload,
   Users,
   GraduationCap,
+  TrendingUp,
 } from "lucide-react";
 import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
 import EditProfileDialog from "@/components/dialog/edit-profile-dialog";
 import { AvatarUpload } from "@/components/updateAvatar";
+import { useGetDetailedStats } from "@/server/api/stats/useGetStats";
 
 export const Profile = () => {
   const { userData, isLoading, error } = useGetUserProfile();
+  const {
+    stats,
+    topContributors,
+    isLoading: statsLoading,
+  } = useGetDetailedStats();
   const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
     if (userData) {
       setUser(userData.data);
-      console.log("USER DATA:",userData)
+      console.log("USER DATA:", userData);
     }
   }, [userData]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error || !user) return <div>Error loading profile</div>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  if (error || !user)
+    return (
+      <div className="flex items-center justify-center min-h-screen text-destructive">
+        Error loading profile
+      </div>
+    );
 
-  // Badges calculation
   const getBadges = () => {
     const badges = [];
     if (user.questionsAsked >= 10)
-      badges.push({ name: "Curious Mind", icon: "🤔", color: "bg-blue-100 text-blue-800" });
+      badges.push({
+        name: "Curious Mind",
+        icon: "🤔",
+        color: "bg-blue-100 text-blue-800",
+      });
     if (user.answersGiven >= 50)
-      badges.push({ name: "Helpful Expert", icon: "🎓", color: "bg-green-100 text-green-800" });
+      badges.push({
+        name: "Helpful Expert",
+        icon: "🎓",
+        color: "bg-green-100 text-green-800",
+      });
     if (user.resourcesUploaded >= 20)
-      badges.push({ name: "Content Creator", icon: "📚", color: "bg-purple-100 text-purple-800" });
+      badges.push({
+        name: "Content Creator",
+        icon: "📚",
+        color: "bg-purple-100 text-purple-800",
+      });
     if (user.points >= 1000)
-      badges.push({ name: "Super Student", icon: "⭐", color: "bg-yellow-100 text-yellow-800" });
+      badges.push({
+        name: "Super Student",
+        icon: "⭐",
+        color: "bg-yellow-100 text-yellow-800",
+      });
     return badges;
   };
 
@@ -48,52 +81,78 @@ export const Profile = () => {
       : ["Mathematics", "Physics", "Computer Science"];
 
   const displayEducation =
-    user.educationLevel && user.educationLevel !== "None" ? user.educationLevel : "Not Set";
+    user.educationLevel && user.educationLevel !== "None"
+      ? user.educationLevel
+      : "Not Set";
 
-  const displayBio = user.bio && user.bio !== "Not Set" ? user.bio : "No bio available";
+  const displayBio =
+    user.bio && user.bio !== "Not Set" ? user.bio : "No bio available";
+
+  const getUserRank = () => {
+    console.log("contributors", topContributors);
+    if (!topContributors || topContributors.length === 0) return "N/A";
+
+    const rank = topContributors.findIndex((c: any) => c._id === user._id);
+    return rank !== -1 ? `#${rank + 1}` : "Unranked";
+  };
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 relative">
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Profile Card */}
-        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-          <div className="h-32 bg-linear-to-r from-primary/20 via-accent to-primary/10"></div>
-          <div className="px-6 pb-6">
-            <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
+        <div className="bg-card border border-border rounded-3xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+          <div className="h-40 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/70 relative">
+            <div className="absolute inset-0 bg-black/10"></div>
+          </div>
+          <div className="px-8 pb-8">
+            <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-20">
               {/* Avatar */}
-                <div className="w-32 h-32 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden">
-                  <AvatarUpload src={user.avatar} alt={user.fullName}/>
-                </div>
-               
-              {/* User Info */}
+              <div className="w-32 h-32 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden">
+                <AvatarUpload src={user.avatar} alt={user.fullName} />
+              </div>
               <div className="flex-1">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-foreground">{user.fullName}</h1>
-                    <p className="text-lg text-muted-foreground">@{user.username}</p>
-                    <div className="flex items-center gap-2 mt-1 text-muted-foreground">
-                      <Mail className="w-4 h-4" />
+                    <h1 className="text-4xl font-bold text-foreground mb-2">
+                      {user.fullName}
+                    </h1>
+                    <p className="text-xl text-muted-foreground mb-2">
+                      @{user.username}
+                    </p>
+                    <div className="flex items-center gap-2 mb-3 text-muted-foreground">
+                      <Mail className="w-5 h-5" />
                       <span className="text-sm">{user.email}</span>
+                    </div>
+
+                    {/* Rank Badge */}
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-primary" />
+                      <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+                        Rank: {getUserRank()}
+                      </span>
                     </div>
                   </div>
 
-                    <div>
-                      <EditProfileDialog/>
-                    </div>
+                  <div>
+                    <EditProfileDialog />
+                  </div>
                 </div>
               </div>
             </div>
 
             {badges.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-border">
-                <h3 className="text-sm font-semibold text-foreground mb-3">🏆 Achievements</h3>
-                <div className="flex flex-wrap gap-2">
+              <div className="mt-8 pt-6 border-t border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Award className="w-5 h-5" />
+                  Achievements
+                </h3>
+                <div className="flex flex-wrap gap-3">
                   {badges.map((badge, index) => (
                     <span
                       key={index}
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${badge.color}`}
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 ${badge.color}`}
                     >
-                      <span>{badge.icon}</span>
+                      <span className="text-lg">{badge.icon}</span>
                       {badge.name}
                     </span>
                   ))}
@@ -104,41 +163,52 @@ export const Profile = () => {
         </div>
 
         {/* Profile Information + Community Stats */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 space-y-6">
-            <div className="bg-card border border-border rounded-2xl shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-foreground">Profile Information</h2>
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-card border border-border rounded-3xl shadow-lg p-8 transition-all duration-300 hover:shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <User className="w-6 h-6" />
+                  Profile Information
+                </h2>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
+              <div className="space-y-6">
+                <div className="bg-accent/20 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
                     <User className="w-5 h-5 text-muted-foreground" />
                     <h3 className="font-semibold text-foreground">Bio</h3>
                   </div>
-                  <p className="text-muted-foreground leading-relaxed pl-7">{displayBio}</p>
+                  <p className="text-muted-foreground leading-relaxed pl-7">
+                    {displayBio}
+                  </p>
                 </div>
 
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="bg-accent/20 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
                     <GraduationCap className="w-5 h-5 text-muted-foreground" />
-                    <h3 className="font-semibold text-foreground">Education Level</h3>
+                    <h3 className="font-semibold text-foreground">
+                      Education Level
+                    </h3>
                   </div>
-                  <p className="text-muted-foreground pl-7 capitalize">{displayEducation}</p>
+                  <p className="text-muted-foreground pl-7 capitalize">
+                    {displayEducation}
+                  </p>
                 </div>
 
                 {/* Subjects */}
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="bg-accent/20 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
                     <BookOpen className="w-5 h-5 text-muted-foreground" />
-                    <h3 className="font-semibold text-foreground">Subjects of Interest</h3>
+                    <h3 className="font-semibold text-foreground">
+                      Subjects of Interest
+                    </h3>
                   </div>
-                  <div className="flex flex-wrap gap-2 pl-7">
+                  <div className="flex flex-wrap gap-3 pl-7">
                     {displaySubjects.map((subject: string, index: number) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-accent text-accent-foreground rounded-full text-sm font-medium"
+                        className="px-4 py-2 bg-accent text-accent-foreground rounded-full text-sm font-medium transition-all duration-200 hover:bg-accent/80"
                       >
                         {subject}
                       </span>
@@ -147,33 +217,140 @@ export const Profile = () => {
                 </div>
               </div>
             </div>
+
+            {/* Platform Overview Stats */}
+            {!statsLoading && stats?.overview && (
+              <div className="bg-card border border-border rounded-3xl shadow-lg p-8 transition-all duration-300 hover:shadow-xl">
+                <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+                  <TrendingUp className="w-6 h-6" />
+                  Platform Overview
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <PlatformStatCard
+                    icon={<MessageSquare className="w-6 h-6" />}
+                    color="bg-blue-100"
+                    label="Total Questions"
+                    value={stats.overview.questions?.toLocaleString() ?? "0"}
+                  />
+                  <PlatformStatCard
+                    icon={<Users className="w-6 h-6" />}
+                    color="bg-purple-100"
+                    label="Active Users"
+                    value={stats.overview.activeUsers?.toLocaleString() ?? "0"}
+                  />
+                  <PlatformStatCard
+                    icon={<Users className="w-6 h-6" />}
+                    color="bg-yellow-100"
+                    label="Total Members"
+                    value={stats.overview.totalUsers?.toLocaleString() ?? "0"}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Community Stats */}
-          <div className="bg-card border border-border rounded-xl shadow-sm p-4 space-y-4">
-            <div className="flex items-center gap-4">
-              <Award className="w-5 h-5 text-primary" />
-              <h2 className="text-base font-semibold text-foreground">Community Stats</h2>
+          {/* Community Stats + Top Contributors */}
+          <div className="space-y-6">
+            {/* User Stats */}
+            <div className="bg-card border border-border rounded-2xl shadow-lg p-6 space-y-6 transition-all duration-300 hover:shadow-xl">
+              <div className="flex items-center gap-4">
+                <Award className="w-6 h-6 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Your Stats
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                <StatCard
+                  icon={<Award className="w-5 h-5 text-yellow-600" />}
+                  color="bg-yellow-100"
+                  label="Total Points"
+                  value={user.points}
+                />
+                <StatCard
+                  icon={<MessageSquare className="w-5 h-5 text-blue-600" />}
+                  color="bg-blue-100"
+                  label="Questions Asked"
+                  value={user.questionsAsked}
+                />
+                <StatCard
+                  icon={<Upload className="w-5 h-5 text-purple-600" />}
+                  color="bg-purple-100"
+                  label="Resources Shared"
+                  value={user.resourcesUploaded}
+                />
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <StatCard icon={<Award className="w-5 h-5 text-yellow-600" />} color="bg-yellow-100" label="Total Points" value={user.points} />
-              <StatCard icon={<MessageSquare className="w-4 h-4 text-blue-600" />} color="bg-blue-100" label="Questions Asked" value={user.questionsAsked} />
-              <StatCard icon={<Users className="w-5 h-5 text-green-600" />} color="bg-green-100" label="Answers Given" value={user.answersGiven} />
-              <StatCard icon={<Upload className="w-5 h-5 text-purple-600" />} color="bg-purple-100" label="Resources Shared" value={user.resourcesUploaded} />
-            </div>
+            {/* Top Contributors */}
+            {!statsLoading && topContributors && topContributors.length > 0 && (
+              <div className="bg-card border border-border rounded-2xl shadow-lg p-6 space-y-4 transition-all duration-300 hover:shadow-xl">
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold text-foreground text-lg">
+                    Top Contributors
+                  </h3>
+                </div>
+
+                <div className="space-y-3">
+                  {topContributors
+                    .slice(0, 5)
+                    .map((contributor: any, idx: number) => (
+                      <div
+                        key={contributor._id}
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer"
+                      >
+                        <span className="text-xl">
+                          {idx === 0
+                            ? "🥇"
+                            : idx === 1
+                              ? "🥈"
+                              : idx === 2
+                                ? "🥉"
+                                : "⭐"}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {contributor.fullName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {contributor.points} pts
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 const StatCard = ({ icon, color, label, value }: any) => (
-  <div className={`flex items-start gap-3 rounded-lg px-3 py-2.5 ${color} flex-nowrap`}>
-    <div className={`w-7 h-7 rounded-md flex items-center justify-center mt-0.5`}>{icon}</div>
-    <div>
-      <p className="text-xs text-gray-700">{label}</p>
-      <p className="text-gray-800 text-sm font-semibold">{value}</p>
+  <div
+    className={`flex items-start gap-4 rounded-xl px-4 py-3 ${color} flex-nowrap transition-all duration-200 hover:scale-105`}
+  >
+    <div
+      className={`w-8 h-8 rounded-lg flex items-center justify-center mt-0.5`}
+    >
+      {icon}
     </div>
+    <div>
+      <p className="text-xs text-gray-700 font-medium">{label}</p>
+      <p className="text-gray-800 text-lg font-bold">{value}</p>
+    </div>
+  </div>
+);
+
+const PlatformStatCard = ({ icon, color, label, value }: any) => (
+  <div
+    className={`rounded-xl ${color} p-6 text-center transition-all duration-200 hover:scale-105`}
+  >
+    <div className="flex justify-center mb-3 text-gray-700">{icon}</div>
+    <p className="text-sm text-gray-600 mb-2 font-medium">{label}</p>
+    <p className="text-2xl font-bold text-gray-800">{value}</p>
   </div>
 );

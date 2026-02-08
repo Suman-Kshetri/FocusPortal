@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, MessageSquare} from "lucide-react";
 
 interface QuestionActionsProps {
   upvoted: boolean;
@@ -29,7 +29,10 @@ export const QuestionActions = ({
           ${upvoted ? "text-primary font-semibold" : "text-muted-foreground"}
         `}
       >
-        <ThumbsUp className="w-4 h-4" fill={upvoted ? "currentColor" : "none"} />
+        <ThumbsUp
+          className="w-4 h-4"
+          fill={upvoted ? "currentColor" : "none"}
+        />
         <span className="text-sm">Upvote</span>
       </button>
 
@@ -60,7 +63,7 @@ export const QuestionActions = ({
       >
         <MessageSquare className="w-4 h-4" />
         <span className="text-sm">Comment</span>
-    </button>
+      </button>
     </div>
   );
 };

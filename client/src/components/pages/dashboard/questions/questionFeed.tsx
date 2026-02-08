@@ -17,7 +17,6 @@ export const QuestionsFeed = () => {
   const questions = data?.data ?? [];
   const currentUserId = userData?.data?._id ?? "";
 
-  // ✅ Socket updates cache
   useEffect(() => {
     if (!socket) return;
 
