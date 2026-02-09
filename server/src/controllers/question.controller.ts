@@ -1,4 +1,6 @@
+import { Comment } from "../models/comment.model.js";
 import { Question } from "../models/questions.model.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -45,7 +47,12 @@ export const createQuestions = asyncHandler(async (req, res) => {
    });
 
    await question.populate("author", "fullName email avatar username");
-
+   await User.findByIdAndUpdate(currentUser._id, {
+      $inc: {
+         questionsAsked: 1,
+         points: 5,
+      },
+   });
    console.log("Question created, preparing to emit:", question._id);
 
    const io = req.app.get("io");
@@ -72,7 +79,8 @@ export const getAllQuestions = asyncHandler(async (req, res) => {
       {
          $sort: { createdAt: -1 },
       },
-      { //look for the author._id in the users database then created [{"_id": ...., "fullName": ...,}]
+      {
+         //look for the author._id in the users database then created [{"_id": ...., "fullName": ...,}]
          $lookup: {
             from: "users",
             localField: "author",
@@ -80,7 +88,8 @@ export const getAllQuestions = asyncHandler(async (req, res) => {
             as: "author",
          },
       },
-      { //converts array to object
+      {
+         //converts array to object
          $unwind: "$author",
       },
       {
@@ -215,4 +224,72 @@ export const removeVote = asyncHandler(async (req, res) => {
    res.status(200).json(
       new ApiResponse(200, "Vote removed successfully", payload)
    );
+});
+
+export const updateQuestion = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   const { title, content, tags } = req.body;
+   const userId = req.user._id;
+
+   const question = await Question.findById(id);
+
+   if (!question) {
+      throw new ApiError(404, "Question not found");
+   }
+   if (question.author.toString() !== userId.toString()) {
+      throw new ApiError(403, "You can only edit your own questions");
+   }
+   question.title = title || question.title;
+   question.content = content || question.content;
+   question.tags = tags || question.tags;
+   question.updatedAt = Date.now();
+
+   await question.save();
+
+   const updatedQuestion = await question.populate(
+      "author",
+      "fullName avatar email"
+   );
+
+   const io = req.app.get("io");
+   if (io) {
+      io.emit("question:updated", updatedQuestion);
+   }
+
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(200, "Question updated successfully", updatedQuestion)
+      );
+});
+
+export const deleteQuestion = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   const userId = req.user._id;
+
+   const question = await Question.findById(id);
+
+   if (!question) {
+      throw new ApiError(404, "Question not found");
+   }
+   if (question.author.toString() !== userId.toString()) {
+      throw new ApiError(403, "You can only delete your own questions");
+   }
+   await Comment.deleteMany({ questionId: id });
+   await Question.findByIdAndDelete(id);
+   await User.findByIdAndUpdate(userId, {
+      $inc: {
+         questionsAsked: -1,
+         points: -5,
+      },
+   });
+
+   const io = req.app.get("io");
+   if (io) {
+      io.emit("question:deleted", { questionId: id });
+   }
+
+   return res
+      .status(200)
+      .json(new ApiResponse(200, "Question deleted successfully", null));
 });
