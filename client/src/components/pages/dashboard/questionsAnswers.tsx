@@ -1,11 +1,12 @@
 import { CreateQuestions } from "@/components/dialog/create-question-dialog";
-import { Award, RotateCw, MessageSquare, Users } from "lucide-react";
+import { Award, RotateCw } from "lucide-react";
 import { StatsSkeleton } from "@/components/skeleton/StatsSkeleton";
 import { useGetStats } from "@/server/api/stats/useGetStats";
 import { useGetDetailedStats } from "@/server/api/stats/useGetStats";
 import { QuestionsFeed } from "./questions/questionFeed";
 import TypingCatGif from "@/components/TypingGif";
 import { useState } from "react";
+import LoadingAnimation from "@/components/other/LoadingAnimation";
 
 export const QuestionsAnswers = () => {
   const { statsData, isLoading, error, refetch } = useGetStats();
@@ -127,7 +128,9 @@ export const QuestionsAnswers = () => {
               </h3>
 
               {contributorsLoading ? (
-                <p className="text-sm text-muted-foreground">Loading...</p>
+                <p className="text-sm text-muted-foreground flex items-center justify-center">
+                  <LoadingAnimation />
+                </p>
               ) : !topContributors || topContributors.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   No contributors yet

@@ -213,7 +213,6 @@
     @apply cursor-pointer;
   }
 }
-
 /* Custom Utility Classes */
 .gradient-primary {
   background: linear-gradient(135deg, oklch(0.50 0.16 285), oklch(0.45 0.14 270));

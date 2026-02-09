@@ -14,6 +14,24 @@ const EditProfileDialog = () => {
     educationLevel: "",
     subjects: "",
   });
+  //hide background scroll on dialog box open
+  useEffect(() => {
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (userData.data) {
@@ -64,7 +82,7 @@ const EditProfileDialog = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative dialog">
       <button
         onClick={openDialog}
         className="flex items-center mt-6 gap-2 px-5 py-2 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/80 transition-all cursor-pointer"
@@ -75,7 +93,7 @@ const EditProfileDialog = () => {
       {isOpen && (
         <div
           className="fixed inset-0 bg-background/80 bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={closeDialog} // closes ONLY when clicking backdrop
+          onClick={closeDialog}
         >
           <div
             className="bg-background border-2 border-border mt-[1vh] rounded-lg shadow-2xl max-w-2xl w-full p-6"
