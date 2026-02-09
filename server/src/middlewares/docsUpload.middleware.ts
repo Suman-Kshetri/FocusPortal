@@ -19,27 +19,27 @@ const storage = multer.diskStorage({
    },
 });
 
-interface MulterFile {
-    mimetype: string;
+export interface MulterFile {
+   mimetype: string;
 }
 
 const fileFilter = (
-    req: Request,
-    file: MulterFile,
-    cb: FileFilterCallback
+   req: Request,
+   file: MulterFile,
+   cb: FileFilterCallback
 ): void => {
-    const allowedTypes = [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
-        "text/markdown",
-        "image/png",
-        "image/jpeg",
-        "image/jpg",
-    ];
+   const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
+      "text/markdown",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+   ];
 
-    if (allowedTypes.includes(file.mimetype)) cb(null, true);
-    else cb(new Error(`Invalid file type: ${file.mimetype}`));
+   if (allowedTypes.includes(file.mimetype)) cb(null, true);
+   else cb(new Error(`Invalid file type: ${file.mimetype}`));
 };
 
 export const docsUpload = multer({

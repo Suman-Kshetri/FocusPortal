@@ -10,6 +10,7 @@ import { registerSocketRoutes } from "./socket/index.js";
 import commentRoute from "./routes/comment.route.js";
 import statsRoute from "./routes/stats.route.js";
 import folderRoute from "./routes/folder.route.js";
+import filesRoute from "./routes/files.route.js";
 
 const app = express();
 const server = createServer(app);
@@ -41,5 +42,6 @@ app.use("/api/comments", commentRoute);
 app.use("/api/stats", statsRoute);
 registerSocketRoutes(io);
 app.use("/api/folder", folderRoute);
+app.use("/api/files", filesRoute);
 
 export { app, server, io };

@@ -1,8 +1,8 @@
-import { Folder } from "../models/files-model/folder.model.js";
+import { Folder } from "../models/file-folder-models/folder.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { File } from "../models/files-model/file.model.js";
+import { File } from "../models/file-folder-models/file.model.js";
 import { Types } from "mongoose";
 
 export const createFolder = asyncHandler(async (req, res) => {

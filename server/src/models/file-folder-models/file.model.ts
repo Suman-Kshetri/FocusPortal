@@ -12,7 +12,7 @@ const fileSchema = new mongoose.Schema(
 
       source: {
          type: String,
-         enum: ["upload", "generated"],
+         enum: ["upload", "created"],
          required: true,
       },
 
@@ -21,13 +21,19 @@ const fileSchema = new mongoose.Schema(
          required: true,
       },
 
-      size: Number,
-      mimeType: String,
+      size: {
+         type: Number,
+         default: 0,
+      },
+      mimeType: {
+         type: String,
+         default: "",
+      },
 
       folder: {
          type: mongoose.Schema.Types.ObjectId,
          ref: "Folder",
-         required: true,
+         default: null,
       },
 
       owner: {
@@ -40,6 +46,7 @@ const fileSchema = new mongoose.Schema(
          type: Boolean,
          default: false,
       },
+      cloudinaryPublicId: { type: String, default: null },
    },
    { timestamps: true }
 );
