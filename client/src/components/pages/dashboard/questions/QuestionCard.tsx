@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Question } from "@/types/questionType";
 import { useVoteQuestion } from "@/server/api/questions/voteQuestions";
 import { useSocket } from "@/context/socketContext";
@@ -8,17 +8,23 @@ import { QuestionContent } from "./QuestionContent";
 import { QuestionStats } from "./QuestionStats";
 import { QuestionActions } from "./QuestionActions";
 import { CommentSection } from "./comments/CommentSection";
+import { MoreVertical, Edit, Trash2 } from "lucide-react";
 
 interface QuestionCardProps {
   question: Question;
   currentUserId?: string;
+  onEdit?: (question: Question) => void;
+  onDelete?: (questionId: string) => void;
 }
 
 export const QuestionCard = ({
   question,
   currentUserId,
+  onEdit,
+  onDelete,
 }: QuestionCardProps) => {
   const socket = useSocket();
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const {
     onSubmit: voteQuestion,
     onRemove: removeVote,
@@ -26,17 +32,37 @@ export const QuestionCard = ({
   } = useVoteQuestion();
 
   const [upvoted, setUpvoted] = useState(
-    currentUserId ? question.upvotedBy?.includes(currentUserId) : false
+    currentUserId ? question.upvotedBy?.includes(currentUserId) : false,
   );
   const [downvoted, setDownvoted] = useState(
-    currentUserId ? question.downvotedBy?.includes(currentUserId) : false
+    currentUserId ? question.downvotedBy?.includes(currentUserId) : false,
   );
   const [upvotes, setUpvotes] = useState(question.upvotedBy?.length || 0);
   const [downvotes, setDownvotes] = useState(question.downvotedBy?.length || 0);
   const [showComments, setShowComments] = useState(false);
-  const [commentCount, setCommentCount] = useState(
-  question.commentCount ?? 0
-);
+  const [commentCount, setCommentCount] = useState(question.commentCount ?? 0);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const isAuthor = currentUserId && question.author?._id === currentUserId;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   useEffect(() => {
     if (!socket) return;
@@ -142,9 +168,59 @@ export const QuestionCard = ({
     }
   };
 
+  const handleEdit = () => {
+    setShowDropdown(false);
+    if (onEdit) {
+      onEdit(question);
+    }
+  };
+
+  const handleDelete = () => {
+    setShowDropdown(false);
+    if (onDelete) {
+      onDelete(question._id);
+    }
+  };
+
   return (
     <div className="bg-background border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
-      <QuestionHeader question={question} />
+      <div className="relative">
+        <QuestionHeader question={question} />
+
+        {/* Action Menu - Only show to author */}
+        {isAuthor && onEdit && onDelete && (
+          <div className="absolute top-4 right-4" ref={dropdownRef}>
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+              aria-label="More options"
+            >
+              <MoreVertical className="w-5 h-5 text-muted-foreground" />
+            </button>
+
+            {/* Dropdown Menu */}
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-1 z-10">
+                <button
+                  onClick={handleEdit}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Question
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Question
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       <QuestionContent question={question} />
       <QuestionStats
         upvotes={upvotes}

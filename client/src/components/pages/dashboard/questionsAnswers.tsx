@@ -5,9 +5,11 @@ import { useGetStats } from "@/server/api/stats/useGetStats";
 import { useGetDetailedStats } from "@/server/api/stats/useGetStats";
 import { QuestionsFeed } from "./questions/questionFeed";
 import TypingCatGif from "@/components/TypingGif";
+import { useState } from "react";
 
 export const QuestionsAnswers = () => {
   const { statsData, isLoading, error, refetch } = useGetStats();
+  const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const isFetching = isLoading;
 
   const { topContributors, isLoading: contributorsLoading } =
@@ -27,6 +29,26 @@ export const QuestionsAnswers = () => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === "all"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              }`}
+            >
+              All Questions
+            </button>
+            <button
+              onClick={() => setActiveTab("my")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === "my"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              }`}
+            >
+              My Questions
+            </button>
             <div className="relative flex-1 w-full">
               <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2"></div>
             </div>
@@ -92,7 +114,7 @@ export const QuestionsAnswers = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Questions Feed */}
           <div className="lg:col-span-8">
-            <QuestionsFeed />
+            <QuestionsFeed activeTab={activeTab} />
           </div>
 
           {/* Right Sidebar */}

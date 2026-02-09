@@ -18,7 +18,7 @@ export interface Question {
   _id: string;
   title: string;
   content: string;
-  commentCount?:number;
+  commentCount?: number;
   author: {
     _id: string;
     fullName: string;
@@ -34,4 +34,11 @@ export interface Question {
   status: QuestionStatus;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface UpdateQuestionData {
+  id: string;
+  title: string;
+  content: string;
+  tags?: string[];
 }
