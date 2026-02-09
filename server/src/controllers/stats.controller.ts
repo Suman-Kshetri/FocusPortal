@@ -17,10 +17,10 @@ export const getQuestionsCount = asyncHandler(
 
 export const getActiveUsersCount = asyncHandler(
    async (req: Request, res: Response) => {
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
 
       const count = await User.countDocuments({
-         lastLogin: { $gte: thirtyDaysAgo },
+         lastLogin: { $gte: fiveDaysAgo },
       });
 
       return res.status(200).json(
@@ -35,9 +35,9 @@ export const getStatsOverview = asyncHandler(
    async (req: Request, res: Response) => {
       const questionsCount = await Question.countDocuments();
 
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
       const activeUsersCount = await User.countDocuments({
-         lastLogin: { $gte: thirtyDaysAgo },
+         lastLogin: { $gte: fiveDaysAgo },
       });
 
       const totalUsers = await User.countDocuments();
@@ -60,9 +60,9 @@ export const getDetailedStats = asyncHandler(
    async (req: Request, res: Response) => {
       const questionsCount = await Question.countDocuments();
 
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
       const activeUsersCount = await User.countDocuments({
-         lastLogin: { $gte: thirtyDaysAgo },
+         lastLogin: { $gte: fiveDaysAgo },
       });
 
       const totalUsers = await User.countDocuments();

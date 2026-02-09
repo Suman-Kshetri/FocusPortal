@@ -1,4 +1,4 @@
-import typingCatGif from "../../public/assets/typing-cat.gif";
+import typingCatGif from "/assets/typing-cat.gif";
 
 const TypingCatGif = () => {
   if (!typingCatGif) return null;
@@ -9,7 +9,7 @@ const TypingCatGif = () => {
         alt="Adorable white cat typing on keyboard"
         style={{
           width: "100%",
-          height: "100%", // numeric pixels
+          height: "100%",
           borderRadius: "12px",
           boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.5)",
         }}
