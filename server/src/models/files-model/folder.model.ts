@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const folderSchema = new mongoose.Schema(
    {
-      name: { type: String, required: true },
+      folderName: { type: String, required: true },
 
       owner: {
          type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ const folderSchema = new mongoose.Schema(
       parentFolder: {
          type: mongoose.Schema.Types.ObjectId,
          ref: "Folder",
-         default: null, // root
+         default: null, 
       },
    },
    { timestamps: true }
