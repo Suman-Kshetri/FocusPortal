@@ -1,8 +1,27 @@
+import { useFolderCreation } from "@/server/api/folder/useFolderCreation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 interface CreateFolderDialogProps {
   onClose: () => void;
 }
 
 const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
+  const [name, setName] = useState("");
+  const { onSubmit, isLoading, error, isSuccess } = useFolderCreation();
+  const handleFolderCreation = () => {
+    if (!name.trim()) {
+      toast.error("Folder name cannot be empty");
+      return;
+    }
+    console.log("Creating new folder", name);
+    onSubmit({ folderName: name, parentFolder: null });
+    useEffect(() => {
+      if (isSuccess) {
+        onClose();
+      }
+    }, [isSuccess, onClose]);
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md mx-4 animate-scale-in">
@@ -22,7 +41,9 @@ const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
             </label>
             <input
               type="text"
+              value={name}
               placeholder="e.g., My Documents"
+              onChange={(e) => setName(e.target.value)}
               className="
                 w-full px-4 py-2.5
                 bg-background border border-input
@@ -34,7 +55,11 @@ const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
             />
           </div>
         </div>
-
+        {error && (
+          <div className="px-6 py-2 text-sm text-destructive">
+            Failed to create folder: {error}
+          </div>
+        )}
         <div className="px-6 py-4 bg-muted/30 rounded-b-xl flex items-center justify-end gap-3">
           <button
             onClick={onClose}
@@ -56,8 +81,9 @@ const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
             rounded-lg
             transition-colors duration-200
           "
+            onClick={handleFolderCreation}
           >
-            Create Folder
+            {isLoading ? "Creating..." : "Create Folder"}
           </button>
         </div>
       </div>

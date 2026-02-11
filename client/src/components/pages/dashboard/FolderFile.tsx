@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FolderCreationUI } from "./folder/folder-creation/FolderCreationCard";
+import { FolderCreationUI } from "./folder/folder-creation/FolderCreationUI";
 import { FolderDialogBox } from "./folder/folder-dialog/FolderDialogBox";
 import FolderList from "./folder/FolderList";
 import { RenameFolderDialog } from "./folder/folder-dialog/RenameFolderDialog";
@@ -66,7 +66,7 @@ const FolderFile = () => {
         </h1>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          <FolderCreationUI />
+          <FolderCreationUI onClick={() => setCreateOpen(true)} />
           <FolderList onContextMenu={handleContextMenu} />
         </div>
       </div>
