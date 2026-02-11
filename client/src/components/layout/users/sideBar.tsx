@@ -1,4 +1,4 @@
-import { Home, Settings, User, MessageSquare } from "lucide-react";
+import { Home, Settings, User, MessageSquare, CloudUpload } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
 
 export const SidebarApp = ({ isOpen }: { isOpen: boolean }) => {
@@ -7,6 +7,11 @@ export const SidebarApp = ({ isOpen }: { isOpen: boolean }) => {
 
   const items = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
+    {
+      title: "Resources",
+      url: "/dashboard/resources",
+      icon: CloudUpload,
+    },
     { title: "Q&A", url: "/dashboard/questions", icon: MessageSquare },
     { title: "My Profile", url: "/dashboard/profile", icon: User },
   ];
