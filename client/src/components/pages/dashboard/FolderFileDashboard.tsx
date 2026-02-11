@@ -7,7 +7,7 @@ import PropertiesDialog from "./folder/folder-dialog/PropertiesDialog";
 import DeleteFolderDialog from "./folder/folder-dialog/DeleteFolderDialog";
 import CreateFolderDialog from "./folder/folder-dialog/CreateFolderDialog";
 
-const FolderFile = () => {
+const FolderFileDashboard = () => {
   const [contextMenu, setContextMenu] = useState({
     isOpen: false,
     position: { x: 0, y: 0 },
@@ -111,4 +111,4 @@ const FolderFile = () => {
   );
 };
 
-export default FolderFile;
+export default FolderFileDashboard;
