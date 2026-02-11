@@ -3,6 +3,7 @@ import {
    createFolder,
    deleteFolder,
    getFolderContents,
+   getRootFolders,
    moveFolder,
    renameFolder,
 } from "../controllers/folder.controller.js";
@@ -15,5 +16,5 @@ folderRoute.get("/:id", verifyJwt, getFolderContents);
 folderRoute.patch("/:id/edit", verifyJwt, renameFolder);
 folderRoute.put("/:id/move", moveFolder);
 folderRoute.delete("/:id/delete", verifyJwt, deleteFolder);
-
+folderRoute.get("/root", verifyJwt, getRootFolders);
 export default folderRoute;

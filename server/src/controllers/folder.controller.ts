@@ -46,20 +46,73 @@ export const createFolder = asyncHandler(async (req, res) => {
 
 export const getFolderContents = asyncHandler(async (req, res) => {
    const { id } = req.params;
-   const folder = await Folder.findOne({ _id: id, owner: req.user._id });
+
+   // Handle root folder case
+   if (id === "root" || !id) {
+      const rootFolders = await Folder.find({
+         parentFolder: null,
+         owner: req.user._id,
+      }).select("+parentFolder"); // Explicitly select parentFolder
+
+      const rootFiles = await File.find({
+         folder: null,
+         owner: req.user._id,
+      });
+
+      return res.status(200).json(
+         new ApiResponse(200, "Root content fetched successfully", {
+            folder: null,
+            subFolders: rootFolders,
+            files: rootFiles,
+         })
+      );
+   }
+
+   // Handle specific folder case
+   const folder = await Folder.findOne({ _id: id, owner: req.user._id }).select(
+      "+parentFolder"
+   );
+
    if (!folder) {
       throw new ApiError(404, "Folder not found");
    }
+
    const subFolders = await Folder.find({
       parentFolder: id,
-      owner: req.user.id,
+      owner: req.user._id,
+   }).select("+parentFolder");
+
+   const files = await File.find({
+      folder: id,
+      owner: req.user._id,
    });
-   const files = await File.find({ folder: id, owner: req.user._id });
+
    res.status(200).json(
       new ApiResponse(200, "Folder content fetched successfully", {
          folder,
          subFolders,
          files,
+      })
+   );
+});
+
+//root folder
+export const getRootFolders = asyncHandler(async (req, res) => {
+   const rootFolders = await Folder.find({
+      parentFolder: null,
+      owner: req.user._id,
+   });
+
+   const rootFiles = await File.find({
+      folder: null,
+      owner: req.user._id,
+   });
+
+   res.status(200).json(
+      new ApiResponse(200, "Root content fetched successfully", {
+         folder: null,
+         subFolders: rootFolders,
+         files: rootFiles,
       })
    );
 });

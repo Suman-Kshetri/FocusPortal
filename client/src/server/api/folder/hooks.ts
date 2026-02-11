@@ -6,4 +6,9 @@ export const folderApi = {
     const response = await axiosInstance.post("/folder/create", data);
     return response;
   },
+  getFolderContents: async (folderId: string) => {
+    const endpoint = folderId ? `/folder/${folderId}` : `/folder/root`;
+    const response = await axiosInstance.get(endpoint);
+    return response;
+  },
 };

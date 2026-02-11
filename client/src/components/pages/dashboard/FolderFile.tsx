@@ -11,14 +11,20 @@ const FolderFile = () => {
   const [contextMenu, setContextMenu] = useState({
     isOpen: false,
     position: { x: 0, y: 0 },
-    folderId: null as number | null,
+    folderId: null as string | null,
   });
   const [renameOpen, setRenameOpen] = useState(false);
   const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
-  const handleContextMenu = (e: React.MouseEvent, folderId: number) => {
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+
+  const handleFolderClick = (folderId: string) => {
+    setCurrentFolderId(folderId);
+  };
+
+  const handleContextMenu = (e: React.MouseEvent, folderId: string) => {
     e.preventDefault();
     setContextMenu({
       isOpen: true,
@@ -67,7 +73,11 @@ const FolderFile = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           <FolderCreationUI onClick={() => setCreateOpen(true)} />
-          <FolderList onContextMenu={handleContextMenu} />
+          <FolderList
+            folderId={currentFolderId}
+            onFolderClick={handleFolderClick}
+            onFolderContextMenu={handleContextMenu}
+          />
         </div>
       </div>
       <FolderDialogBox
@@ -82,8 +92,12 @@ const FolderFile = () => {
         onDelete={handleDelete}
       />
       {createOpen && (
-        <CreateFolderDialog onClose={() => setCreateOpen(false)} />
+        <CreateFolderDialog
+          parentFolderId={currentFolderId}
+          onClose={() => setCreateOpen(false)}
+        />
       )}
+
       {renameOpen && (
         <RenameFolderDialog onClose={() => setRenameOpen(false)} />
       )}

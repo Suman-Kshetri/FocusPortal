@@ -2,26 +2,33 @@ import { useFolderCreation } from "@/server/api/folder/useFolderCreation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-interface CreateFolderDialogProps {
+interface FolderCreationProps {
+  parentFolderId: string | null;
   onClose: () => void;
 }
 
-const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
+const CreateFolderDialog = ({
+  parentFolderId,
+  onClose,
+}: FolderCreationProps) => {
   const [name, setName] = useState("");
   const { onSubmit, isLoading, error, isSuccess } = useFolderCreation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      onClose();
+    }
+  }, [isSuccess, onClose]);
+
   const handleFolderCreation = () => {
     if (!name.trim()) {
       toast.error("Folder name cannot be empty");
       return;
     }
     console.log("Creating new folder", name);
-    onSubmit({ folderName: name, parentFolder: null });
-    useEffect(() => {
-      if (isSuccess) {
-        onClose();
-      }
-    }, [isSuccess, onClose]);
+    onSubmit({ folderName: name, parentFolder: parentFolderId });
   };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md mx-4 animate-scale-in">
@@ -33,7 +40,6 @@ const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
             Enter a name for your new folder
           </p>
         </div>
-
         <div className="px-6 py-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
@@ -44,6 +50,9 @@ const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
               value={name}
               placeholder="e.g., My Documents"
               onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleFolderCreation();
+              }}
               className="
                 w-full px-4 py-2.5
                 bg-background border border-input
@@ -63,25 +72,29 @@ const CreateFolderDialog = ({ onClose }: CreateFolderDialogProps) => {
         <div className="px-6 py-4 bg-muted/30 rounded-b-xl flex items-center justify-end gap-3">
           <button
             onClick={onClose}
+            disabled={isLoading}
             className="
               px-4 py-2
               text-sm font-medium text-foreground
               hover:bg-muted
               rounded-lg
               transition-colors duration-200
+              disabled:opacity-50
             "
           >
             Cancel
           </button>
           <button
             className="
-            px-4 py-2
-            text-sm font-medium text-primary-foreground
-            bg-primary hover:bg-primary/90
-            rounded-lg
-            transition-colors duration-200
-          "
+              px-4 py-2
+              text-sm font-medium text-primary-foreground
+              bg-primary hover:bg-primary/90
+              rounded-lg
+              transition-colors duration-200
+              disabled:opacity-50
+            "
             onClick={handleFolderCreation}
+            disabled={isLoading}
           >
             {isLoading ? "Creating..." : "Create Folder"}
           </button>
