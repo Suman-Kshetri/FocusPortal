@@ -111,7 +111,7 @@ export const QuestionsAnswers = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Questions Feed */}
           <div className="lg:col-span-8">

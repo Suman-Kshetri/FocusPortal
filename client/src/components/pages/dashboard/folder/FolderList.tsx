@@ -1,5 +1,6 @@
 import { useGetFolderContents } from "@/server/api/folder/useGetFolderContent";
 import { FolderCard } from "./folder-card/FolderCard";
+import LoadingAnimation from "@/components/other/LoadingAnimation";
 
 interface FolderListProps {
   folderId: string | null;
@@ -24,11 +25,7 @@ const FolderList = ({
   const { data, isLoading, error } = useGetFolderContents(folderId || "root");
 
   if (isLoading) {
-    return (
-      <div className="col-span-full text-center py-8">
-        <p className="text-muted-foreground">Loading folders...</p>
-      </div>
-    );
+    return <LoadingAnimation />;
   }
 
   if (error) {

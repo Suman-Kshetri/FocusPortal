@@ -14,6 +14,7 @@ import { useGetUserProfile } from "@/server/api/users/usegetUserProfile";
 import EditProfileDialog from "@/components/dialog/edit-profile-dialog";
 import { AvatarUpload } from "@/components/updateAvatar";
 import { useGetDetailedStats } from "@/server/api/stats/useGetStats";
+import { TopContributors } from "@/components/other/TopContrubutors";
 
 export const Profile = () => {
   const { userData, isLoading, error } = useGetUserProfile();
@@ -27,7 +28,6 @@ export const Profile = () => {
   useEffect(() => {
     if (userData) {
       setUser(userData.data);
-      console.log("USER DATA:", userData);
     }
   }, [userData]);
 
@@ -89,9 +89,7 @@ export const Profile = () => {
     user.bio && user.bio !== "Not Set" ? user.bio : "No bio available";
 
   const getUserRank = () => {
-    console.log("contributors", topContributors);
     if (!topContributors || topContributors.length === 0) return "N/A";
-
     const rank = topContributors.findIndex((c: any) => c._id === user._id);
     return rank !== -1 ? `#${rank + 1}` : "Unranked";
   };
@@ -230,19 +228,19 @@ export const Profile = () => {
                     icon={<MessageSquare className="w-6 h-6" />}
                     color="bg-blue-100"
                     label="Total Questions"
-                    value={stats.overview.questions?.toLocaleString() ?? "0"}
+                    value={stats.overview.questions ?? 0}
                   />
                   <PlatformStatCard
                     icon={<Users className="w-6 h-6" />}
                     color="bg-purple-100"
                     label="Active Users"
-                    value={stats.overview.activeUsers?.toLocaleString() ?? "0"}
+                    value={stats.overview.activeUsers ?? 0}
                   />
                   <PlatformStatCard
                     icon={<Users className="w-6 h-6" />}
                     color="bg-yellow-100"
                     label="Total Members"
-                    value={stats.overview.totalUsers?.toLocaleString() ?? "0"}
+                    value={stats.overview.totalUsers ?? 0}
                   />
                 </div>
               </div>
@@ -282,46 +280,13 @@ export const Profile = () => {
               </div>
             </div>
 
-            {/* Top Contributors */}
-            {!statsLoading && topContributors && topContributors.length > 0 && (
-              <div className="bg-card border border-border rounded-2xl shadow-lg p-6 space-y-4 transition-all duration-300 hover:shadow-xl">
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-foreground text-lg">
-                    Top Contributors
-                  </h3>
-                </div>
-
-                <div className="space-y-3">
-                  {topContributors
-                    .slice(0, 5)
-                    .map((contributor: any, idx: number) => (
-                      <div
-                        key={contributor._id}
-                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer"
-                      >
-                        <span className="text-xl">
-                          {idx === 0
-                            ? "🥇"
-                            : idx === 1
-                              ? "🥈"
-                              : idx === 2
-                                ? "🥉"
-                                : "⭐"}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {contributor.fullName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {contributor.points} pts
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
+            {/* Top Contributors - Now using the component */}
+            <TopContributors
+              contributors={topContributors || []}
+              isLoading={statsLoading}
+              maxDisplay={5}
+              currentUserId={user._id}
+            />
           </div>
         </div>
       </div>
@@ -333,9 +298,7 @@ const StatCard = ({ icon, color, label, value }: any) => (
   <div
     className={`flex items-start gap-4 rounded-xl px-4 py-3 ${color} flex-nowrap transition-all duration-200 hover:scale-105`}
   >
-    <div
-      className={`w-8 h-8 rounded-lg flex items-center justify-center mt-0.5`}
-    >
+    <div className="w-8 h-8 rounded-lg flex items-center justify-center mt-0.5">
       {icon}
     </div>
     <div>

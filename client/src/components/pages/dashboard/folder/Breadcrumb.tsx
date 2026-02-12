@@ -1,3 +1,4 @@
+import LoadingAnimation from "@/components/other/LoadingAnimation";
 import { ChevronRight, Home, Folder, AlertCircle } from "lucide-react";
 
 interface BreadcrumbItem {
@@ -47,12 +48,7 @@ export const Breadcrumb = ({
       </button>
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center gap-2">
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          <div className="animate-shimmer h-6 w-32 rounded-md" />
-        </div>
-      )}
+      {isLoading && <LoadingAnimation />}
 
       {/* Breadcrumb Items */}
       {!isLoading &&
