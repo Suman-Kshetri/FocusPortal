@@ -3,6 +3,7 @@ import {
    createFolder,
    deleteFolder,
    getFolderContents,
+   getFolderPath,
    getRootFolders,
    moveFolder,
    renameFolder,
@@ -12,9 +13,10 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 const folderRoute = express.Router();
 
 folderRoute.post("/create", verifyJwt, createFolder);
-folderRoute.get("/:id", verifyJwt, getFolderContents);
+folderRoute.get("/:folderId", verifyJwt, getFolderContents);
 folderRoute.patch("/:id/edit", verifyJwt, renameFolder);
-folderRoute.put("/:id/move", moveFolder);
-folderRoute.delete("/:id/delete", verifyJwt, deleteFolder);
+folderRoute.put("/:folderId/move", moveFolder);
+folderRoute.delete("/:folderId/delete", verifyJwt, deleteFolder);
 folderRoute.get("/root", verifyJwt, getRootFolders);
+folderRoute.get("/:folderId/path", verifyJwt, getFolderPath);
 export default folderRoute;

@@ -23,13 +23,30 @@ const FolderList = ({
 }: FolderListProps) => {
   const { data, isLoading, error } = useGetFolderContents(folderId || "root");
 
-  if (isLoading) return <p>Loading folders...</p>;
-  if (error) return <p>Failed to load folders.</p>;
+  if (isLoading) {
+    return (
+      <div className="col-span-full text-center py-8">
+        <p className="text-muted-foreground">Loading folders...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="col-span-full text-center py-8">
+        <p className="text-destructive">Failed to load folders.</p>
+      </div>
+    );
+  }
 
   const folders: Folder[] = data?.data?.data?.subFolders || [];
 
   if (folders.length === 0) {
-    return <p className="text-muted-foreground">No folders found</p>;
+    return (
+      <div className="col-span-full text-center py-8">
+        <p className="text-muted-foreground">No folders found</p>
+      </div>
+    );
   }
 
   return (

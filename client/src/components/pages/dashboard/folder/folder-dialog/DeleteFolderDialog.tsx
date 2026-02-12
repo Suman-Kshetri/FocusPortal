@@ -1,8 +1,14 @@
 interface DeleteFolderDialogProps {
+  folderId: string;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
-const DeleteFolderDialog = ({ onClose }: DeleteFolderDialogProps) => {
+const DeleteFolderDialog = ({
+  folderId,
+  onClose,
+  onSuccess,
+}: DeleteFolderDialogProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md mx-4 animate-scale-in">

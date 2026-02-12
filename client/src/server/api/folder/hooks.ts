@@ -11,4 +11,8 @@ export const folderApi = {
     const response = await axiosInstance.get(endpoint);
     return response;
   },
+  getFolderPath: async (folderId: string) => {
+    const response = await axiosInstance.get(`/folder/${folderId}/path`);
+    return response.data;
+  },
 };

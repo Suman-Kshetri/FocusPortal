@@ -6,6 +6,9 @@ import { RenameFolderDialog } from "./folder/folder-dialog/RenameFolderDialog";
 import PropertiesDialog from "./folder/folder-dialog/PropertiesDialog";
 import DeleteFolderDialog from "./folder/folder-dialog/DeleteFolderDialog";
 import CreateFolderDialog from "./folder/folder-dialog/CreateFolderDialog";
+import { Breadcrumb } from "./folder/Breadcrumb";
+import { useGetFolderPath } from "@/server/api/folder/useGetFolderPath";
+import { ArrowLeft } from "lucide-react";
 
 const FolderFileDashboard = () => {
   const [contextMenu, setContextMenu] = useState({
@@ -17,11 +20,28 @@ const FolderFileDashboard = () => {
   const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
-
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+
+  const { data: pathData, isLoading: isPathLoading } =
+    useGetFolderPath(currentFolderId);
+  const breadcrumbPath = pathData?.data || [];
 
   const handleFolderClick = (folderId: string) => {
     setCurrentFolderId(folderId);
+  };
+
+  const handleBreadcrumbNavigate = (folderId: string | null) => {
+    setCurrentFolderId(folderId);
+  };
+
+  const handleBackNavigation = () => {
+    if (breadcrumbPath.length > 0) {
+      const parentFolder = breadcrumbPath[breadcrumbPath.length - 2];
+      setCurrentFolderId(parentFolder?.id || null);
+    } else {
+      setCurrentFolderId(null);
+    }
   };
 
   const handleContextMenu = (e: React.MouseEvent, folderId: string) => {
@@ -38,40 +58,84 @@ const FolderFileDashboard = () => {
   };
 
   const handleOpen = () => {
-    console.log("Open folder:", contextMenu.folderId);
-    // Add your open logic here
+    if (contextMenu.folderId) {
+      setCurrentFolderId(contextMenu.folderId);
+    }
   };
 
   const handleCopy = () => {
     console.log("Copy folder:", contextMenu.folderId);
-    // Add your copy logic here
   };
 
   const handleMove = () => {
     console.log("Move folder:", contextMenu.folderId);
-    // Add your move logic here
   };
 
   const handleRename = () => {
+    setSelectedFolderId(contextMenu.folderId);
     setRenameOpen(true);
   };
 
   const handleProperties = () => {
+    setSelectedFolderId(contextMenu.folderId);
     setPropertiesOpen(true);
   };
 
   const handleDelete = () => {
+    setSelectedFolderId(contextMenu.folderId);
     setDeleteOpen(true);
+  };
+
+  const handleDeleteSuccess = () => {
+    if (breadcrumbPath.length > 0) {
+      const parentFolder = breadcrumbPath[breadcrumbPath.length - 2];
+      setCurrentFolderId(parentFolder?.id || null);
+    } else {
+      setCurrentFolderId(null);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-semibold text-foreground mb-8">
-          My Folders
-        </h1>
+        {/* Header */}
+        <div className="mb-6 animate-fade-in">
+          <h1 className="text-4xl font-bold text-gradient-primary mb-2">
+            My Folders
+          </h1>
+          <p className="text-muted-foreground">
+            Organize and manage your files efficiently
+          </p>
+        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {/* Back Button */}
+        {currentFolderId && (
+          <button
+            onClick={handleBackNavigation}
+            className="
+              inline-flex items-center gap-2 px-4 py-2 mb-4
+              text-sm font-medium text-foreground
+              bg-card border border-border rounded-lg
+              hover:bg-accent hover:text-accent-foreground
+              transition-all duration-200
+              hover-lift shadow-md
+              animate-slide-in-left
+            "
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+        )}
+
+        {/* Breadcrumb */}
+        <Breadcrumb
+          items={breadcrumbPath}
+          onNavigate={handleBreadcrumbNavigate}
+          isLoading={isPathLoading}
+        />
+
+        {/* Folder Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-fade-in">
           <FolderCreationUI onClick={() => setCreateOpen(true)} />
           <FolderList
             folderId={currentFolderId}
@@ -80,6 +144,8 @@ const FolderFileDashboard = () => {
           />
         </div>
       </div>
+
+      {/* Context Menu */}
       <FolderDialogBox
         isOpen={contextMenu.isOpen}
         position={contextMenu.position}
@@ -91,6 +157,8 @@ const FolderFileDashboard = () => {
         onMove={handleMove}
         onDelete={handleDelete}
       />
+
+      {/* Dialogs */}
       {createOpen && (
         <CreateFolderDialog
           parentFolderId={currentFolderId}
@@ -98,14 +166,35 @@ const FolderFileDashboard = () => {
         />
       )}
 
-      {renameOpen && (
-        <RenameFolderDialog onClose={() => setRenameOpen(false)} />
+      {renameOpen && selectedFolderId && (
+        <RenameFolderDialog
+          folderId={selectedFolderId}
+          onClose={() => {
+            setRenameOpen(false);
+            setSelectedFolderId(null);
+          }}
+        />
       )}
-      {propertiesOpen && (
-        <PropertiesDialog onClose={() => setPropertiesOpen(false)} />
+
+      {propertiesOpen && selectedFolderId && (
+        <PropertiesDialog
+          folderId={selectedFolderId}
+          onClose={() => {
+            setPropertiesOpen(false);
+            setSelectedFolderId(null);
+          }}
+        />
       )}
-      {deleteOpen && (
-        <DeleteFolderDialog onClose={() => setDeleteOpen(false)} />
+
+      {deleteOpen && selectedFolderId && (
+        <DeleteFolderDialog
+          folderId={selectedFolderId}
+          onClose={() => {
+            setDeleteOpen(false);
+            setSelectedFolderId(null);
+          }}
+          onSuccess={handleDeleteSuccess}
+        />
       )}
     </div>
   );

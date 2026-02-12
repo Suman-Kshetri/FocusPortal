@@ -45,10 +45,10 @@ export const createFolder = asyncHandler(async (req, res) => {
 });
 
 export const getFolderContents = asyncHandler(async (req, res) => {
-   const { id } = req.params;
+   const { folderId } = req.params;
 
    // Handle root folder case
-   if (id === "root" || !id) {
+   if (folderId === "root" || !folderId) {
       const rootFolders = await Folder.find({
          parentFolder: null,
          owner: req.user._id,
@@ -69,21 +69,22 @@ export const getFolderContents = asyncHandler(async (req, res) => {
    }
 
    // Handle specific folder case
-   const folder = await Folder.findOne({ _id: id, owner: req.user._id }).select(
-      "+parentFolder"
-   );
+   const folder = await Folder.findOne({
+      _id: folderId,
+      owner: req.user._id,
+   }).select("+parentFolder");
 
    if (!folder) {
       throw new ApiError(404, "Folder not found");
    }
 
    const subFolders = await Folder.find({
-      parentFolder: id,
+      parentFolder: folderId,
       owner: req.user._id,
    }).select("+parentFolder");
 
    const files = await File.find({
-      folder: id,
+      folder: folderId,
       owner: req.user._id,
    });
 
@@ -118,9 +119,9 @@ export const getRootFolders = asyncHandler(async (req, res) => {
 });
 
 export const moveFolder = asyncHandler(async (req, res) => {
-   const { id } = req.params;
+   const { folderId } = req.params;
    const { newParentId } = req.body;
-   const folder = await Folder.findOne({ _id: id, owner: req.user._id });
+   const folder = await Folder.findOne({ _id: folderId, owner: req.user._id });
    if (!folder) {
       throw new ApiError(404, "Folder not found");
    }
@@ -132,7 +133,7 @@ export const moveFolder = asyncHandler(async (req, res) => {
 });
 
 export const renameFolder = asyncHandler(async (req, res) => {
-   const { id } = req.params;
+   const { folderId } = req.params;
    const { folderName } = req.body;
 
    if (!folderName || !folderName.trim()) {
@@ -140,7 +141,7 @@ export const renameFolder = asyncHandler(async (req, res) => {
    }
 
    const folder = await Folder.findOne({
-      _id: id,
+      _id: folderId,
       owner: req.user._id,
    });
 
@@ -185,10 +186,10 @@ const deleteFolderRecursively = async (
 };
 
 export const deleteFolder = asyncHandler(async (req, res) => {
-   const { id } = req.params;
+   const { folderId } = req.params;
 
    const folder = await Folder.findOne({
-      _id: id,
+      _id: folderId,
       owner: req.user._id,
    });
 
@@ -200,5 +201,52 @@ export const deleteFolder = asyncHandler(async (req, res) => {
 
    res.status(200).json(
       new ApiResponse(200, "Folder and all contents deleted successfully", {})
+   );
+});
+
+export const getFolderPath = asyncHandler(async (req, res) => {
+   const { folderId } = req.params;
+   const currentUser = req.user;
+
+   if (!currentUser) {
+      throw new ApiError(403, "Unauthorized access");
+   }
+
+   if (!folderId) {
+      throw new ApiError(400, "Folder ID is required");
+   }
+
+   if (!Types.ObjectId.isValid(folderId)) {
+      throw new ApiError(400, "Invalid folder ID format");
+   }
+
+   const folder = await Folder.findById(folderId);
+
+   if (!folder) {
+      throw new ApiError(404, "Folder not found");
+   }
+
+   if (folder.owner.toString() !== currentUser._id.toString()) {
+      throw new ApiError(403, "Not authorized to access this folder");
+   }
+
+   const path: { id: string; name: string }[] = [];
+   let currentFolder: typeof folder | null = folder;
+
+   while (currentFolder) {
+      path.unshift({
+         id: currentFolder._id.toString(),
+         name: currentFolder.folderName,
+      });
+
+      if (currentFolder.parentFolder) {
+         currentFolder = await Folder.findById(currentFolder.parentFolder);
+      } else {
+         currentFolder = null;
+      }
+   }
+
+   res.status(200).json(
+      new ApiResponse(200, "Folder path retrieved successfully", path)
    );
 });
