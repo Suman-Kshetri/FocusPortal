@@ -9,6 +9,7 @@ import CreateFolderDialog from "./folder/folder-dialog/CreateFolderDialog";
 import { Breadcrumb } from "./folder/Breadcrumb";
 import { useGetFolderPath } from "@/server/api/folder/useGetFolderPath";
 import { ArrowLeft } from "lucide-react";
+import { MoveFolderDialog } from "./folder/folder-dialog/MoveFolderDialog";
 
 const FolderFileDashboard = () => {
   const [contextMenu, setContextMenu] = useState({
@@ -21,6 +22,7 @@ const FolderFileDashboard = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [moveOpen, setMoveOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,12 +66,9 @@ const FolderFileDashboard = () => {
     }
   };
 
-  const handleCopy = () => {
-    console.log("Copy folder:", contextMenu.folderId);
-  };
-
   const handleMove = () => {
-    console.log("Move folder:", contextMenu.folderId);
+    setSelectedFolderId(contextMenu.folderId);
+    setMoveOpen(true);
   };
 
   const handleRename = () => {
@@ -183,7 +182,6 @@ const FolderFileDashboard = () => {
         onClose={closeContextMenu}
         onOpen={handleOpen}
         onRename={handleRename}
-        onCopy={handleCopy}
         onMove={handleMove}
         onDelete={handleDelete}
       />
@@ -214,6 +212,15 @@ const FolderFileDashboard = () => {
             setSelectedFolderId(null);
           }}
           onSuccess={handleDeleteSuccess}
+        />
+      )}
+      {moveOpen && selectedFolderId && (
+        <MoveFolderDialog
+          folderId={selectedFolderId}
+          onClose={() => {
+            setMoveOpen(false);
+            setSelectedFolderId(null);
+          }}
         />
       )}
     </div>

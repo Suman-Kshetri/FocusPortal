@@ -16,7 +16,6 @@ export const FolderDialogBox = ({
   onClose,
   onOpen,
   onRename,
-  onCopy,
   onMove,
   onDelete,
 }: FolderDialogBoxProps) => {
@@ -77,6 +76,7 @@ export const FolderDialogBox = ({
             <div
               onClick={() => {
                 onRename?.();
+                onClose();
               }}
               className="
                 px-4 py-2.5 
@@ -103,7 +103,7 @@ export const FolderDialogBox = ({
               <span>Rename</span>
             </div>
             <div className="my-1 h-px bg-border"></div>
-            <div
+            {/* <div
               onClick={() => {
                 onCopy?.();
                 onClose();
@@ -131,7 +131,7 @@ export const FolderDialogBox = ({
                 />
               </svg>
               <span>Copy</span>
-            </div>
+            </div> */}
 
             <div
               onClick={() => {
