@@ -4,27 +4,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import RegisterForm from "../registerForm";
 import { useRegister } from "@/server/api/auth/useRegister";
+import GoToHomeButton from "../ui/GotoHomeButton";
 
-
-const step1Schema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
-  username: z.string().trim().min(4,"Username must be at least of minimum 4 characters").toLowerCase(),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"]
-});
+const step1Schema = z
+  .object({
+    fullName: z.string().min(2, "Name must be at least 2 characters"),
+    username: z
+      .string()
+      .trim()
+      .min(4, "Username must be at least of minimum 4 characters")
+      .toLowerCase(),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const step2Schema = z.object({
-  profilePicture: z.instanceof(FileList).optional().refine(
-    (files) => !files || files.length === 0 || files[0].size <= 2000000,
-    "File size must be less than 2MB"
-  ).refine(
-    (files) => !files || files.length === 0 || ["image/jpeg", "image/jpg", "image/png"].includes(files[0].type),
-    "Only .jpg, .jpeg, .png formats are supported"
-  )
+  profilePicture: z
+    .instanceof(FileList)
+    .optional()
+    .refine(
+      (files) => !files || files.length === 0 || files[0].size <= 2000000,
+      "File size must be less than 2MB",
+    )
+    .refine(
+      (files) =>
+        !files ||
+        files.length === 0 ||
+        ["image/jpeg", "image/jpg", "image/png"].includes(files[0].type),
+      "Only .jpg, .jpeg, .png formats are supported",
+    ),
 });
 
 type Step1FormData = z.infer<typeof step1Schema>;
@@ -35,7 +48,7 @@ const Register = () => {
   const [step1Data, setStep1Data] = useState<Step1FormData | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const {onSubmit,isLoading} = useRegister();
+  const { onSubmit, isLoading } = useRegister();
   const step1Form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
     defaultValues: {
@@ -43,12 +56,12 @@ const Register = () => {
       username: "",
       email: "",
       password: "",
-      confirmPassword: ""
-    }
+      confirmPassword: "",
+    },
   });
 
   const step2Form = useForm<Step2FormData>({
-    resolver: zodResolver(step2Schema)
+    resolver: zodResolver(step2Schema),
   });
 
   const onStep1Submit = (data: Step1FormData) => {
@@ -59,21 +72,25 @@ const Register = () => {
   const onStep2Submit = (data: Step2FormData) => {
     if (!step1Data) return;
 
-  const finalData = {
-    fullName: step1Data.fullName,
-    email: step1Data.email,
-    username: step1Data.username,
-    password: step1Data.password,
-    avatar: data.profilePicture?.[0],
-  };
+    const finalData = {
+      fullName: step1Data.fullName,
+      email: step1Data.email,
+      username: step1Data.username,
+      password: step1Data.password,
+      avatar: data.profilePicture?.[0],
+    };
 
-  console.log("Final registration data:", finalData);
+    console.log("Final registration data:", finalData);
 
-  onSubmit(finalData);
+    onSubmit(finalData);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-background/40 px-4 py-8">
+      <div className="absolute top-6 left-6">
+        <GoToHomeButton />
+      </div>
+
       <RegisterForm
         step={step}
         setStep={setStep}
