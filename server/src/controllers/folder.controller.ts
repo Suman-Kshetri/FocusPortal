@@ -141,7 +141,7 @@ export const renameFolder = asyncHandler(async (req, res) => {
    }
 
    const folder = await Folder.findOne({
-      _id: folderId,
+      _id: new Types.ObjectId(folderId),
       owner: req.user._id,
    });
 

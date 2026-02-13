@@ -1,5 +1,6 @@
 import axiosInstance from "@/config/api/axios.config";
 import type { folderCreationType } from "@/types/folderTypes";
+import type { RenameFolderInput } from "./useRenameFolder";
 
 export const folderApi = {
   createFolder: async (data: folderCreationType) => {
@@ -13,6 +14,12 @@ export const folderApi = {
   },
   getFolderPath: async (folderId: string) => {
     const response = await axiosInstance.get(`/folder/${folderId}/path`);
+    return response.data;
+  },
+  renameFolder: async ({ folderId, folderName }: RenameFolderInput) => {
+    const response = await axiosInstance.patch(`/folder/${folderId}/edit`, {
+      folderName,
+    });
     return response.data;
   },
 };

@@ -4,7 +4,6 @@ import { FileUploadUI } from "./file/FileUploaderUI";
 import { FolderDialogBox } from "./folder/folder-dialog/FolderDialogBox";
 import FolderList from "./folder/FolderList";
 import { RenameFolderDialog } from "./folder/folder-dialog/RenameFolderDialog";
-import PropertiesDialog from "./folder/folder-dialog/PropertiesDialog";
 import DeleteFolderDialog from "./folder/folder-dialog/DeleteFolderDialog";
 import CreateFolderDialog from "./folder/folder-dialog/CreateFolderDialog";
 import { Breadcrumb } from "./folder/Breadcrumb";
@@ -18,13 +17,11 @@ const FolderFileDashboard = () => {
     folderId: null as string | null,
   });
   const [renameOpen, setRenameOpen] = useState(false);
-  const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
-  // File upload ref
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: pathData, isLoading: isPathLoading } =
@@ -76,13 +73,12 @@ const FolderFileDashboard = () => {
   };
 
   const handleRename = () => {
-    setSelectedFolderId(contextMenu.folderId);
-    setRenameOpen(true);
-  };
-
-  const handleProperties = () => {
-    setSelectedFolderId(contextMenu.folderId);
-    setPropertiesOpen(true);
+    const folderId = contextMenu.folderId;
+    closeContextMenu();
+    if (folderId) {
+      setSelectedFolderId(folderId);
+      setRenameOpen(true);
+    }
   };
 
   const handleDelete = () => {
@@ -187,7 +183,6 @@ const FolderFileDashboard = () => {
         onClose={closeContextMenu}
         onOpen={handleOpen}
         onRename={handleRename}
-        onProperties={handleProperties}
         onCopy={handleCopy}
         onMove={handleMove}
         onDelete={handleDelete}
@@ -206,16 +201,6 @@ const FolderFileDashboard = () => {
           folderId={selectedFolderId}
           onClose={() => {
             setRenameOpen(false);
-            setSelectedFolderId(null);
-          }}
-        />
-      )}
-
-      {propertiesOpen && selectedFolderId && (
-        <PropertiesDialog
-          folderId={selectedFolderId}
-          onClose={() => {
-            setPropertiesOpen(false);
             setSelectedFolderId(null);
           }}
         />

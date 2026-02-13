@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { commentApis } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
@@ -10,11 +10,13 @@ interface UpdateCommentParams {
 }
 
 export const useUpdateComment = () => {
+  const queryClient = useQueryClient();
   const updateCommentMutation = useMutation({
     mutationFn: ({ commentId, data }: UpdateCommentParams) =>
       commentApis.updateComment(commentId, data),
 
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments"] });
       toast.success("Comment updated successfully");
     },
 
