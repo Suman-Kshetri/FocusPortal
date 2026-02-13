@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FolderCreationUI } from "./folder/folder-creation/FolderCreationUI";
+import { FileUploadUI } from "./file/FileUploaderUI";
 import { FolderDialogBox } from "./folder/folder-dialog/FolderDialogBox";
 import FolderList from "./folder/FolderList";
 import { RenameFolderDialog } from "./folder/folder-dialog/RenameFolderDialog";
@@ -22,6 +23,9 @@ const FolderFileDashboard = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+
+  // File upload ref
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: pathData, isLoading: isPathLoading } =
     useGetFolderPath(currentFolderId);
@@ -95,6 +99,26 @@ const FolderFileDashboard = () => {
     }
   };
 
+  // File upload handlers
+  const handleFileUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      // Handle file upload logic here
+      console.log("Selected files:", Array.from(files));
+      console.log("Upload to folder:", currentFolderId);
+
+      // TODO: Implement your file upload logic here
+      // Example: uploadFiles(Array.from(files), currentFolderId);
+
+      // Reset the input
+      e.target.value = "";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
@@ -134,9 +158,20 @@ const FolderFileDashboard = () => {
           isLoading={isPathLoading}
         />
 
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept=".docx,.jpg,.jpeg,.png,.gif,.webp,.pdf,.md,.xlsx,.txt"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+
         {/* Folder Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-fade-in">
           <FolderCreationUI onClick={() => setCreateOpen(true)} />
+          <FileUploadUI onClick={handleFileUploadClick} />
           <FolderList
             folderId={currentFolderId}
             onFolderClick={handleFolderClick}
