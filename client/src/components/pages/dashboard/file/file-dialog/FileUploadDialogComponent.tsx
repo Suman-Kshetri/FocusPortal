@@ -146,6 +146,7 @@ export const FileUploadDialog = ({
         formData.append("folder", currentFolderId);
       }
       await onSubmit(formData);
+      console.log(formData);
       selectedFiles.forEach((sf) => {
         if (sf.preview) {
           URL.revokeObjectURL(sf.preview);

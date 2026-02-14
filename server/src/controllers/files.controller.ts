@@ -14,7 +14,7 @@ const getFileType = (mimetype: string) => {
    if (mimetype.includes("sheet") || mimetype.includes("excel")) return "xlsx";
    if (mimetype.includes("markdown")) return "md";
    if (mimetype.includes("image")) return "image";
-   if (mimetype.includes("txt")) return "txt";
+   if (mimetype.includes("plain") || mimetype === "text/plain") return "txt";
    return "txt";
 };
 

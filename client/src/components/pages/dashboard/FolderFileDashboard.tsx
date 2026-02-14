@@ -407,9 +407,10 @@ const FolderFileDashboard = () => {
           }}
         />
       )}
-      {moveFileOpen && selectedFileId && (
+      {moveFileOpen && selectedFileId && currentFile && (
         <MoveFileDialog
           fileId={selectedFileId}
+          fileName={currentFile.fileName}
           currentFolderId={currentFolderId}
           onClose={() => {
             setMoveFileOpen(false);

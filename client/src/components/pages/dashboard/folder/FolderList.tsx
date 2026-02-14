@@ -37,15 +37,6 @@ const FolderList = ({
   }
 
   const folders: Folder[] = data?.data?.data?.subFolders || [];
-
-  if (folders.length === 0) {
-    return (
-      <div className="col-span-full text-center py-8">
-        <p className="text-muted-foreground">No folders found</p>
-      </div>
-    );
-  }
-
   return (
     <>
       {folders.map((folder) => (
