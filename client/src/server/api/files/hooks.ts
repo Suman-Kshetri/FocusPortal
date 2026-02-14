@@ -40,8 +40,8 @@ export const filesApi = {
     return response.data;
   },
 
-  deleteFile: async (fileId: string) => {
-    const response = await axiosInstance.delete(`/files/${fileId}/delete`);
+  deleteFile: async (id: string) => {
+    const response = await axiosInstance.delete(`/files/delete/${id}`);
     return response.data;
   },
 };

@@ -15,7 +15,7 @@ const getFileType = (mimetype: string) => {
    if (mimetype.includes("markdown")) return "md";
    if (mimetype.includes("image")) return "image";
    if (mimetype.includes("txt")) return "txt";
-   return "other";
+   return "txt";
 };
 
 export const uploadFile = asyncHandler(async (req, res) => {

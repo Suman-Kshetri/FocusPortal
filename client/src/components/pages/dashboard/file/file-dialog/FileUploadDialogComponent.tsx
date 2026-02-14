@@ -25,7 +25,7 @@ const ALLOWED_TYPES = {
 interface SelectedFile {
   file: File;
   preview?: string;
-  type: "pdf" | "docx" | "xlsx" | "md" | "image" | "txt";
+  type: "pdf" | "docx" | "xlsx" | "md" | "image" | "txt" | "webp" | "gif";
   error?: string;
 }
 
@@ -44,10 +44,16 @@ export const FileUploadDialog = ({
 
   const getFileType = (
     file: File,
-  ): "pdf" | "docx" | "xlsx" | "md" | "image" | "txt" => {
+  ): "pdf" | "docx" | "xlsx" | "md" | "image" | "txt" | "webp" | "gif" => {
     const extension = file.name.split(".").pop()?.toLowerCase();
     if (["jpg", "jpeg", "png"].includes(extension || "")) {
       return "image";
+    }
+    if (extension === "webp") {
+      return "webp";
+    }
+    if (extension === "gif") {
+      return "gif";
     }
     if (extension === "txt") {
       return "txt";

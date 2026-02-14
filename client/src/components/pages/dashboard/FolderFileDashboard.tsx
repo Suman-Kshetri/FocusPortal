@@ -18,6 +18,14 @@ import { FileUploadDialog } from "./file/file-dialog/FileUploadDialogComponent";
 import { RenameFileDialog } from "./file/file-dialog/RenameFolderDialog";
 import { useDownloadFile } from "@/server/api/files/useDownloadFile";
 import { MoveFileDialog } from "./file/file-dialog/MoveFileDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const FolderFileDashboard = () => {
   // Folder states
@@ -33,6 +41,9 @@ const FolderFileDashboard = () => {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [moveFolderOpen, setMoveFolderOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  //only for the alert dialogbox:
+  const [previewErrorOpen, setPreviewErrorOpen] = useState(false);
+  const [previewErrorType, setPreviewErrorType] = useState("");
 
   // File states
   const [fileContextMenu, setFileContextMenu] = useState({
@@ -122,7 +133,19 @@ const FolderFileDashboard = () => {
   const handleFileClick = (fileId: string) => {
     const file = filesData?.data?.files?.find((f: any) => f._id === fileId);
     if (file) {
-      handleFileView(fileId, file);
+      // For images - open in new tab
+      if (file.type === "image" && file.cloudinaryPublicId) {
+        window.open(file.path, "_blank");
+        return;
+      }
+
+      // For PDFs - open in new tab
+      if (file.type === "pdf") {
+        window.open(file.path, "_blank");
+        return;
+      }
+      setPreviewErrorType(file.type.toUpperCase());
+      setPreviewErrorOpen(true);
     }
   };
 
@@ -133,6 +156,7 @@ const FolderFileDashboard = () => {
       position: { x: e.clientX, y: e.clientY },
       fileId,
     });
+    setSelectedFileId(fileId);
   };
 
   const closeFileContextMenu = () => {
@@ -143,11 +167,16 @@ const FolderFileDashboard = () => {
     });
   };
 
-  const handleFileView = (fileId?: string, file?: any) => {
-    const targetFileId = fileId || fileContextMenu.fileId;
-    const targetFile = file || currentFile;
+  const handleFileView = () => {
+    const targetFile = filesData?.data?.files?.find(
+      (f: any) => f._id === fileContextMenu.fileId,
+    );
 
-    if (!targetFile) return;
+    if (!targetFile) {
+      console.error("File not found");
+      closeFileContextMenu();
+      return;
+    }
 
     // For images - open in new tab
     if (targetFile.type === "image" && targetFile.cloudinaryPublicId) {
@@ -164,9 +193,7 @@ const FolderFileDashboard = () => {
     }
 
     // For other file types, download them
-    if (targetFileId) {
-      handleFileDownload(targetFileId, targetFile.fileName);
-    }
+    handleFileDownload();
     closeFileContextMenu();
   };
 
@@ -176,24 +203,27 @@ const FolderFileDashboard = () => {
     // TODO: Implement file edit
   };
 
-  const handleFileDownload = async (fileId?: string, fileName?: string) => {
-    const targetFileId = fileId || fileContextMenu.fileId;
-    const targetFileName = fileName || currentFile?.fileName;
+  const handleFileDownload = async () => {
+    const targetFile = filesData?.data?.files?.find(
+      (f: any) => f._id === fileContextMenu.fileId,
+    );
 
-    if (targetFileId && targetFileName) {
-      try {
-        await downloadFile({
-          fileId: targetFileId,
-          fileName: targetFileName,
-        });
-      } catch (error) {
-        console.error("Download error:", error);
-      }
-    }
-
-    if (!fileId) {
+    if (!targetFile) {
+      console.error("File not found");
       closeFileContextMenu();
+      return;
     }
+
+    try {
+      await downloadFile({
+        fileId: targetFile._id,
+        fileName: targetFile.fileName,
+      });
+    } catch (error) {
+      console.error("Download error:", error);
+    }
+
+    closeFileContextMenu();
   };
 
   const handleFileMove = () => {
@@ -300,7 +330,7 @@ const FolderFileDashboard = () => {
         onClose={closeFileContextMenu}
         onView={handleFileView}
         onEdit={handleFileEdit}
-        onDownload={() => handleFileDownload()}
+        onDownload={handleFileDownload}
         onMove={handleFileMove}
         onRename={handleFileRename}
         onDelete={handleFileDelete}
@@ -387,6 +417,29 @@ const FolderFileDashboard = () => {
           }}
         />
       )}
+
+      <AlertDialog open={previewErrorOpen} onOpenChange={setPreviewErrorOpen}>
+        <AlertDialogContent className="w-[320px] p-4">
+          <AlertDialogHeader className="space-y-2">
+            <AlertDialogTitle className="text-base">
+              Preview Not Available
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm">
+              Cannot preview {previewErrorType} files. Please right-click and
+              select Download.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="flex justify-end mt-4">
+            <AlertDialogAction
+              onClick={() => setPreviewErrorOpen(false)}
+              className="h-8 px-3 text-sm"
+            >
+              OK
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

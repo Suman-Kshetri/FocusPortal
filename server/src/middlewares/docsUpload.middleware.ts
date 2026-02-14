@@ -33,9 +33,12 @@ const fileFilter = (
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
       "text/markdown",
+      "text/plain",
       "image/png",
       "image/jpeg",
       "image/jpg",
+      "image/gif",
+      "image/webp",
    ];
 
    if (allowedTypes.includes(file.mimetype)) cb(null, true);
