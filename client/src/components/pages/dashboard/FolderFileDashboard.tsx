@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { FolderCreationUI } from "./folder/folder-creation/FolderCreationUI";
 import { FileUploadUI } from "./file/FileUploaderUI";
 import { FolderDialogBox } from "./folder/folder-dialog/FolderDialogBox";
@@ -10,6 +10,8 @@ import { Breadcrumb } from "./folder/Breadcrumb";
 import { useGetFolderPath } from "@/server/api/folder/useGetFolderPath";
 import { ArrowLeft } from "lucide-react";
 import { MoveFolderDialog } from "./folder/folder-dialog/MoveFolderDialog";
+import { FileUploadDialog } from "./file/file-preview/FileUploadDialogComponent";
+
 
 const FolderFileDashboard = () => {
   const [contextMenu, setContextMenu] = useState({
@@ -23,8 +25,7 @@ const FolderFileDashboard = () => {
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [moveOpen, setMoveOpen] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   const { data: pathData, isLoading: isPathLoading } =
     useGetFolderPath(currentFolderId);
@@ -94,24 +95,14 @@ const FolderFileDashboard = () => {
     }
   };
 
-  // File upload handlers
   const handleFileUploadClick = () => {
-    fileInputRef.current?.click();
+    setUploadDialogOpen(true);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      // Handle file upload logic here
-      console.log("Selected files:", Array.from(files));
-      console.log("Upload to folder:", currentFolderId);
-
-      // TODO: Implement your file upload logic here
-      // Example: uploadFiles(Array.from(files), currentFolderId);
-
-      // Reset the input
-      e.target.value = "";
-    }
+  const handleUploadSuccess = () => {
+    // Refresh file list or handle success
+    console.log("Files uploaded successfully");
+    // You might want to refetch files here
   };
 
   return (
@@ -151,16 +142,6 @@ const FolderFileDashboard = () => {
           items={breadcrumbPath}
           onNavigate={handleBreadcrumbNavigate}
           isLoading={isPathLoading}
-        />
-
-        {/* Hidden File Input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept=".docx,.jpg,.jpeg,.png,.gif,.webp,.pdf,.md,.xlsx,.txt"
-          onChange={handleFileSelect}
-          className="hidden"
         />
 
         {/* Folder Grid */}
@@ -214,6 +195,7 @@ const FolderFileDashboard = () => {
           onSuccess={handleDeleteSuccess}
         />
       )}
+
       {moveOpen && selectedFolderId && (
         <MoveFolderDialog
           folderId={selectedFolderId}
@@ -221,6 +203,15 @@ const FolderFileDashboard = () => {
             setMoveOpen(false);
             setSelectedFolderId(null);
           }}
+        />
+      )}
+
+      {uploadDialogOpen && (
+        <FileUploadDialog
+          isOpen={uploadDialogOpen}
+          onClose={() => setUploadDialogOpen(false)}
+          currentFolderId={currentFolderId}
+          onUploadSuccess={handleUploadSuccess}
         />
       )}
     </div>

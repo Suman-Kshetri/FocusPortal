@@ -198,20 +198,6 @@ const LandingPage = () => {
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-2 pl-14">
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className="w-6 h-6 rounded-full border-2 border-background gradient-secondary"
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        12 people are discussing this
-                      </span>
-                    </div>
                   </div>
                 </div>
 
