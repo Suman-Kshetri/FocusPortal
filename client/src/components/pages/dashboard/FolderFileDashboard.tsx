@@ -10,25 +10,41 @@ import { Breadcrumb } from "./folder/Breadcrumb";
 import { useGetFolderPath } from "@/server/api/folder/useGetFolderPath";
 import { ArrowLeft } from "lucide-react";
 import { MoveFolderDialog } from "./folder/folder-dialog/MoveFolderDialog";
-import { FileUploadDialog } from "./file/file-preview/FileUploadDialogComponent";
-
+import { DeleteFileDialog } from "./file/file-dialog/DeleteFileDialog";
+import { useGetFiles } from "@/server/api/files/useGetFolderFiles";
+import { FileDialogBox } from "./file/file-dialog/FileContextMenuDialog";
+import FileList from "./file/file-list/FileList";
+import { FileUploadDialog } from "./file/file-dialog/FileUploadDialogComponent";
+import { RenameFileDialog } from "./file/file-dialog/RenameFolderDialog";
 
 const FolderFileDashboard = () => {
-  const [contextMenu, setContextMenu] = useState({
+  // Folder states
+  const [folderContextMenu, setFolderContextMenu] = useState({
     isOpen: false,
     position: { x: 0, y: 0 },
     folderId: null as string | null,
   });
-  const [renameOpen, setRenameOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [renameFolderOpen, setRenameFolderOpen] = useState(false);
+  const [deleteFolderOpen, setDeleteFolderOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
-  const [moveOpen, setMoveOpen] = useState(false);
+  const [moveFolderOpen, setMoveFolderOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
+  // File states
+  const [fileContextMenu, setFileContextMenu] = useState({
+    isOpen: false,
+    position: { x: 0, y: 0 },
+    fileId: null as string | null,
+  });
+  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+  const [deleteFileOpen, setDeleteFileOpen] = useState(false);
+  const [renameFileOpen, setRenameFileOpen] = useState(false);
 
   const { data: pathData, isLoading: isPathLoading } =
     useGetFolderPath(currentFolderId);
+  const { data: filesData } = useGetFiles(currentFolderId);
   const breadcrumbPath = pathData?.data || [];
 
   const handleFolderClick = (folderId: string) => {
@@ -48,45 +64,50 @@ const FolderFileDashboard = () => {
     }
   };
 
-  const handleContextMenu = (e: React.MouseEvent, folderId: string) => {
+  // Folder handlers
+  const handleFolderContextMenu = (e: React.MouseEvent, folderId: string) => {
     e.preventDefault();
-    setContextMenu({
+    setFolderContextMenu({
       isOpen: true,
       position: { x: e.clientX, y: e.clientY },
       folderId,
     });
   };
 
-  const closeContextMenu = () => {
-    setContextMenu({ isOpen: false, position: { x: 0, y: 0 }, folderId: null });
+  const closeFolderContextMenu = () => {
+    setFolderContextMenu({
+      isOpen: false,
+      position: { x: 0, y: 0 },
+      folderId: null,
+    });
   };
 
-  const handleOpen = () => {
-    if (contextMenu.folderId) {
-      setCurrentFolderId(contextMenu.folderId);
+  const handleFolderOpen = () => {
+    if (folderContextMenu.folderId) {
+      setCurrentFolderId(folderContextMenu.folderId);
     }
   };
 
-  const handleMove = () => {
-    setSelectedFolderId(contextMenu.folderId);
-    setMoveOpen(true);
+  const handleFolderMove = () => {
+    setSelectedFolderId(folderContextMenu.folderId);
+    setMoveFolderOpen(true);
   };
 
-  const handleRename = () => {
-    const folderId = contextMenu.folderId;
-    closeContextMenu();
+  const handleFolderRename = () => {
+    const folderId = folderContextMenu.folderId;
+    closeFolderContextMenu();
     if (folderId) {
       setSelectedFolderId(folderId);
-      setRenameOpen(true);
+      setRenameFolderOpen(true);
     }
   };
 
-  const handleDelete = () => {
-    setSelectedFolderId(contextMenu.folderId);
-    setDeleteOpen(true);
+  const handleFolderDelete = () => {
+    setSelectedFolderId(folderContextMenu.folderId);
+    setDeleteFolderOpen(true);
   };
 
-  const handleDeleteSuccess = () => {
+  const handleDeleteFolderSuccess = () => {
     if (breadcrumbPath.length > 0) {
       const parentFolder = breadcrumbPath[breadcrumbPath.length - 2];
       setCurrentFolderId(parentFolder?.id || null);
@@ -95,15 +116,76 @@ const FolderFileDashboard = () => {
     }
   };
 
+  // File handlers
+  const handleFileClick = (fileId: string) => {
+    console.log("File clicked:", fileId);
+    // TODO: Implement file view/download
+  };
+
+  const handleFileContextMenu = (e: React.MouseEvent, fileId: string) => {
+    e.preventDefault();
+    setFileContextMenu({
+      isOpen: true,
+      position: { x: e.clientX, y: e.clientY },
+      fileId,
+    });
+  };
+
+  const closeFileContextMenu = () => {
+    setFileContextMenu({
+      isOpen: false,
+      position: { x: 0, y: 0 },
+      fileId: null,
+    });
+  };
+
+  const handleFileView = () => {
+    console.log("View file:", fileContextMenu.fileId);
+    closeFileContextMenu();
+    // TODO: Implement file view
+  };
+
+  const handleFileEdit = () => {
+    console.log("Edit file:", fileContextMenu.fileId);
+    closeFileContextMenu();
+    // TODO: Implement file edit
+  };
+
+  const handleFileDownload = () => {
+    console.log("Download file:", fileContextMenu.fileId);
+    closeFileContextMenu();
+    // TODO: Implement file download
+  };
+
+  const handleFileMove = () => {
+    console.log("Move file:", fileContextMenu.fileId);
+    closeFileContextMenu();
+    // TODO: Implement file move
+  };
+
+  const handleFileRename = () => {
+    setSelectedFileId(fileContextMenu.fileId);
+    setRenameFileOpen(true);
+    closeFileContextMenu();
+  };
+
+  const handleFileDelete = () => {
+    setSelectedFileId(fileContextMenu.fileId);
+    setDeleteFileOpen(true);
+    closeFileContextMenu();
+  };
+
   const handleFileUploadClick = () => {
     setUploadDialogOpen(true);
   };
 
   const handleUploadSuccess = () => {
-    // Refresh file list or handle success
     console.log("Files uploaded successfully");
-    // You might want to refetch files here
   };
+
+  const currentFile = filesData?.data?.files?.find(
+    (f: any) => f._id === selectedFileId,
+  );
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -144,30 +226,49 @@ const FolderFileDashboard = () => {
           isLoading={isPathLoading}
         />
 
-        {/* Folder Grid */}
+        {/* Folder & File Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-fade-in">
           <FolderCreationUI onClick={() => setCreateOpen(true)} />
           <FileUploadUI onClick={handleFileUploadClick} />
           <FolderList
             folderId={currentFolderId}
             onFolderClick={handleFolderClick}
-            onFolderContextMenu={handleContextMenu}
+            onFolderContextMenu={handleFolderContextMenu}
+          />
+          <FileList
+            folderId={currentFolderId}
+            onFileClick={handleFileClick}
+            onFileContextMenu={handleFileContextMenu}
           />
         </div>
       </div>
 
-      {/* Context Menu */}
+      {/* Folder Context Menu */}
       <FolderDialogBox
-        isOpen={contextMenu.isOpen}
-        position={contextMenu.position}
-        onClose={closeContextMenu}
-        onOpen={handleOpen}
-        onRename={handleRename}
-        onMove={handleMove}
-        onDelete={handleDelete}
+        isOpen={folderContextMenu.isOpen}
+        position={folderContextMenu.position}
+        onClose={closeFolderContextMenu}
+        onOpen={handleFolderOpen}
+        onRename={handleFolderRename}
+        onMove={handleFolderMove}
+        onDelete={handleFolderDelete}
       />
 
-      {/* Dialogs */}
+      {/* File Context Menu */}
+      <FileDialogBox
+        isOpen={fileContextMenu.isOpen}
+        position={fileContextMenu.position}
+        onClose={closeFileContextMenu}
+        onView={handleFileView}
+        onEdit={handleFileEdit}
+        onDownload={handleFileDownload}
+        onMove={handleFileMove}
+        onRename={handleFileRename}
+        onDelete={handleFileDelete}
+        editable={currentFile?.editable}
+      />
+
+      {/* Folder Dialogs */}
       {createOpen && (
         <CreateFolderDialog
           parentFolderId={currentFolderId}
@@ -175,43 +276,66 @@ const FolderFileDashboard = () => {
         />
       )}
 
-      {renameOpen && selectedFolderId && (
+      {renameFolderOpen && selectedFolderId && (
         <RenameFolderDialog
           folderId={selectedFolderId}
           onClose={() => {
-            setRenameOpen(false);
+            setRenameFolderOpen(false);
             setSelectedFolderId(null);
           }}
         />
       )}
 
-      {deleteOpen && selectedFolderId && (
+      {deleteFolderOpen && selectedFolderId && (
         <DeleteFolderDialog
           folderId={selectedFolderId}
           onClose={() => {
-            setDeleteOpen(false);
+            setDeleteFolderOpen(false);
             setSelectedFolderId(null);
           }}
-          onSuccess={handleDeleteSuccess}
+          onSuccess={handleDeleteFolderSuccess}
         />
       )}
 
-      {moveOpen && selectedFolderId && (
+      {moveFolderOpen && selectedFolderId && (
         <MoveFolderDialog
           folderId={selectedFolderId}
           onClose={() => {
-            setMoveOpen(false);
+            setMoveFolderOpen(false);
             setSelectedFolderId(null);
           }}
         />
       )}
 
+      {/* File Dialogs */}
       {uploadDialogOpen && (
         <FileUploadDialog
           isOpen={uploadDialogOpen}
           onClose={() => setUploadDialogOpen(false)}
           currentFolderId={currentFolderId}
           onUploadSuccess={handleUploadSuccess}
+        />
+      )}
+
+      {deleteFileOpen && selectedFileId && currentFile && (
+        <DeleteFileDialog
+          fileId={selectedFileId}
+          fileName={currentFile.fileName}
+          onClose={() => {
+            setDeleteFileOpen(false);
+            setSelectedFileId(null);
+          }}
+        />
+      )}
+
+      {renameFileOpen && selectedFileId && currentFile && (
+        <RenameFileDialog
+          fileId={selectedFileId}
+          currentName={currentFile.fileName}
+          onClose={() => {
+            setRenameFileOpen(false);
+            setSelectedFileId(null);
+          }}
         />
       )}
     </div>

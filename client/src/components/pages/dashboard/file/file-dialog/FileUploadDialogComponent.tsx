@@ -20,8 +20,6 @@ const ALLOWED_TYPES = {
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
   png: "image/png",
-  gif: "image/gif",
-  webp: "image/webp",
 };
 
 interface SelectedFile {
@@ -48,7 +46,7 @@ export const FileUploadDialog = ({
     file: File,
   ): "pdf" | "docx" | "xlsx" | "md" | "image" | "txt" => {
     const extension = file.name.split(".").pop()?.toLowerCase();
-    if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || "")) {
+    if (["jpg", "jpeg", "png"].includes(extension || "")) {
       return "image";
     }
     if (extension === "txt") {
@@ -212,8 +210,7 @@ export const FileUploadDialog = ({
                     file
                   </li>
                   <li>
-                    • Supported formats: PDF, DOCX, XLSX, MD, TXT, JPG, PNG,
-                    GIF, WEBP
+                    • Supported formats: PDF, DOCX, XLSX, MD, TXT, JPG, PNG
                   </li>
                   <li>
                     • Images will show preview, documents will show name only
@@ -331,7 +328,7 @@ export const FileUploadDialog = ({
             ref={fileInputRef}
             type="file"
             multiple
-            accept=".docx,.jpg,.jpeg,.png,.gif,.webp,.pdf,.md,.xlsx,.txt"
+            accept=".docx,.jpg,.jpeg,.png,.pdf,.md,.xlsx,.txt"
             onChange={(e) => handleFileSelect(e.target.files)}
             className="hidden"
             disabled={isLoading}
