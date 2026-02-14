@@ -122,7 +122,7 @@ const FolderFileDashboard = () => {
   const handleFileClick = (fileId: string) => {
     const file = filesData?.data?.files?.find((f: any) => f._id === fileId);
     if (file) {
-      handleFileDownload(fileId, file.fileName);
+      handleFileView(fileId, file);
     }
   };
 
@@ -143,10 +143,29 @@ const FolderFileDashboard = () => {
     });
   };
 
-  const handleFileView = () => {
-    const file = currentFile;
-    if (file) {
-      handleFileDownload(file._id, file.fileName);
+  const handleFileView = (fileId?: string, file?: any) => {
+    const targetFileId = fileId || fileContextMenu.fileId;
+    const targetFile = file || currentFile;
+
+    if (!targetFile) return;
+
+    // For images - open in new tab
+    if (targetFile.type === "image" && targetFile.cloudinaryPublicId) {
+      window.open(targetFile.path, "_blank");
+      closeFileContextMenu();
+      return;
+    }
+
+    // For PDFs - open in new tab
+    if (targetFile.type === "pdf") {
+      window.open(targetFile.path, "_blank");
+      closeFileContextMenu();
+      return;
+    }
+
+    // For other file types, download them
+    if (targetFileId) {
+      handleFileDownload(targetFileId, targetFile.fileName);
     }
     closeFileContextMenu();
   };
@@ -171,6 +190,7 @@ const FolderFileDashboard = () => {
         console.error("Download error:", error);
       }
     }
+
     if (!fileId) {
       closeFileContextMenu();
     }
@@ -280,7 +300,7 @@ const FolderFileDashboard = () => {
         onClose={closeFileContextMenu}
         onView={handleFileView}
         onEdit={handleFileEdit}
-        onDownload={handleFileDownload}
+        onDownload={() => handleFileDownload()}
         onMove={handleFileMove}
         onRename={handleFileRename}
         onDelete={handleFileDelete}

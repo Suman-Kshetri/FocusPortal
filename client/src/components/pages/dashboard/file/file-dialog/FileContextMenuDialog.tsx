@@ -1,5 +1,4 @@
 import {
-  MoreVertical,
   Eye,
   Edit,
   Download,
@@ -54,19 +53,58 @@ export const FileDialogBox = ({
   if (!isOpen) return null;
 
   const menuItems = [
-    { label: "View", icon: Eye, onClick: onView, show: true },
-    { label: "Edit", icon: Edit, onClick: onEdit, show: editable },
-    { label: "Download", icon: Download, onClick: onDownload, show: true },
-    { label: "Move", icon: FolderInput, onClick: onMove, show: true },
-    { label: "Rename", icon: Edit, onClick: onRename, show: true },
+    { label: "View", icon: Eye, onClick: onView, show: true, group: "view" },
+    {
+      label: "Edit",
+      icon: Edit,
+      onClick: onEdit,
+      show: editable,
+      group: "view",
+    },
+    {
+      label: "Download",
+      icon: Download,
+      onClick: onDownload,
+      show: true,
+      group: "actions",
+    },
+    {
+      label: "Move",
+      icon: FolderInput,
+      onClick: onMove,
+      show: true,
+      group: "actions",
+    },
+    {
+      label: "Rename",
+      icon: Edit,
+      onClick: onRename,
+      show: true,
+      group: "actions",
+    },
     {
       label: "Delete",
       icon: Trash2,
       onClick: onDelete,
       show: true,
       danger: true,
+      group: "danger",
     },
   ];
+
+  // Group menu items and add separators
+  const groupedItems: ((typeof menuItems)[0] | "separator")[] = [];
+  let lastGroup = "";
+
+  menuItems.forEach((item, index) => {
+    if (item.show) {
+      if (lastGroup && lastGroup !== item.group && groupedItems.length > 0) {
+        groupedItems.push("separator");
+      }
+      groupedItems.push(item);
+      lastGroup = item.group;
+    }
+  });
 
   return (
     <div
@@ -77,28 +115,33 @@ export const FileDialogBox = ({
         left: `${position.x}px`,
       }}
     >
-      {menuItems.map(
-        (item, index) =>
-          item.show && (
-            <button
-              key={index}
-              onClick={() => {
-                item.onClick?.();
-                onClose();
-              }}
-              className={`
-                w-full px-4 py-2 text-left text-sm
-                flex items-center gap-3
-                hover:bg-accent
-                transition-colors
-                ${item.danger ? "text-red-600 hover:text-red-700" : "text-foreground"}
-              `}
-            >
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </button>
-          ),
-      )}
+      {groupedItems.map((item, index) => {
+        if (item === "separator") {
+          return (
+            <div key={`separator-${index}`} className="h-px bg-border my-1" />
+          );
+        }
+
+        return (
+          <button
+            key={index}
+            onClick={() => {
+              item.onClick?.();
+              onClose();
+            }}
+            className={`
+              w-full px-4 py-2 text-left text-sm
+              flex items-center gap-3
+              hover:bg-accent
+              transition-colors
+              ${item.danger ? "text-red-600 hover:text-red-700" : "text-foreground"}
+            `}
+          >
+            <item.icon className="w-4 h-4" />
+            {item.label}
+          </button>
+        );
+      })}
     </div>
   );
 };
