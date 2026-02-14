@@ -394,16 +394,40 @@ export const downloadFile = asyncHandler(async (req, res) => {
    }
 
    try {
-      res.setHeader("Content-Type", file.mimeType);
+      // If file is stored on Cloudinary (images), redirect to Cloudinary URL
+      if (file.cloudinaryPublicId && file.type === "image") {
+         // For Cloudinary images, just send the URL back
+         return res.status(200).json(
+            new ApiResponse(200, "File URL retrieved", {
+               url: file.path,
+               fileName: file.fileName,
+               type: "cloudinary",
+            })
+         );
+      }
+
+      // For local files (PDFs, DOCX, etc.)
+      // Check if file exists
+      const fs = await import("fs/promises");
+      try {
+         await fs.access(file.path);
+      } catch (error) {
+         throw new ApiError(404, "File not found on server");
+      }
+
+      res.setHeader(
+         "Content-Type",
+         file.mimeType || "application/octet-stream"
+      );
       res.setHeader(
          "Content-Disposition",
          `attachment; filename="${file.fileName}"`
       );
-      res.setHeader("Content-Length", file.size);
 
-      const fileStream = await readFile(file.path);
-      res.send(fileStream);
+      const fileBuffer = await readFile(file.path);
+      res.send(fileBuffer);
    } catch (error) {
-      throw new ApiError(500, "Failed to download file");
+      console.error("Download error:", error);
+      throw new ApiError(500, `Failed to download file`);
    }
 });

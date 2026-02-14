@@ -33,6 +33,6 @@ filesRoute.get("/:id/download", downloadFile);
 filesRoute.patch("/:id/edit", editFile);
 filesRoute.patch("/:id/move", moveFile);
 filesRoute.patch("/:id/rename", renameFile);
-filesRoute.delete("/:id/delete", deleteFile);
+filesRoute.delete("/delete/:id", deleteFile);
 
 export default filesRoute;

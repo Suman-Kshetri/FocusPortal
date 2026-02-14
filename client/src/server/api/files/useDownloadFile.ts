@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { filesApi } from "./hooks";
+import axiosInstance from "@/config/api/axios.config";
 import { toast } from "sonner";
 
 export const useDownloadFile = () => {
@@ -11,25 +11,57 @@ export const useDownloadFile = () => {
       fileId: string;
       fileName: string;
     }) => {
-      const response = await filesApi.downloadFile(fileId);
+      try {
+        // First, try to get the file
+        const response = await axiosInstance.get(`/files/${fileId}/download`);
 
-      // Creating blob link to download files
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+        // Check if it's a Cloudinary image (returns JSON with URL)
+        if (response.data?.data?.type === "cloudinary") {
+          const cloudinaryUrl = response.data.data.url;
 
-      return response.data;
+          // Download from Cloudinary URL
+          const imageResponse = await fetch(cloudinaryUrl);
+          const blob = await imageResponse.blob();
+
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", fileName);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+
+          return { success: true };
+        }
+
+        // Otherwise it's a blob response from backend
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true };
+      } catch (error) {
+        console.error("Download error details:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast.success("File downloaded successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to download file");
+      console.error("Download mutation error:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to download file";
+      toast.error(errorMessage);
     },
   });
 

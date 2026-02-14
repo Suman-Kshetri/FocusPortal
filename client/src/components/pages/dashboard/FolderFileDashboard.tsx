@@ -16,6 +16,8 @@ import { FileDialogBox } from "./file/file-dialog/FileContextMenuDialog";
 import FileList from "./file/file-list/FileList";
 import { FileUploadDialog } from "./file/file-dialog/FileUploadDialogComponent";
 import { RenameFileDialog } from "./file/file-dialog/RenameFolderDialog";
+import { useDownloadFile } from "@/server/api/files/useDownloadFile";
+import { MoveFileDialog } from "./file/file-dialog/MoveFileDialog";
 
 const FolderFileDashboard = () => {
   // Folder states
@@ -41,7 +43,8 @@ const FolderFileDashboard = () => {
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [deleteFileOpen, setDeleteFileOpen] = useState(false);
   const [renameFileOpen, setRenameFileOpen] = useState(false);
-
+  const [moveFileOpen, setMoveFileOpen] = useState(false);
+  const { onSubmit: downloadFile } = useDownloadFile();
   const { data: pathData, isLoading: isPathLoading } =
     useGetFolderPath(currentFolderId);
   const { data: filesData } = useGetFiles(currentFolderId);
@@ -116,10 +119,11 @@ const FolderFileDashboard = () => {
     }
   };
 
-  // File handlers
   const handleFileClick = (fileId: string) => {
-    console.log("File clicked:", fileId);
-    // TODO: Implement file view/download
+    const file = filesData?.data?.files?.find((f: any) => f._id === fileId);
+    if (file) {
+      handleFileDownload(fileId, file.fileName);
+    }
   };
 
   const handleFileContextMenu = (e: React.MouseEvent, fileId: string) => {
@@ -140,9 +144,11 @@ const FolderFileDashboard = () => {
   };
 
   const handleFileView = () => {
-    console.log("View file:", fileContextMenu.fileId);
+    const file = currentFile;
+    if (file) {
+      handleFileDownload(file._id, file.fileName);
+    }
     closeFileContextMenu();
-    // TODO: Implement file view
   };
 
   const handleFileEdit = () => {
@@ -151,16 +157,29 @@ const FolderFileDashboard = () => {
     // TODO: Implement file edit
   };
 
-  const handleFileDownload = () => {
-    console.log("Download file:", fileContextMenu.fileId);
-    closeFileContextMenu();
-    // TODO: Implement file download
+  const handleFileDownload = async (fileId?: string, fileName?: string) => {
+    const targetFileId = fileId || fileContextMenu.fileId;
+    const targetFileName = fileName || currentFile?.fileName;
+
+    if (targetFileId && targetFileName) {
+      try {
+        await downloadFile({
+          fileId: targetFileId,
+          fileName: targetFileName,
+        });
+      } catch (error) {
+        console.error("Download error:", error);
+      }
+    }
+    if (!fileId) {
+      closeFileContextMenu();
+    }
   };
 
   const handleFileMove = () => {
-    console.log("Move file:", fileContextMenu.fileId);
+    setSelectedFileId(fileContextMenu.fileId);
+    setMoveFileOpen(true);
     closeFileContextMenu();
-    // TODO: Implement file move
   };
 
   const handleFileRename = () => {
@@ -334,6 +353,16 @@ const FolderFileDashboard = () => {
           currentName={currentFile.fileName}
           onClose={() => {
             setRenameFileOpen(false);
+            setSelectedFileId(null);
+          }}
+        />
+      )}
+      {moveFileOpen && selectedFileId && (
+        <MoveFileDialog
+          fileId={selectedFileId}
+          currentFolderId={currentFolderId}
+          onClose={() => {
+            setMoveFileOpen(false);
             setSelectedFileId(null);
           }}
         />

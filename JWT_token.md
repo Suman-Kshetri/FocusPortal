@@ -1,6 +1,7 @@
 # Complete JWT Access & Refresh Token Frontend Guide
 
 ## 📚 Table of Contents
+
 1. [How JWT Works](#how-jwt-works)
 2. [API Service Setup](#api-service-setup)
 3. [Key Concepts](#key-concepts)
@@ -13,6 +14,7 @@
 ## 🔐 How JWT Works
 
 ### Token Flow Diagram
+
 ```
 1. User logs in → Server sends accessToken + refreshToken
 2. Store tokens in memory (secure)
@@ -24,11 +26,13 @@
 ### Why Two Tokens?
 
 **Access Token (Short-lived: 15min-1hr)**
+
 - Used for every API request
 - Contains user data
 - If stolen, expires quickly (limited damage)
 
 **Refresh Token (Long-lived: 7-30 days)**
+
 - Only used to get new access tokens
 - Stored in httpOnly cookie (more secure)
 - If stolen, harder to use and can be revoked
@@ -41,7 +45,7 @@
 
 ```typescript
 // services/api.service.ts
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+const API_BASE_URL = "http://localhost:5000/api/v1";
 
 class ApiService {
   private accessToken: string | null = null;
@@ -64,13 +68,13 @@ class ApiService {
   // Refresh the access token
   async refreshAccessToken(): Promise<string> {
     const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', // ✅ Important: sends cookies
-      body: JSON.stringify({ refreshToken: this.refreshToken })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // ✅ Important: sends cookies
+      body: JSON.stringify({ refreshToken: this.refreshToken }),
     });
 
-    if (!response.ok) throw new Error('Token refresh failed');
+    if (!response.ok) throw new Error("Token refresh failed");
 
     const data = await response.json();
     this.setTokens(data.data.accessToken, data.data.refreshToken);
@@ -80,15 +84,15 @@ class ApiService {
   // Main fetch method with auto-retry
   async fetchWithAuth(url: string, options: RequestInit = {}) {
     const headers = {
-      'Content-Type': 'application/json',
-      ...(this.accessToken && { 'Authorization': `Bearer ${this.accessToken}` }),
+      "Content-Type": "application/json",
+      ...(this.accessToken && { Authorization: `Bearer ${this.accessToken}` }),
       ...options.headers,
     };
 
     let response = await fetch(`${API_BASE_URL}${url}`, {
       ...options,
       headers,
-      credentials: 'include',
+      credentials: "include",
     });
 
     // If 401 and we have refresh token, try refreshing
@@ -103,9 +107,9 @@ class ApiService {
             ...options,
             headers: {
               ...headers,
-              'Authorization': `Bearer ${this.accessToken}`,
+              Authorization: `Bearer ${this.accessToken}`,
             },
-            credentials: 'include',
+            credentials: "include",
           });
         } finally {
           this.isRefreshing = false;
@@ -125,15 +129,19 @@ export const apiService = new ApiService();
 ## 🔑 Key Concepts
 
 ### 1. **Credentials: 'include'**
+
 Always include this to send cookies:
+
 ```typescript
 fetch(url, {
-  credentials: 'include', // ✅ Sends httpOnly cookies
+  credentials: "include", // ✅ Sends httpOnly cookies
 });
 ```
 
 ### 2. **Authorization Header**
+
 Send access token with every protected request:
+
 ```typescript
 headers: {
   'Authorization': `Bearer ${accessToken}`,
@@ -141,7 +149,9 @@ headers: {
 ```
 
 ### 3. **Auto-Refresh on 401**
+
 When access token expires, automatically get new one:
+
 ```typescript
 if (response.status === 401) {
   await refreshAccessToken();
@@ -150,6 +160,7 @@ if (response.status === 401) {
 ```
 
 ### 4. **Token Storage**
+
 ```typescript
 // ❌ BAD: localStorage (vulnerable to XSS)
 localStorage.setItem('token', accessToken);
@@ -166,6 +177,7 @@ private accessToken: string | null = null;
 ## 💻 Complete Implementation
 
 ### Auth Context Hook
+
 ```typescript
 // hooks/useAuth.tsx
 import { createContext, useContext, useState, useEffect } from 'react';
@@ -237,27 +249,29 @@ export const useAuth = () => useContext(AuthContext);
 ## 📋 Common Patterns
 
 ### 1. Protected API Call
+
 ```typescript
 const fetchUserProfile = async () => {
-  const response = await apiService.fetchWithAuth('/auth/profile');
+  const response = await apiService.fetchWithAuth("/auth/profile");
   const data = await response.json();
   return data;
 };
 ```
 
 ### 2. File Upload with Auth
+
 ```typescript
 const uploadAvatar = async (file: File) => {
   const formData = new FormData();
-  formData.append('avatar', file);
+  formData.append("avatar", file);
 
-  const response = await apiService.fetchWithAuth('/users/update-avatar', {
-    method: 'PATCH',
+  const response = await apiService.fetchWithAuth("/users/update-avatar", {
+    method: "PATCH",
     body: formData,
     headers: {
       // Don't set Content-Type, browser will set with boundary
-      'Authorization': `Bearer ${apiService.getAccessToken()}`,
-    }
+      Authorization: `Bearer ${apiService.getAccessToken()}`,
+    },
   });
 
   return response.json();
@@ -265,36 +279,41 @@ const uploadAvatar = async (file: File) => {
 ```
 
 ### 3. Update User Details
+
 ```typescript
 const updateProfile = async (fullName: string, email: string) => {
-  const response = await apiService.fetchWithAuth('/users/update-user-profile', {
-    method: 'PATCH',
-    body: JSON.stringify({ fullName, email })
-  });
+  const response = await apiService.fetchWithAuth(
+    "/users/update-user-profile",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ fullName, email }),
+    },
+  );
 
   return response.json();
 };
 ```
 
 ### 4. Protected Route Component
+
 ```typescript
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/login" />;
-  
+
   return children;
 };
 
 // Usage in React Router
-<Route 
-  path="/dashboard" 
+<Route
+  path="/dashboard"
   element={
     <ProtectedRoute>
       <Dashboard />
     </ProtectedRoute>
-  } 
+  }
 />
 ```
 
@@ -303,15 +322,19 @@ const ProtectedRoute = ({ children }) => {
 ## 🐛 Troubleshooting
 
 ### Problem 1: "Access token expired" on every request
+
 **Solution:** Make sure you're updating the token after refresh:
+
 ```typescript
 // After refresh, retry with new token
 const newToken = await this.refreshAccessToken();
-headers['Authorization'] = `Bearer ${newToken}`; // ✅ Use new token
+headers["Authorization"] = `Bearer ${newToken}`; // ✅ Use new token
 ```
 
 ### Problem 2: Infinite refresh loop
+
 **Solution:** Add a flag to prevent multiple simultaneous refreshes:
+
 ```typescript
 if (this.isRefreshing) {
   // Wait for current refresh to complete
@@ -322,7 +345,9 @@ if (this.isRefreshing) {
 ```
 
 ### Problem 3: Cookies not being sent
+
 **Solution:** Check these settings:
+
 ```typescript
 // Frontend
 credentials: 'include'
@@ -342,13 +367,15 @@ app.use(cors({
 ```
 
 ### Problem 4: 401 even after login
+
 **Solution:** Check token is being saved and sent:
+
 ```typescript
 // After login
-console.log('Access Token:', apiService.getAccessToken()); // Should not be null
+console.log("Access Token:", apiService.getAccessToken()); // Should not be null
 
 // Before request
-console.log('Sending with token:', headers['Authorization']); // Should be "Bearer xxx"
+console.log("Sending with token:", headers["Authorization"]); // Should be "Bearer xxx"
 ```
 
 ---
@@ -404,15 +431,13 @@ REACT_APP_API_URL=http://localhost:5000/api/v1
 
 That's it! Your JWT authentication is ready to use.
 
-
-
-
-
 ## Complete Flow Comparison
+
 ```typescript
 const token = req.header("Authorization")?.replace("Bearer ", "");
 // Frontend sets header (YOUR CURRENT APPROACH)
 ```
+
 GET /api/courses
 Headers: { Authorization: "Bearer eyJhbGc..." }
 
@@ -426,89 +451,94 @@ Headers: { Authorization: "Bearer eyJhbGc..." }
 
 ### **Frontend → Backend Flow**
 ```
+
 ┌─────────────────────────────────────────────────────────┐
-│ FRONTEND: Login Successful                              │
-│ localStorage.setItem('accessToken', 'eyJhbGc...')       │
+│ FRONTEND: Login Successful │
+│ localStorage.setItem('accessToken', 'eyJhbGc...') │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ USER: Navigates to /dashboard                           │
-│ Component calls: getCourses()                           │
+│ USER: Navigates to /dashboard │
+│ Component calls: getCourses() │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ AXIOS INTERCEPTOR (Request)                             │
-│ const token = localStorage.getItem('accessToken');      │
-│ config.headers.Authorization = `Bearer ${token}`;       │
+│ AXIOS INTERCEPTOR (Request) │
+│ const token = localStorage.getItem('accessToken'); │
+│ config.headers.Authorization = `Bearer ${token}`; │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ HTTP REQUEST                                            │
-│ GET /api/courses                                        │
-│ Headers: {                                              │
-│   Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI..."│
-│ }                                                       │
+│ HTTP REQUEST │
+│ GET /api/courses │
+│ Headers: { │
+│ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI..."│
+│ } │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ BACKEND: verifyJwt Middleware                           │
-│                                                         │
-│ Step 1: Extract token                                   │
-│ const token = req.cookies?.accessToken ||               │
-│              req.header("Authorization")                │
-│                 ?.replace("Bearer ", "");               │
-│                                                         │
-│ Result: token = "eyJhbGciOiJIUzI1NiIsInR5cCI..."        │
+│ BACKEND: verifyJwt Middleware │
+│ │
+│ Step 1: Extract token │
+│ const token = req.cookies?.accessToken || │
+│ req.header("Authorization") │
+│ ?.replace("Bearer ", ""); │
+│ │
+│ Result: token = "eyJhbGciOiJIUzI1NiIsInR5cCI..." │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ Step 2: Verify JWT                                      │
-│ const decodedToken = jwt.verify(token, SECRET);         │
-│                                                         │
-│ Decoded: {                                              │
-│   _id: "507f1f77bcf86cd799439011",                      │
-│   email: "user@example.com",                            │
-│   iat: 1674567890,                                      │
-│   exp: 1674654290                                       │
-│ }                                                       │
+│ Step 2: Verify JWT │
+│ const decodedToken = jwt.verify(token, SECRET); │
+│ │
+│ Decoded: { │
+│ \_id: "507f1f77bcf86cd799439011", │
+│ email: "user@example.com", │
+│ iat: 1674567890, │
+│ exp: 1674654290 │
+│ } │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ Step 3: Find User in Database                           │
-│ const user = await User.findById("507f1f77...")         │
-│   .select("-password -refreshToken");                   │
-│                                                         │
-│ Found: {                                                │
-│   _id: "507f1f77...",                                   │
-│   email: "user@example.com",                            │
-│   name: "John Doe",                                     │
-│   role: "student"                                       │
-│   // password excluded ✅                               │
-│   // refreshToken excluded ✅                           │
-│ }                                                       │
+│ Step 3: Find User in Database │
+│ const user = await User.findById("507f1f77...") │
+│ .select("-password -refreshToken"); │
+│ │
+│ Found: { │
+│ \_id: "507f1f77...", │
+│ email: "user@example.com", │
+│ name: "John Doe", │
+│ role: "student" │
+│ // password excluded ✅ │
+│ // refreshToken excluded ✅ │
+│ } │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ Step 4: Attach User to Request                          │
-│ req.user = user;                                        │
+│ Step 4: Attach User to Request │
+│ req.user = user; │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ Step 5: Call next()                                     │
-│ Proceed to route handler                                │
+│ Step 5: Call next() │
+│ Proceed to route handler │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ ROUTE HANDLER                                           │
+│ ROUTE HANDLER │
 │ router.get('/courses', verifyJwt, async (req, res) => { │
-│   const userId = req.user._id; // Available! ✅         │
-│   const courses = await Course.find({ userId });        │
-│   res.json(courses);                                    │
-│ });                                                     │
+│ const userId = req.user.\_id; // Available! ✅ │
+│ const courses = await Course.find({ userId }); │
+│ res.json(courses); │
+│ }); │
 └────────────────┬────────────────────────────────────────┘
-                 ▼
+▼
 ┌─────────────────────────────────────────────────────────┐
-│ RESPONSE                                                │
-│ 200 OK                                                  │
-│ [{ id: 1, name: "Math" }, { id: 2, name: "Physics" }]   │
+│ RESPONSE │
+│ 200 OK │
+│ [{ id: 1, name: "Math" }, { id: 2, name: "Physics" }] │
 └─────────────────────────────────────────────────────────┘
+
+Summary of Fixes:
+
+✅ Download Backend: Handle Cloudinary images by redirecting to URL

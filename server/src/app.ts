@@ -11,6 +11,7 @@ import commentRoute from "./routes/comment.route.js";
 import statsRoute from "./routes/stats.route.js";
 import folderRoute from "./routes/folder.route.js";
 import filesRoute from "./routes/files.route.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 const server = createServer(app);
@@ -44,4 +45,5 @@ registerSocketRoutes(io);
 app.use("/api/folder", folderRoute);
 app.use("/api/files", filesRoute);
 
+app.use(errorHandler);
 export { app, server, io };
