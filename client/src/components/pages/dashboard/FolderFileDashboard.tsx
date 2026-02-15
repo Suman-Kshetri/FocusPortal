@@ -244,13 +244,9 @@ const FolderFileDashboard = () => {
     }
 
     if (targetFile.type === "pdf") {
-      console.log(`this is vite url: ${import.meta.env.VITE_API_URL}`);
       const token = localStorage.getItem("accessToken");
       const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileContextMenu.fileId}/view?token=${token}`;
       window.open(viewUrl, "_blank");
-      //TODO: set the accesstoken in that page
-
-
       closeFileContextMenu();
       return;
     }

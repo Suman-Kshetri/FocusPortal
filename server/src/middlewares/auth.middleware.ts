@@ -6,7 +6,8 @@ import { User } from "../models/user.model.js";
 export const verifyJwt = asyncHandler(async(req, res, next) => {
     try {
         const token = req.cookies?.accessToken || 
-                     req.header("Authorization")?.replace("Bearer ", "");
+                     req.header("Authorization")?.replace("Bearer ", "") ||
+                     req.query.token as string;
         
         if (!token) {
             throw new ApiError(401, "Access token is required");
