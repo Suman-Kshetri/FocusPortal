@@ -18,7 +18,7 @@ export const useCreateComment = () => {
 
     onSuccess: (response, { questionId }) => {
       toast.success("Comment posted successfully");
-      console.log("Response of comment", response);
+      // console.log($&)
       queryClient.invalidateQueries({ queryKey: ["comments", questionId] });
     },
 

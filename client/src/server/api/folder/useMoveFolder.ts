@@ -20,7 +20,7 @@ export const useMoveFolder = () => {
       toast.success("Folder moved");
     },
     onError: (error: AxiosError<any>) => {
-      console.log("Error response:", error.response);
+      // console.log($&)
       const errorMessage =
         error.response?.data?.message || "Failed to rename Folder";
       toast.error(errorMessage);

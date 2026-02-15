@@ -9,10 +9,10 @@ export const useCreateQuestion = () => {
   const useCreateQuestionMutation = useMutation({
     mutationFn: questionApis.createQuestion,
     onSuccess: (response) => {
-      console.log("Question created successfully", response.data);
+      // console.log($&)
       toast.success("Question created successfully");
-      
-      queryClient.invalidateQueries({ queryKey: ['questions'] });
+
+      queryClient.invalidateQueries({ queryKey: ["questions"] });
     },
     onError: (error: AxiosError<any>) => {
       console.error("Create question error:", error);

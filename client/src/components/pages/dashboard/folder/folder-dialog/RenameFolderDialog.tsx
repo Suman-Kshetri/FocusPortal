@@ -26,7 +26,7 @@ export const RenameFolderDialog = ({
   const handleFolderRename = () => {
     if (!folderName.trim()) return;
     onSubmit({ folderId, folderName });
-    console.log("Renaming folder:", { folderId, folderName });
+    // console.log($&)
     onClose();
   };
 

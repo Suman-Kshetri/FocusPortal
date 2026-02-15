@@ -31,18 +31,19 @@ export const useLogin = () => {
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (response) => {
-     
-      console.log("Login response:", response);
-      
+      // console.log($&)
+
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
-      
+
       toast.success("Login successful!");
       navigate({ to: "/dashboard" });
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.error("Login error:", error); // Debug logging
-      const errorMsg = error.response?.data?.message || "Login failed. Please check your credentials.";
+      const errorMsg =
+        error.response?.data?.message ||
+        "Login failed. Please check your credentials.";
       toast.error(errorMsg);
     },
   });

@@ -80,7 +80,7 @@ const Register = () => {
       avatar: data.profilePicture?.[0],
     };
 
-    console.log("Final registration data:", finalData);
+    // console.log($&)
 
     onSubmit(finalData);
   };

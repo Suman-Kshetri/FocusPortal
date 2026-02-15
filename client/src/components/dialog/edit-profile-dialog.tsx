@@ -76,7 +76,7 @@ const EditProfileDialog = () => {
         .map((s) => s.trim())
         .filter(Boolean),
     };
-    console.log(payload);
+    // console.log($&)
     onSubmit(payload);
     closeDialog();
   };

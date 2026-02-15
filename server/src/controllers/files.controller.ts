@@ -293,14 +293,14 @@ export const deleteFile = asyncHandler(async (req, res) => {
    if (file.cloudinaryPublicId) {
       try {
          await deleteFromCloudinary(file.cloudinaryPublicId);
-         console.log("Image deleted from Cloudinary");
+         // console.log($&)
       } catch (error) {
          console.error("Failed to delete from Cloudinary:", error);
       }
    } else {
       try {
          await unlink(file.path);
-         console.log("File deleted from local storage");
+         // console.log($&)
       } catch (error) {
          console.log(
             "File not found on disk, proceeding with database deletion"
@@ -396,7 +396,7 @@ export const readFileContent = asyncHandler(async (req, res) => {
 
          // Log any warnings
          if (result.messages.length > 0) {
-            console.log("Mammoth conversion warnings:", result.messages);
+            // console.log($&)
          }
       } else {
          throw new ApiError(400, "Unsupported file type for reading");

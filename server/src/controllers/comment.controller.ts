@@ -42,7 +42,7 @@ export const createComment = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("comment:created", payload);
-      console.log(`Comment created for question ${questionId}`);
+      // console.log($&)
    }
 
    res.status(201).json(
@@ -181,7 +181,7 @@ export const updateComment = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("comment:updated", payload);
-      console.log(`Comment ${commentId} updated`);
+      // console.log($&)
    }
 
    res.status(200).json(
@@ -218,7 +218,7 @@ export const deleteComment = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("comment:deleted", payload);
-      console.log(`Comment ${commentId} deleted`);
+      // console.log($&)
    }
 
    res.status(200).json(
@@ -267,7 +267,7 @@ export const commentVote = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("comment:voted", payload);
-      console.log(`Vote emitted for comment ${comment._id}:`, payload);
+      // console.log($&)
    }
 
    res.status(200).json(new ApiResponse(200, "Voted successfully", payload));
@@ -308,7 +308,7 @@ export const removeCommentVote = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("comment:voted", payload);
-      console.log(`Vote removed for comment ${comment._id}:`, payload);
+      // console.log($&)
    }
 
    res.status(200).json(

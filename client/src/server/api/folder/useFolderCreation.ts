@@ -18,8 +18,8 @@ export const useFolderCreation = () => {
       queryClient.invalidateQueries({ queryKey: ["folderContents"] });
     },
     onError: (error: AxiosError<{ message: string }>, response) => {
-      console.log("Error in file creation", error);
-      console.log(response);
+      // console.log($&)
+      // console.log($&)
       toast.error(error.response?.data?.message);
       console.error("Folder creation error:", error);
     },

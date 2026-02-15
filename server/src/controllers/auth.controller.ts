@@ -9,7 +9,9 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import uploadOnCloudinary, { deleteFromCloudinary } from "../utils/cloudinary.js";
+import uploadOnCloudinary, {
+   deleteFromCloudinary,
+} from "../utils/cloudinary.js";
 import { generateVerificationToken } from "../utils/generateVerificationTokenAndSetCookies.js";
 import {
    accessCookieOptions,
@@ -19,23 +21,29 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 export const adminTest = asyncHandler(async (req, res) => {
-   const user = await User.find()
-   return res.status(200).json(new ApiResponse(200, "This is admin", user))
-})
+   const user = await User.find();
+   return res.status(200).json(new ApiResponse(200, "This is admin", user));
+});
 
 export const signup = asyncHandler(async (req, res) => {
    const { username, email, password, fullName } = req.body;
-   
-   try {
 
-      if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
+   try {
+      if (
+         [fullName, email, username, password].some(
+            (field) => field?.trim() === ""
+         )
+      ) {
          throw new ApiError(400, "All the fields are required");
       }
 
       const existedUser = await User.findOne({
-         $or: [{ username: username.toLowerCase() }, { email: email.toLowerCase() }],
+         $or: [
+            { username: username.toLowerCase() },
+            { email: email.toLowerCase() },
+         ],
       });
-      
+
       if (existedUser) {
          throw new ApiError(409, "User with email or username already exists");
       }
@@ -73,10 +81,17 @@ export const signup = asyncHandler(async (req, res) => {
       return res
          .status(201)
          .json(
-            new ApiResponse(201, "User registered successfully. Please verify your email.", createdUser)
+            new ApiResponse(
+               201,
+               "User registered successfully. Please verify your email.",
+               createdUser
+            )
          );
    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error ?? "Unknown error");
+      const message =
+         error instanceof Error
+            ? error.message
+            : String(error ?? "Unknown error");
       throw new ApiError(400, message);
    }
 });
@@ -109,12 +124,17 @@ export const verifyEmail = asyncHandler(async (req, res) => {
          .status(200)
          .json(new ApiResponse(200, "Email verified successfully.", user));
    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error ?? "Unknown error");
+      const message =
+         error instanceof Error
+            ? error.message
+            : String(error ?? "Unknown error");
       throw new ApiError(400, message);
    }
 });
 
-const generateAccessAndRefreshToken = async (userId: mongoose.Types.ObjectId) => {
+const generateAccessAndRefreshToken = async (
+   userId: mongoose.Types.ObjectId
+) => {
    try {
       const user = await User.findById(userId);
 
@@ -158,12 +178,16 @@ export const login = asyncHandler(async (req, res) => {
       throw new ApiError(401, "Invalid credentials");
    }
 
-   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      user._id
+   );
 
    user.lastLogin = new Date();
    await user.save({ validateBeforeSave: false });
 
-   const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+   const loggedInUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+   );
 
    return res
       .status(200)
@@ -173,7 +197,7 @@ export const login = asyncHandler(async (req, res) => {
          new ApiResponse(200, "User logged in successfully", {
             user: loggedInUser,
             accessToken,
-            refreshToken
+            refreshToken,
          })
       );
 });
@@ -238,9 +262,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-   const token = req.cookies?.accessToken || 
-                 req.header("Authorization")?.replace("Bearer ", "");
-   
+   const token =
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
    if (token) {
       try {
          const secret = process.env.ACCESS_TOKEN_SECRET;
@@ -253,7 +278,7 @@ export const logout = asyncHandler(async (req, res) => {
             );
          }
       } catch (error) {
-         console.log("Token verification failed during logout:", error);
+         // console.log($&)
       }
    }
 
@@ -265,7 +290,8 @@ export const logout = asyncHandler(async (req, res) => {
 });
 
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-   const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+   const incomingRefreshToken =
+      req.cookies?.refreshToken || req.body?.refreshToken;
 
    if (!incomingRefreshToken) {
       throw new ApiError(401, "Refresh token is required");
@@ -277,8 +303,11 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
    }
 
    try {
-      const decodedToken = jwt.verify(incomingRefreshToken, refreshTokenSecret) as jwt.JwtPayload;
-      
+      const decodedToken = jwt.verify(
+         incomingRefreshToken,
+         refreshTokenSecret
+      ) as jwt.JwtPayload;
+
       const user = await User.findById(decodedToken._id);
 
       if (!user) {
@@ -289,7 +318,9 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
          throw new ApiError(401, "Refresh token is expired or has been used");
       }
 
-      const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+      const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+         user._id
+      );
 
       return res
          .status(200)
@@ -298,7 +329,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
          .json(
             new ApiResponse(200, "Access token refreshed successfully", {
                accessToken,
-               refreshToken
+               refreshToken,
             })
          );
    } catch (error) {
@@ -323,7 +354,10 @@ export const changeCurrentPassword = asyncHandler(async (req, res) => {
    }
 
    if (newPassword.length < 6) {
-      throw new ApiError(400, "New password must be at least 6 characters long");
+      throw new ApiError(
+         400,
+         "New password must be at least 6 characters long"
+      );
    }
 
    if (!currentUser) {
@@ -350,7 +384,7 @@ export const changeCurrentPassword = asyncHandler(async (req, res) => {
 
 export const updateUserDetails = asyncHandler(async (req, res) => {
    const { fullName, email, username } = req.body;
-   
+
    if (!fullName && !email && !username) {
       throw new ApiError(400, "At least one field is required to update");
    }
@@ -368,10 +402,10 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
             {
                $or: [
                   ...(email ? [{ email: email.toLowerCase() }] : []),
-                  ...(username ? [{ username: username.toLowerCase() }] : [])
-               ]
-            }
-         ]
+                  ...(username ? [{ username: username.toLowerCase() }] : []),
+               ],
+            },
+         ],
       });
 
       if (existingUser) {
@@ -392,14 +426,12 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
 
    return res
       .status(200)
-      .json(
-         new ApiResponse(200, "Account details updated successfully", user)
-      );
+      .json(new ApiResponse(200, "Account details updated successfully", user));
 });
 
 export const updateUserAvatar = asyncHandler(async (req, res) => {
    const avatarLocalPath = req.file?.path;
-   
+
    if (!avatarLocalPath) {
       throw new ApiError(400, "Avatar file is missing");
    }
@@ -427,17 +459,15 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
       {
          $set: {
             avatar: avatar.url,
-            avatarPublicId: avatar.public_id
-         }
+            avatarPublicId: avatar.public_id,
+         },
       },
       { new: true }
    ).select("-password -refreshToken");
 
    return res
       .status(200)
-      .json(
-         new ApiResponse(200, "Profile picture updated successfully", user)
-      );
+      .json(new ApiResponse(200, "Profile picture updated successfully", user));
 });
 
 export const deleteUserAccount = asyncHandler(async (req, res) => {
@@ -472,7 +502,5 @@ export const deleteUserAccount = asyncHandler(async (req, res) => {
       .status(200)
       .clearCookie("accessToken", accessCookieOptions as any)
       .clearCookie("refreshToken", refreshCookieOptions as any)
-      .json(
-         new ApiResponse(200, "User account deleted successfully", {})
-      );
+      .json(new ApiResponse(200, "User account deleted successfully", {}));
 });

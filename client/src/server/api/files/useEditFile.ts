@@ -49,7 +49,7 @@ export const useEditFile = () => {
         });
       }
 
-      console.log("File updated successfully:", data.data.fileName);
+      // console.log($&)
     },
     onError: (error) => {
       console.error("Error updating file:", error);

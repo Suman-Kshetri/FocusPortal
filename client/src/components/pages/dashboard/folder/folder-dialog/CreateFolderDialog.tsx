@@ -25,7 +25,7 @@ const CreateFolderDialog = ({
       toast.error("Folder name cannot be empty");
       return;
     }
-    console.log("Creating new folder", name);
+    // console.log($&)
     onSubmit({ folderName: name, parentFolder: parentFolderId });
   };
 

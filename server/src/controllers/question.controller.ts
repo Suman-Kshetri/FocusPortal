@@ -53,20 +53,20 @@ export const createQuestions = asyncHandler(async (req, res) => {
          points: 5,
       },
    });
-   console.log("Question created, preparing to emit:", question._id);
+   // console.log($&)
 
    const io = req.app.get("io");
 
    if (!io) {
       console.error("Socket.IO instance not found on app!");
    } else {
-      console.log("Socket.IO instance found");
+      // console.log($&)
 
       io.to("questions-feed").emit("question:created", question);
-      console.log("Emitted question:created event to questions-feed room");
+      // console.log($&)
 
       const room = io.sockets.adapter.rooms.get("questions-feed");
-      console.log(`Clients in questions-feed room: ${room ? room.size : 0}`);
+      // console.log($&)
    }
 
    res.status(201).json(
@@ -177,7 +177,7 @@ export const questionVote = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("question:voted", payload);
-      console.log(`Vote emitted for question ${question._id}:`, payload);
+      // console.log($&)
    }
 
    res.status(200).json(new ApiResponse(200, "Voted successfully", payload));
@@ -218,7 +218,7 @@ export const removeVote = asyncHandler(async (req, res) => {
    const io = req.app.get("io");
    if (io) {
       io.to("questions-feed").emit("question:voted", payload);
-      console.log(`Vote removed for question ${question._id}:`, payload);
+      // console.log($&)
    }
 
    res.status(200).json(

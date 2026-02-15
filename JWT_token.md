@@ -372,10 +372,10 @@ app.use(cors({
 
 ```typescript
 // After login
-console.log("Access Token:", apiService.getAccessToken()); // Should not be null
+// console.log($&) // Should not be null
 
 // Before request
-console.log("Sending with token:", headers["Authorization"]); // Should be "Bearer xxx"
+// console.log($&) // Should be "Bearer xxx"
 ```
 
 ---

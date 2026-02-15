@@ -384,7 +384,7 @@ const FolderFileDashboard = () => {
   };
 
   const handleUploadSuccess = () => {
-    console.log("Files uploaded successfully");
+    // console.log($&)
     refetchFiles();
   };
 

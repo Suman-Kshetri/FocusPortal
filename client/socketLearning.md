@@ -36,7 +36,7 @@ app.set("io", io); // 🔑 VERY IMPORTANT
 This makes the Socket.IO instance accessible inside Express controllers using:
 
 ```ts
-req.app.get('io')
+req.app.get("io");
 ```
 
 ---
@@ -48,12 +48,12 @@ req.app.get('io')
 ```ts
 export const registerSocketRoutes = (io: Server) => {
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+    // console.log($&)
 
     registerQuestionSocket(io, socket);
 
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
+      // console.log($&)
     });
   });
 };
@@ -75,7 +75,7 @@ export const registerSocketRoutes = (io: Server) => {
 ```ts
 export const registerQuestionSocket = (io: Server, socket: Socket) => {
   socket.join("questions-feed");
-  console.log(`${socket.id} auto-joined questions-feed`);
+  // console.log($&)
 };
 ```
 
@@ -100,10 +100,10 @@ This allows broadcasting only to users who care about questions.
 
 ```ts
 questionRoute.post(
-   "/create-questions",
-   verifyJwt,
-   upload.array("images", 2),
-   createQuestions
+  "/create-questions",
+  verifyJwt,
+  upload.array("images", 2),
+  createQuestions,
 );
 ```
 
@@ -174,22 +174,22 @@ tags = JSON.parse(req.body.tags);
 
 ```ts
 const files = req.files;
-const imagePaths = files?.map(file => file.path);
+const imagePaths = files?.map((file) => file.path);
 ```
 
-* Multer provides temporary file paths
-* Files are uploaded to Cloudinary
+- Multer provides temporary file paths
+- Files are uploaded to Cloudinary
 
 ```ts
 const uploadedImages = await Promise.all(
-  imagePaths.map(path => uploadOnCloudinary(path))
+  imagePaths.map((path) => uploadOnCloudinary(path)),
 );
 ```
 
 Result:
 
 ```ts
-images: ["https://cloudinary/..." ]
+images: ["https://cloudinary/..."];
 ```
 
 ---
@@ -210,7 +210,7 @@ const question = await Question.create({
 Populate author details:
 
 ```ts
-await question.populate('author', 'fullName email avatar username');
+await question.populate("author", "fullName email avatar username");
 ```
 
 ---
@@ -220,20 +220,20 @@ await question.populate('author', 'fullName email avatar username');
 ### Getting Socket.IO inside Controller
 
 ```ts
-const io = req.app.get('io');
+const io = req.app.get("io");
 ```
 
 **Why this works:**
 
-* `app.set("io", io)` was done earlier
-* Express app is globally accessible
+- `app.set("io", io)` was done earlier
+- Express app is globally accessible
 
 ---
 
 ### Emitting Event
 
 ```ts
-io.to('questions-feed').emit('question:created', question);
+io.to("questions-feed").emit("question:created", question);
 ```
 
 #### Meaning Breakdown
@@ -258,7 +258,7 @@ io.to('questions-feed').emit('question:created', question);
 ```ts
 const newSocket = io(BACKEND_URL, {
   withCredentials: true,
-  transports: ['websocket'],
+  transports: ["websocket"],
 });
 ```
 
@@ -321,13 +321,13 @@ io.to("questions-feed").emit("question:created", question);
 ### 6.3 Preventing Duplicate Questions
 
 ```ts
-if (prev.some(q => q._id === newQuestion._id)) return prev;
+if (prev.some((q) => q._id === newQuestion._id)) return prev;
 ```
 
 **Why needed?**
 
-* Creator gets REST response
-* Creator also receives socket event
+- Creator gets REST response
+- Creator also receives socket event
 
 ✔ Prevents duplicate insertion in UI
 
@@ -351,9 +351,9 @@ POST /question/create-questions
 
 Includes:
 
-* FormData
-* Images
-* JWT (via Axios interceptor)
+- FormData
+- Images
+- JWT (via Axios interceptor)
 
 ---
 
@@ -397,14 +397,14 @@ User submits form
 
 ### Why Rooms?
 
-* Scalability
-* Feature isolation
-* Avoid global broadcasts
+- Scalability
+- Feature isolation
+- Avoid global broadcasts
 
 ---
 
 ### Why Context for Socket?
 
-* Single socket connection
-* Avoid reconnect spam
-* Accessible across entire app
+- Single socket connection
+- Avoid reconnect spam
+- Accessible across entire app

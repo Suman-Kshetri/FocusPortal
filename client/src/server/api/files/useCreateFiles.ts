@@ -47,7 +47,7 @@ export const useCreateFile = () => {
         });
       }
 
-      console.log("File created successfully:", data.data.fileName);
+      // console.log($&)
     },
     onError: (error) => {
       console.error("Error creating file:", error);
