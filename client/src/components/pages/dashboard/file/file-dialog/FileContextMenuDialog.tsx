@@ -96,7 +96,7 @@ export const FileDialogBox = ({
   const groupedItems: ((typeof menuItems)[0] | "separator")[] = [];
   let lastGroup = "";
 
-  menuItems.forEach((item, index) => {
+  menuItems.forEach((item) => {
     if (item.show) {
       if (lastGroup && lastGroup !== item.group && groupedItems.length > 0) {
         groupedItems.push("separator");

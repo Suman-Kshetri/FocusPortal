@@ -1,6 +1,19 @@
 import axiosInstance from "@/config/api/axios.config";
+import type { EditFileParams } from "./useEditFile";
+
+// Define params for create here or import if exported, adhering to user pattern
+interface CreateFileParams {
+  fileName: string;
+  type: "md" | "xlsx";
+  content?: string;
+  folder?: string | null;
+}
 
 export const filesApi = {
+  createFile: async (data: CreateFileParams) => {
+    const response = await axiosInstance.post("/files/create", data);
+    return response.data;
+  },
   fileUpload: async (data: FormData) => {
     const response = await axiosInstance.post("/files/upload", data, {
       headers: {
@@ -42,6 +55,16 @@ export const filesApi = {
 
   deleteFile: async (id: string) => {
     const response = await axiosInstance.delete(`/files/delete/${id}`);
+    return response.data;
+  },
+  editFile: async ({ id, content }: EditFileParams) => {
+    const response = await axiosInstance.patch(`/files/${id}/edit`, {
+      content,
+    });
+    return response.data;
+  },
+  readFileContent: async (fileId: string) => {
+    const response = await axiosInstance.get(`/files/${fileId}/content`);
     return response.data;
   },
 };

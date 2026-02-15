@@ -26,6 +26,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useReadFileContent } from "@/server/api/files/useReadFileContent";
+import { useEditFile } from "@/server/api/files/useEditFile";
+import { MarkdownEditor } from "../notes/MarkdownEditor";
+import { DocxEditor } from "../notes/DocXEditor";
 
 const FolderFileDashboard = () => {
   // Folder states
@@ -41,7 +45,6 @@ const FolderFileDashboard = () => {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [moveFolderOpen, setMoveFolderOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  //only for the alert dialogbox:
   const [previewErrorOpen, setPreviewErrorOpen] = useState(false);
   const [previewErrorType, setPreviewErrorType] = useState("");
 
@@ -55,10 +58,21 @@ const FolderFileDashboard = () => {
   const [deleteFileOpen, setDeleteFileOpen] = useState(false);
   const [renameFileOpen, setRenameFileOpen] = useState(false);
   const [moveFileOpen, setMoveFileOpen] = useState(false);
+
+  // Editor states
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editorType, setEditorType] = useState<"md" | "docx" | null>(null);
+  const [fileContent, setFileContent] = useState("");
+  const [isLoadingContent, setIsLoadingContent] = useState(false);
+
   const { onSubmit: downloadFile } = useDownloadFile();
   const { data: pathData, isLoading: isPathLoading } =
     useGetFolderPath(currentFolderId);
-  const { data: filesData } = useGetFiles(currentFolderId);
+  const { data: filesData, refetch: refetchFiles } =
+    useGetFiles(currentFolderId);
+  const { mutateAsync: readContent } = useReadFileContent();
+  const { mutateAsync: editFile } = useEditFile();
+
   const breadcrumbPath = pathData?.data || [];
 
   const handleFolderClick = (folderId: string) => {
@@ -130,23 +144,68 @@ const FolderFileDashboard = () => {
     }
   };
 
-  const handleFileClick = (fileId: string) => {
+  const handleFileClick = async (fileId: string) => {
     const file = filesData?.data?.files?.find((f: any) => f._id === fileId);
-    if (file) {
-      // For images - open in new tab
-      if (file.type === "image" && file.cloudinaryPublicId) {
-        window.open(file.path, "_blank");
-        return;
-      }
+    if (!file) return;
 
-      // For PDFs - open in new tab
-      if (file.type === "pdf") {
-        window.open(file.path, "_blank");
-        return;
-      }
-      setPreviewErrorType(file.type.toUpperCase());
-      setPreviewErrorOpen(true);
+    // For images - open Cloudinary URL directly
+    if (file.type === "image" && file.cloudinaryPublicId) {
+      window.open(file.path, "_blank");
+      return;
     }
+
+    // For PDFs - use the view endpoint
+    if (file.type === "pdf") {
+      const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileId}/view`;
+      window.open(viewUrl, "_blank");
+      return;
+    }
+
+    // For editable files (MD, DOCX) - open in editor
+    if (file.editable && (file.type === "md" || file.type === "docx")) {
+      await openFileInEditor(fileId, file.type);
+      return;
+    }
+
+    // For other file types - show error
+    setPreviewErrorType(file.type.toUpperCase());
+    setPreviewErrorOpen(true);
+  };
+
+  const openFileInEditor = async (fileId: string, type: "md" | "docx") => {
+    setIsLoadingContent(true);
+    try {
+      const response = await readContent(fileId);
+      setFileContent(response.data.content || "");
+      setSelectedFileId(fileId);
+      setEditorType(type);
+      setEditorOpen(true);
+    } catch (error) {
+      console.error("Error loading file:", error);
+      alert("Failed to load file content");
+    } finally {
+      setIsLoadingContent(false);
+    }
+  };
+
+  const handleSaveFile = async (content: string) => {
+    if (!selectedFileId) return;
+
+    try {
+      await editFile({ id: selectedFileId, content });
+      setFileContent(content);
+      refetchFiles();
+    } catch (error) {
+      console.error("Error saving file:", error);
+      throw error;
+    }
+  };
+
+  const handleCloseEditor = () => {
+    setEditorOpen(false);
+    setSelectedFileId(null);
+    setEditorType(null);
+    setFileContent("");
   };
 
   const handleFileContextMenu = (e: React.MouseEvent, fileId: string) => {
@@ -178,16 +237,20 @@ const FolderFileDashboard = () => {
       return;
     }
 
-    // For images - open in new tab
     if (targetFile.type === "image" && targetFile.cloudinaryPublicId) {
       window.open(targetFile.path, "_blank");
       closeFileContextMenu();
       return;
     }
 
-    // For PDFs - open in new tab
     if (targetFile.type === "pdf") {
-      window.open(targetFile.path, "_blank");
+      console.log(`this is vite url: ${import.meta.env.VITE_API_URL}`);
+      const token = localStorage.getItem("accessToken");
+      const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileContextMenu.fileId}/view?token=${token}`;
+      window.open(viewUrl, "_blank");
+      //TODO: set the accesstoken in that page
+
+
       closeFileContextMenu();
       return;
     }
@@ -197,10 +260,26 @@ const FolderFileDashboard = () => {
     closeFileContextMenu();
   };
 
-  const handleFileEdit = () => {
-    console.log("Edit file:", fileContextMenu.fileId);
-    closeFileContextMenu();
-    // TODO: Implement file edit
+  const handleFileEdit = async () => {
+    const targetFile = filesData?.data?.files?.find(
+      (f: any) => f._id === fileContextMenu.fileId,
+    );
+
+    if (!targetFile) {
+      closeFileContextMenu();
+      return;
+    }
+
+    if (
+      targetFile.editable &&
+      (targetFile.type === "md" || targetFile.type === "docx")
+    ) {
+      closeFileContextMenu();
+      await openFileInEditor(targetFile._id, targetFile.type);
+    } else {
+      closeFileContextMenu();
+      alert("This file type cannot be edited");
+    }
   };
 
   const handleFileDownload = async () => {
@@ -250,11 +329,41 @@ const FolderFileDashboard = () => {
 
   const handleUploadSuccess = () => {
     console.log("Files uploaded successfully");
+    refetchFiles();
   };
 
   const currentFile = filesData?.data?.files?.find(
     (f: any) => f._id === selectedFileId,
   );
+
+  // If editor is open, show the appropriate editor
+  if (editorOpen && selectedFileId && currentFile) {
+    if (editorType === "md") {
+      return (
+        <MarkdownEditor
+          fileId={selectedFileId}
+          fileName={currentFile.fileName}
+          initialContent={fileContent}
+          onSave={handleSaveFile}
+          onClose={handleCloseEditor}
+          isLoading={isLoadingContent}
+        />
+      );
+    }
+
+    if (editorType === "docx") {
+      return (
+        <DocxEditor
+          fileId={selectedFileId}
+          fileName={currentFile.fileName}
+          initialContent={fileContent}
+          onSave={handleSaveFile}
+          onClose={handleCloseEditor}
+          isLoading={isLoadingContent}
+        />
+      );
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background p-8">

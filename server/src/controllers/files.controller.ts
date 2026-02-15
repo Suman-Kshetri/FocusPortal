@@ -6,6 +6,10 @@ import { File } from "../models/file-folder-models/file.model.js";
 import { unlink, mkdir, writeFile, readFile } from "fs/promises";
 import path from "path";
 import uploadOnCloudinary from "../utils/cloudinary.js";
+import { deleteFromCloudinary } from "../utils/cloudinary.js";
+import { createReadStream } from "fs";
+import mammoth from "mammoth";
+import htmlToDocx from "html-to-docx";
 
 const getFileType = (mimetype: string) => {
    if (mimetype.includes("pdf")) return "pdf";
@@ -82,7 +86,7 @@ export const uploadFile = asyncHandler(async (req, res) => {
             mimeType: uploadedFile.mimetype,
             folder: folder || null,
             owner: req.user._id,
-            editable: fileType === "md" || fileType === "xlsx",
+            editable: fileType === "md" || fileType === "docx",
             cloudinaryPublicId,
          });
 
@@ -163,37 +167,6 @@ export const createFile = asyncHandler(async (req, res) => {
    );
 });
 
-export const editFile = asyncHandler(async (req, res) => {
-   const { id } = req.params;
-   const { content } = req.body;
-
-   if (content === undefined || content === null) {
-      throw new ApiError(400, "Content is required");
-   }
-
-   const file = await File.findOne({
-      _id: id,
-      owner: req.user._id,
-   });
-
-   if (!file) {
-      throw new ApiError(404, "File not found");
-   }
-
-   if (!file.editable) {
-      throw new ApiError(403, "This file type is not editable");
-   }
-
-   await writeFile(file.path, content, "utf-8");
-
-   file.size = Buffer.byteLength(content, "utf-8");
-   await file.save();
-
-   res.status(200).json(
-      new ApiResponse(200, "File updated successfully", file)
-   );
-});
-
 export const listFiles = asyncHandler(async (req, res) => {
    const { folderId } = req.params;
 
@@ -238,45 +211,6 @@ export const getFile = asyncHandler(async (req, res) => {
    res.status(200).json(
       new ApiResponse(200, "File fetched successfully", file)
    );
-});
-
-export const readFileContent = asyncHandler(async (req, res) => {
-   const { id } = req.params;
-
-   const file = await File.findOne({
-      _id: id,
-      owner: req.user._id,
-   });
-
-   if (!file) {
-      throw new ApiError(404, "File not found");
-   }
-
-   if (!file.editable) {
-      throw new ApiError(
-         403,
-         "Cannot read content of this file type. Only md and xlsx files are readable."
-      );
-   }
-
-   try {
-      const content = await readFile(file.path, "utf-8");
-
-      res.status(200).json(
-         new ApiResponse(200, "File content fetched successfully", {
-            file: {
-               id: file._id,
-               fileName: file.fileName,
-               type: file.type,
-               size: file.size,
-               editable: file.editable,
-            },
-            content,
-         })
-      );
-   } catch (error) {
-      throw new ApiError(500, "Failed to read file content");
-   }
 });
 
 export const moveFile = asyncHandler(async (req, res) => {
@@ -343,8 +277,6 @@ export const renameFile = asyncHandler(async (req, res) => {
       new ApiResponse(200, "File renamed successfully", file)
    );
 });
-
-import { deleteFromCloudinary } from "../utils/cloudinary.js";
 
 export const deleteFile = asyncHandler(async (req, res) => {
    const { id } = req.params;
@@ -430,4 +362,151 @@ export const downloadFile = asyncHandler(async (req, res) => {
       console.error("Download error:", error);
       throw new ApiError(500, `Failed to download file`);
    }
+});
+
+export const readFileContent = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+
+   const file = await File.findOne({
+      _id: id,
+      owner: req.user._id,
+   });
+
+   if (!file) {
+      throw new ApiError(404, "File not found");
+   }
+
+   if (!file.editable) {
+      throw new ApiError(
+         403,
+         "Cannot read content of this file type. Only md and docx files are readable."
+      );
+   }
+
+   try {
+      let content: string;
+
+      if (file.type === "md") {
+         // For markdown files, read as plain text
+         content = await readFile(file.path, "utf-8");
+      } else if (file.type === "docx") {
+         // For DOCX files, convert to HTML using mammoth
+         const result = await mammoth.convertToHtml({ path: file.path });
+         content = result.value; // HTML content
+
+         // Log any warnings
+         if (result.messages.length > 0) {
+            console.log("Mammoth conversion warnings:", result.messages);
+         }
+      } else {
+         throw new ApiError(400, "Unsupported file type for reading");
+      }
+
+      res.status(200).json(
+         new ApiResponse(200, "File content fetched successfully", {
+            file: {
+               id: file._id,
+               fileName: file.fileName,
+               type: file.type,
+               size: file.size,
+               editable: file.editable,
+            },
+            content,
+         })
+      );
+   } catch (error) {
+      console.error("File read error:", error);
+      throw new ApiError(500, "Failed to read file content");
+   }
+});
+export const editFile = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   const { content } = req.body;
+
+   if (content === undefined || content === null) {
+      throw new ApiError(400, "Content is required");
+   }
+
+   const file = await File.findOne({
+      _id: id,
+      owner: req.user._id,
+   });
+
+   if (!file) {
+      throw new ApiError(404, "File not found");
+   }
+
+   if (!file.editable) {
+      throw new ApiError(403, "This file type is not editable");
+   }
+
+   try {
+      if (file.type === "md") {
+         // For markdown files, write as plain text
+         await writeFile(file.path, content, "utf-8");
+         file.size = Buffer.byteLength(content, "utf-8");
+      } else if (file.type === "docx") {
+         // For DOCX files, convert HTML back to DOCX
+         const docxBuffer = await htmlToDocx(content, null, {
+            table: { row: { cantSplit: true } },
+            footer: true,
+            pageNumber: true,
+         });
+
+         // Convert ArrayBuffer or Blob to Buffer
+         let bufferToWrite: Buffer;
+         if (docxBuffer instanceof ArrayBuffer) {
+            bufferToWrite = Buffer.from(docxBuffer);
+         } else if (docxBuffer instanceof Blob) {
+            bufferToWrite = Buffer.from(await docxBuffer.arrayBuffer());
+         } else {
+            bufferToWrite = Buffer.from(docxBuffer as any);
+         }
+
+         await writeFile(file.path, bufferToWrite);
+         file.size = bufferToWrite.length;
+      } else {
+         throw new ApiError(400, "Unsupported file type for editing");
+      }
+
+      await file.save();
+
+      res.status(200).json(
+         new ApiResponse(200, "File updated successfully", file)
+      );
+   } catch (error) {
+      console.error("File edit error:", error);
+      throw new ApiError(500, "Failed to update file");
+   }
+});
+
+// view for the pdf and images files:
+export const viewFile = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+
+   const file = await File.findOne({
+      _id: id,
+      owner: req.user._id,
+   });
+
+   if (!file) {
+      throw new ApiError(404, "File not found");
+   }
+
+   // Only for PDFs and images
+   if (file.type !== "pdf" && file.type !== "image") {
+      throw new ApiError(400, "Cannot view this file type");
+   }
+
+   // For Cloudinary images, redirect
+   if (file.cloudinaryPublicId) {
+      return res.redirect(file.path);
+   }
+
+   // For local files (PDFs), stream the file
+   res.setHeader("Content-Type", file.mimeType || "application/pdf");
+   res.setHeader("Content-Disposition", `inline; filename="${file.fileName}"`);
+
+   const fileStream = createReadStream(file.path);
+   fileStream.pipe(res);
 });

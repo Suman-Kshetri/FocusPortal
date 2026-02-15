@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -445,4 +446,16 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;              /* Chrome, Safari */
+}
+
+
+/* for tinymce */
+@layer utilities {
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
+  }
+
+  .hover-lift {
+    @apply hover:translate-y-[-2px] hover:shadow-lg transition-all;
+  }
 }

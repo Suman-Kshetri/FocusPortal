@@ -25,7 +25,7 @@ const ALLOWED_TYPES = {
 interface SelectedFile {
   file: File;
   preview?: string;
-  type: "pdf" | "docx" | "xlsx" | "md" | "image" | "txt" | "webp" | "gif";
+  type: "pdf" | "docx" | "xlsx" | "md" | "image" | "webp" | "gif";
   error?: string;
 }
 
@@ -44,7 +44,7 @@ export const FileUploadDialog = ({
 
   const getFileType = (
     file: File,
-  ): "pdf" | "docx" | "xlsx" | "md" | "image" | "txt" | "webp" | "gif" => {
+  ): "pdf" | "docx" | "xlsx" | "md" | "image" | "webp" | "gif" => {
     const extension = file.name.split(".").pop()?.toLowerCase();
     if (["jpg", "jpeg", "png"].includes(extension || "")) {
       return "image";
@@ -54,9 +54,6 @@ export const FileUploadDialog = ({
     }
     if (extension === "gif") {
       return "gif";
-    }
-    if (extension === "txt") {
-      return "txt";
     }
     return extension as "pdf" | "docx" | "xlsx" | "md";
   };
@@ -217,7 +214,8 @@ export const FileUploadDialog = ({
                     file
                   </li>
                   <li>
-                    • Supported formats: PDF, DOCX, XLSX, MD, TXT, JPG, PNG
+                    • Supported formats: PDF, DOCX, XLSX, MD, JPG, PNG, WEBP,
+                    GIF
                   </li>
                   <li>
                     • Images will show preview, documents will show name only

@@ -18,6 +18,7 @@ import { Route as DashboardDashboardSettingsRouteImport } from './routes/_dashbo
 import { Route as DashboardDashboardResourcesRouteImport } from './routes/_dashboard/dashboard/resources'
 import { Route as DashboardDashboardQuestionsRouteImport } from './routes/_dashboard/dashboard/questions'
 import { Route as DashboardDashboardProfileRouteImport } from './routes/_dashboard/dashboard/profile'
+import { Route as DashboardDashboardNotesRouteImport } from './routes/_dashboard/dashboard/notes'
 import { Route as AuthAuthVerifyEmailRouteImport } from './routes/_auth/auth/verify-email'
 import { Route as AuthAuthRegisterRouteImport } from './routes/_auth/auth/register'
 import { Route as AuthAuthLoginRouteImport } from './routes/_auth/auth/login'
@@ -71,6 +72,11 @@ const DashboardDashboardProfileRoute =
     path: '/dashboard/profile',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardDashboardNotesRoute = DashboardDashboardNotesRouteImport.update({
+  id: '/dashboard/notes',
+  path: '/dashboard/notes',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const AuthAuthVerifyEmailRoute = AuthAuthVerifyEmailRouteImport.update({
   id: '/auth/verify-email',
   path: '/auth/verify-email',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
+  '/dashboard/notes': typeof DashboardDashboardNotesRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/dashboard/questions': typeof DashboardDashboardQuestionsRoute
   '/dashboard/resources': typeof DashboardDashboardResourcesRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/verify-email': typeof AuthAuthVerifyEmailRoute
+  '/dashboard/notes': typeof DashboardDashboardNotesRoute
   '/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/dashboard/questions': typeof DashboardDashboardQuestionsRoute
   '/dashboard/resources': typeof DashboardDashboardResourcesRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/_auth/auth/login': typeof AuthAuthLoginRoute
   '/_auth/auth/register': typeof AuthAuthRegisterRoute
   '/_auth/auth/verify-email': typeof AuthAuthVerifyEmailRoute
+  '/_dashboard/dashboard/notes': typeof DashboardDashboardNotesRoute
   '/_dashboard/dashboard/profile': typeof DashboardDashboardProfileRoute
   '/_dashboard/dashboard/questions': typeof DashboardDashboardQuestionsRoute
   '/_dashboard/dashboard/resources': typeof DashboardDashboardResourcesRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/verify-email'
+    | '/dashboard/notes'
     | '/dashboard/profile'
     | '/dashboard/questions'
     | '/dashboard/resources'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/verify-email'
+    | '/dashboard/notes'
     | '/dashboard/profile'
     | '/dashboard/questions'
     | '/dashboard/resources'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/_auth/auth/login'
     | '/_auth/auth/register'
     | '/_auth/auth/verify-email'
+    | '/_dashboard/dashboard/notes'
     | '/_dashboard/dashboard/profile'
     | '/_dashboard/dashboard/questions'
     | '/_dashboard/dashboard/resources'
@@ -262,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDashboardProfileRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/dashboard/notes': {
+      id: '/_dashboard/dashboard/notes'
+      path: '/dashboard/notes'
+      fullPath: '/dashboard/notes'
+      preLoaderRoute: typeof DashboardDashboardNotesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_auth/auth/verify-email': {
       id: '/_auth/auth/verify-email'
       path: '/auth/verify-email'
@@ -319,6 +338,7 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardDashboardNotesRoute: typeof DashboardDashboardNotesRoute
   DashboardDashboardProfileRoute: typeof DashboardDashboardProfileRoute
   DashboardDashboardQuestionsRoute: typeof DashboardDashboardQuestionsRoute
   DashboardDashboardResourcesRoute: typeof DashboardDashboardResourcesRoute
@@ -327,6 +347,7 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardDashboardNotesRoute: DashboardDashboardNotesRoute,
   DashboardDashboardProfileRoute: DashboardDashboardProfileRoute,
   DashboardDashboardQuestionsRoute: DashboardDashboardQuestionsRoute,
   DashboardDashboardResourcesRoute: DashboardDashboardResourcesRoute,
