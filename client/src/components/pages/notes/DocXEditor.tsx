@@ -111,7 +111,7 @@ export const DocxEditor = ({
       </div>
       <div className="flex-1 overflow-hidden bg-white dark:bg-gray-900">
         <Editor
-          apiKey="vsw6mi74f6zjl53iahqipq2w0i3dkjl5jkdcv15mzbslbmcg"
+          apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
           onInit={(editor) => {
             editorRef.current = editor;
             setEditorLoaded(true);
