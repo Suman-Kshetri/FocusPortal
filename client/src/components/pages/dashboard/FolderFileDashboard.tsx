@@ -148,27 +148,55 @@ const FolderFileDashboard = () => {
     const file = filesData?.data?.files?.find((f: any) => f._id === fileId);
     if (!file) return;
 
-    // For images - open Cloudinary URL directly
     if (file.type === "image" && file.cloudinaryPublicId) {
       window.open(file.path, "_blank");
       return;
     }
 
-    // For PDFs - use the view endpoint
     if (file.type === "pdf") {
+<<<<<<< HEAD
       const token = localStorage.getItem("accessToken");
       const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileId}/view?token=${token}`;
       window.open(viewUrl, "_blank");
+=======
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) throw new Error("No access token found");
+
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/files/${fileId}/view`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Unauthorized or file not found");
+        }
+
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        window.open(blobUrl, "_blank");
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+      } catch (err) {
+        console.error("PDF preview error:", err);
+        alert("Cannot preview this file. Please download it instead.");
+      }
+
+      closeFileContextMenu();
+>>>>>>> 86f93a2 (feat:setting added)
       return;
     }
 
-    // For editable files (MD, DOCX) - open in editor
     if (file.editable && (file.type === "md" || file.type === "docx")) {
       await openFileInEditor(fileId, file.type);
       return;
     }
 
-    // For other file types - show error
+    // For unsupported files
     setPreviewErrorType(file.type.toUpperCase());
     setPreviewErrorOpen(true);
   };
@@ -227,7 +255,7 @@ const FolderFileDashboard = () => {
     });
   };
 
-  const handleFileView = () => {
+  const handleFileView = async () => {
     const targetFile = filesData?.data?.files?.find(
       (f: any) => f._id === fileContextMenu.fileId,
     );
@@ -245,14 +273,57 @@ const FolderFileDashboard = () => {
     }
 
     if (targetFile.type === "pdf") {
+<<<<<<< HEAD
       const token = localStorage.getItem("accessToken");
       const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileContextMenu.fileId}/view?token=${token}`;
       window.open(viewUrl, "_blank");
+=======
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) throw new Error("No access token found");
+
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/files/${fileContextMenu.fileId}/view`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Unauthorized or file not found");
+        }
+
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Open PDF in new tab safely
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.target = "_blank";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+      } catch (err) {
+        console.error("PDF preview error:", err);
+        alert("Cannot preview this file. Please download it instead.");
+      }
+
+>>>>>>> 86f93a2 (feat:setting added)
       closeFileContextMenu();
       return;
     }
-
-    // For other file types, download them
+    if (
+      targetFile.editable &&
+      (targetFile.type === "md" || targetFile.type === "docx")
+    ) {
+      closeFileContextMenu();
+      await openFileInEditor(targetFile._id, targetFile.type);
+      return;
+    }
     handleFileDownload();
     closeFileContextMenu();
   };
