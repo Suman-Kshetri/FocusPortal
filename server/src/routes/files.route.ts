@@ -1,4 +1,3 @@
-// routes/files.route.ts
 import express from "express";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { docsUpload } from "../middlewares/docsUpload.middleware.js";
@@ -32,5 +31,4 @@ filesRoute.patch("/:id/move", moveFile);
 filesRoute.patch("/:id/rename", renameFile);
 filesRoute.delete("/delete/:id", deleteFile);
 filesRoute.get("/:id/view", viewFile);
-
 export default filesRoute;
