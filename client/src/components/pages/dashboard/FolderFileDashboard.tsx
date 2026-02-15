@@ -156,7 +156,8 @@ const FolderFileDashboard = () => {
 
     // For PDFs - use the view endpoint
     if (file.type === "pdf") {
-      const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileId}/view`;
+      const token = localStorage.getItem("accessToken");
+      const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileId}/view?token=${token}`;
       window.open(viewUrl, "_blank");
       return;
     }

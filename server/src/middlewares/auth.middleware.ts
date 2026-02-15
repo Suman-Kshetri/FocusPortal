@@ -5,6 +5,9 @@ import { User } from "../models/user.model.js";
 
 export const verifyJwt = asyncHandler(async(req, res, next) => {
     try {
+        // Accept token from cookies, Authorization header, or query parameters
+        // Query parameters are used for file viewing in new tabs where headers can't be set
+        // Note: Query parameter tokens are visible in browser history and server logs
         const token = req.cookies?.accessToken || 
                      req.header("Authorization")?.replace("Bearer ", "") ||
                      req.query.token as string;
