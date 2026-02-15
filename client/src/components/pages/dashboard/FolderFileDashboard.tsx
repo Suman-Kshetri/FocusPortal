@@ -154,11 +154,6 @@ const FolderFileDashboard = () => {
     }
 
     if (file.type === "pdf") {
-<<<<<<< HEAD
-      const token = localStorage.getItem("accessToken");
-      const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileId}/view?token=${token}`;
-      window.open(viewUrl, "_blank");
-=======
       try {
         const token = localStorage.getItem("accessToken");
         if (!token) throw new Error("No access token found");
@@ -187,7 +182,6 @@ const FolderFileDashboard = () => {
       }
 
       closeFileContextMenu();
->>>>>>> 86f93a2 (feat:setting added)
       return;
     }
 
@@ -273,11 +267,6 @@ const FolderFileDashboard = () => {
     }
 
     if (targetFile.type === "pdf") {
-<<<<<<< HEAD
-      const token = localStorage.getItem("accessToken");
-      const viewUrl = `${import.meta.env.VITE_API_URL}/files/${fileContextMenu.fileId}/view?token=${token}`;
-      window.open(viewUrl, "_blank");
-=======
       try {
         const token = localStorage.getItem("accessToken");
         if (!token) throw new Error("No access token found");
@@ -312,7 +301,6 @@ const FolderFileDashboard = () => {
         alert("Cannot preview this file. Please download it instead.");
       }
 
->>>>>>> 86f93a2 (feat:setting added)
       closeFileContextMenu();
       return;
     }
