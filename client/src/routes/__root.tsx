@@ -1,12 +1,12 @@
-import NotFound from '@/components/pages/notFound'
-import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
-import { Toaster } from 'sonner'
+import NotFound from "@/components/pages/notFound";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Toaster } from "sonner";
 
 export const Route = createRootRoute({
   component: RootComponent,
-  notFoundComponent:NotFound
-})
+  notFoundComponent: (props: any) => <NotFound {...props} />,
+});
 
 function RootComponent() {
   return (
@@ -17,5 +17,5 @@ function RootComponent() {
       </div>
       <TanStackRouterDevtools position="bottom-right" />
     </>
-  )
+  );
 }

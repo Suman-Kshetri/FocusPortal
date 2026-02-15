@@ -17,7 +17,6 @@ interface FileCardProps {
 }
 
 export const FileCard = ({
-  id,
   name,
   type,
   size,
