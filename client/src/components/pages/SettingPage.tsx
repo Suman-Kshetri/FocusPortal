@@ -157,7 +157,7 @@ export const SettingsPage = () => {
                 </div>
                 <input
                   type={showOldPassword ? "text" : "password"}
-                  value={oldPassword}
+                  value=""
                   onChange={(e) => setOldPassword(e.target.value)}
                   className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter current password"
