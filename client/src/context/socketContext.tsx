@@ -36,8 +36,9 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       setSocket(newSocket);
     });
 
-    newSocket.on("disconnect", (reason) => {
+    newSocket.on("disconnect", () => {
       // console.log($&)
+      setSocket(null);
     });
 
     return () => {

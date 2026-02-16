@@ -6,7 +6,7 @@ import type { AxiosError } from "axios";
 export const useUserUpdateProfile = () => {
   const useUserUpdateMutation = useMutation({
     mutationFn: userApi.updateUserData,
-    onSuccess: (response) => {
+    onSuccess: () => {
       // console.log($&)
       toast.success("User data updated successfully");
     },

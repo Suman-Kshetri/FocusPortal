@@ -8,7 +8,7 @@ export const useCreateQuestion = () => {
 
   const useCreateQuestionMutation = useMutation({
     mutationFn: questionApis.createQuestion,
-    onSuccess: (response) => {
+    onSuccess: () => {
       // console.log($&)
       toast.success("Question created successfully");
 

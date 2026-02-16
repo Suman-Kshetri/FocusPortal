@@ -6,7 +6,7 @@ import type { AxiosError } from "axios";
 export const useUploadAvatar = () => {
   const useUploadAvatarMutation = useMutation({
     mutationFn: userApi.updateUploadAvatar,
-    onSuccess: (response) => {
+    onSuccess: () => {
       // console.log($&)
       toast.success("User avatar updated successfully.. Please reload page");
     },

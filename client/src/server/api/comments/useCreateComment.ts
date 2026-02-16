@@ -16,7 +16,7 @@ export const useCreateComment = () => {
     mutationFn: ({ questionId, data }: CreateCommentParams) =>
       commentApis.createComment(questionId, data),
 
-    onSuccess: (response, { questionId }) => {
+    onSuccess: ({ questionId }) => {
       toast.success("Comment posted successfully");
       // console.log($&)
       queryClient.invalidateQueries({ queryKey: ["comments", questionId] });

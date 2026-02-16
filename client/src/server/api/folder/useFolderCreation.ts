@@ -17,7 +17,7 @@ export const useFolderCreation = () => {
       // Optional: invalidate all folder queries
       queryClient.invalidateQueries({ queryKey: ["folderContents"] });
     },
-    onError: (error: AxiosError<{ message: string }>, response) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       // console.log($&)
       // console.log($&)
       toast.error(error.response?.data?.message);
