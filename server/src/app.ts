@@ -36,6 +36,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+//corn job
+app.get("/health", (req, res) => {
+   res.status(200).json({ status: "OK" });
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoute);
