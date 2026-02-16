@@ -18,9 +18,9 @@ export const useDownloadFile = () => {
         // Check if it's a Cloudinary image (returns JSON with URL)
         if (response.data?.data?.type === "cloudinary") {
           const cloudinaryUrl = response.data.data.url;
+          const secureUrl = cloudinaryUrl.replace("http://", "https://");
 
-          // Download from Cloudinary URL
-          const imageResponse = await fetch(cloudinaryUrl);
+          const imageResponse = await fetch(secureUrl);
           const blob = await imageResponse.blob();
 
           const url = window.URL.createObjectURL(blob);
