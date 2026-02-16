@@ -55,6 +55,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
          type: String,
          enum: {
             values: [
+               "None",
                "High School",
                "Undergraduate",
                "Associate Degree",
@@ -67,7 +68,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
             message: "{VALUE} is not a valid education level",
          },
          trim: true,
-         default: "None",
+         required: false,
       },
       subjects: { type: [String], default: ["None"] },
       points: { type: Number, default: 0 },

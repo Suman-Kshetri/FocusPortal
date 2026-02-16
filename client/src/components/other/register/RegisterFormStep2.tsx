@@ -81,8 +81,8 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
                       </Label>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:border-blue-500 transition-colors">
-                      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600">
+                    <div className="flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed border-border rounded-lg bg-background hover:border-blue-500 transition-colors">
+                      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-background/40 text-foreground">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-8 w-8"
@@ -100,10 +100,10 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
                       </div>
 
                       <div className="text-center">
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-primary">
                           Upload your profile picture
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           PNG, JPG up to 2MB
                         </p>
                       </div>

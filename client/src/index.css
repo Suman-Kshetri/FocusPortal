@@ -213,6 +213,9 @@
   button {
     @apply cursor-pointer;
   }
+  input{
+    @apply bg-transparent;
+  }
 }
 /* Custom Utility Classes */
 .gradient-primary {

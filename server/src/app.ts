@@ -30,6 +30,7 @@ app.use(
    cors({
       origin: process.env.CLIENT_URL || "http://localhost:5173",
       credentials: true,
+      methods: ["GET", "POST", "DELETE", "PATCH", "PUT"],
    })
 );
 app.use(express.json());

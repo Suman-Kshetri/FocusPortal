@@ -28,72 +28,68 @@ export const adminTest = asyncHandler(async (req, res) => {
 export const signup = asyncHandler(async (req, res) => {
    const { username, email, password, fullName } = req.body;
 
-   try {
-      if (
-         [fullName, email, username, password].some(
-            (field) => field?.trim() === ""
-         )
-      ) {
-         throw new ApiError(400, "All the fields are required");
-      }
-
-      const existedUser = await User.findOne({
-         $or: [
-            { username: username.toLowerCase() },
-            { email: email.toLowerCase() },
-         ],
-      });
-
-      if (existedUser) {
-         throw new ApiError(409, "User with email or username already exists");
-      }
-
-      const avatarLocalPath = req.file?.path;
-      if (!avatarLocalPath) {
-         throw new ApiError(400, "Profile Image is required");
-      }
-
-      const avatarImage = await uploadOnCloudinary(avatarLocalPath);
-      if (!avatarImage || !avatarImage.url) {
-         throw new ApiError(500, "Image upload failed");
-      }
-      const verificationToken = generateVerificationToken();
-      if (!verificationToken) {
-         throw new ApiError(500, "Verification token generation failed");
-      }
-
-      const user = await User.create({
-         username: username.toLowerCase(),
-         fullName,
-         email: email.toLowerCase(),
-         password,
-         avatar: avatarImage.url,
-         avatarPublicId: avatarImage.public_id,
-         verificationToken,
-         verificationTokenExpiry: Date.now() + 60 * 60 * 1000,
-      });
-
-      const createdUser = await User.findById(user._id).select(
-         "-password -refreshToken"
-      );
-      await sendVerificationEmail(user.email, verificationToken);
-
-      return res
-         .status(201)
-         .json(
-            new ApiResponse(
-               201,
-               "User registered successfully. Please verify your email.",
-               createdUser
-            )
-         );
-   } catch (error) {
-      const message =
-         error instanceof Error
-            ? error.message
-            : String(error ?? "Unknown error");
-      throw new ApiError(400, message);
+   if (!username || !email || !password || !fullName) {
+      throw new ApiError(400, "All fields are required");
    }
+
+   if (
+      [fullName, email, username, password].some(
+         (field) => typeof field === "string" && field.trim() === ""
+      )
+   ) {
+      throw new ApiError(400, "All fields must be non-empty");
+   }
+
+   const existedUser = await User.findOne({
+      $or: [
+         { username: username.toLowerCase() },
+         { email: email.toLowerCase() },
+      ],
+   });
+
+   if (existedUser) {
+      throw new ApiError(409, "User with email or username already exists");
+   }
+
+   const avatarLocalPath = req.file?.path;
+   if (!avatarLocalPath) {
+      throw new ApiError(400, "Profile Image is required");
+   }
+
+   const avatarImage = await uploadOnCloudinary(avatarLocalPath);
+   if (!avatarImage || !avatarImage.url) {
+      throw new ApiError(500, "Image upload failed");
+   }
+   const verificationToken = generateVerificationToken();
+   if (!verificationToken) {
+      throw new ApiError(500, "Verification token generation failed");
+   }
+
+   const user = await User.create({
+      username: username.toLowerCase(),
+      fullName,
+      email: email.toLowerCase(),
+      password,
+      avatar: avatarImage.url,
+      avatarPublicId: avatarImage.public_id,
+      verificationToken,
+      verificationTokenExpiry: Date.now() + 60 * 60 * 1000,
+   });
+
+   const createdUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+   );
+   await sendVerificationEmail(user.email, verificationToken);
+
+   return res
+      .status(201)
+      .json(
+         new ApiResponse(
+            201,
+            "User registered successfully. Please verify your email.",
+            createdUser
+         )
+      );
 });
 
 export const verifyEmail = asyncHandler(async (req, res) => {
