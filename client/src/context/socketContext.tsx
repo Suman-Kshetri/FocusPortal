@@ -24,7 +24,8 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const BACKEND_URL =
+      import.meta.env.VITE_SOCKET_API_URL || "http://localhost:8000";
 
     const newSocket = io(BACKEND_URL, {
       withCredentials: true,
