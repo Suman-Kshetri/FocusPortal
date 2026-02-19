@@ -130,28 +130,53 @@ export const Dashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
           {stats.map((stat, index) => (
             <div
               key={index}
               className="
-                bg-card border border-border rounded-xl p-6
-                hover:shadow-lg transition-all duration-200
-                hover-lift
-                animate-scale-in
-              "
+        group relative overflow-hidden
+        bg-card border border-border rounded-2xl p-5
+        hover:shadow-lg hover:-translate-y-0.5
+        transition-all duration-200
+        animate-scale-in
+      "
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              {/* Subtle corner glow on hover */}
+              <div
+                className={`
+          pointer-events-none absolute -top-6 -right-6 w-24 h-24
+          rounded-full blur-2xl opacity-0 group-hover:opacity-40
+          transition-opacity duration-500 ${stat.bgColor}
+        `}
+              />
+
+              {/* Top row: icon + label + trending badge — all inline, no justify-between */}
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className={`p-2 rounded-xl ${stat.bgColor}`}>
+                  <stat.icon className={`w-4 h-4 ${stat.color}`} />
                 </div>
-                <TrendingUp className="w-4 h-4 text-green-500" />
+
+                <h2 className="text-sm font-medium text-muted-foreground flex-1">
+                  {stat.label}
+                </h2>
+
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">
+                  <TrendingUp className="w-3 h-3 text-green-500" />
+                </div>
               </div>
-              <h3 className="text-3xl font-bold text-foreground mb-1">
+
+              {/* Value */}
+              <h3 className="text-3xl font-bold text-foreground tracking-tight leading-none">
                 {stat.value}
               </h3>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
+
+              {/* Bottom accent line */}
+              <div
+                className={`absolute bottom-0 left-0 right-0 h-[2px] ${stat.bgColor} opacity-50`}
+              />
             </div>
           ))}
         </div>
