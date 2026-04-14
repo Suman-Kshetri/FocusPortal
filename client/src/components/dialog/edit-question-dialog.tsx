@@ -47,7 +47,11 @@ export const EditQuestionDialog = ({
     }
   }, [open, question, reset]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: {
+    title: string;
+    content: string;
+    tags?: string;
+  }) => {
     updateQuestion(
       {
         id: question._id,

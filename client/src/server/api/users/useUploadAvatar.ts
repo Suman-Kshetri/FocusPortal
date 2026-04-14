@@ -18,7 +18,7 @@ export const useUploadAvatar = () => {
     },
   });
 
-  const onUpload = (data: any) => {
+  const onUpload = (data: FormData) => {
     useUploadAvatarMutation.mutate(data);
   };
 

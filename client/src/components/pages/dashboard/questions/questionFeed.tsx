@@ -11,6 +11,11 @@ import { QuestionCardSkeleton } from "@/components/skeleton/questionCardSkeleton
 import { DeleteConfirmationDialog } from "@/components/dialog/delete-confirmation-dialog";
 import { EditQuestionDialog } from "@/components/dialog/edit-question-dialog";
 
+interface QuestionsResponse {
+  data: Question[];
+  [key: string]: unknown;
+}
+
 export const QuestionsFeed = ({ activeTab }: { activeTab: "all" | "my" }) => {
   const socket = useSocket();
   const queryClient = useQueryClient();
@@ -33,7 +38,7 @@ export const QuestionsFeed = ({ activeTab }: { activeTab: "all" | "my" }) => {
     if (!socket) return;
 
     const handleNewQuestion = (newQuestion: Question) => {
-      queryClient.setQueryData(["questions"], (old: any) => {
+      queryClient.setQueryData(["questions"], (old: QuestionsResponse | undefined) => {
         if (!old?.data) return old;
         if (old.data.some((q: Question) => q._id === newQuestion._id))
           return old;
@@ -44,7 +49,7 @@ export const QuestionsFeed = ({ activeTab }: { activeTab: "all" | "my" }) => {
     };
 
     const handleQuestionUpdated = (updatedQuestion: Question) => {
-      queryClient.setQueryData(["questions"], (old: any) => {
+      queryClient.setQueryData(["questions"], (old: QuestionsResponse | undefined) => {
         if (!old?.data) return old;
 
         const updatedData = old.data.map((q: Question) =>
@@ -56,7 +61,7 @@ export const QuestionsFeed = ({ activeTab }: { activeTab: "all" | "my" }) => {
     };
 
     const handleQuestionDeleted = (payload: { questionId: string }) => {
-      queryClient.setQueryData(["questions"], (old: any) => {
+      queryClient.setQueryData(["questions"], (old: QuestionsResponse | undefined) => {
         if (!old?.data) return old;
 
         const filteredData = old.data.filter(

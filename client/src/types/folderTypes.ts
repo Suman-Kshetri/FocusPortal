@@ -1,3 +1,4 @@
-export interface folderCreationType{
-    folderName:string
+export interface folderCreationType {
+  folderName: string;
+  parentFolder?: string | null;
 }

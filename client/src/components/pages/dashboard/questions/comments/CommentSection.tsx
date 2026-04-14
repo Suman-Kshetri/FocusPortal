@@ -16,6 +16,11 @@ interface CommentSectionProps {
   showComments: boolean;
 }
 
+interface CommentsResponse {
+  data: Comment[];
+  [key: string]: unknown;
+}
+
 export const CommentSection = ({
   questionId,
   currentUserId,
@@ -56,7 +61,7 @@ export const CommentSection = ({
     }) => {
       if (payload.questionId !== questionId) return;
 
-      queryClient.setQueryData(["comments", questionId], (old: any) => {
+      queryClient.setQueryData(["comments", questionId], (old: CommentsResponse | undefined) => {
         if (!old?.data) return old;
 
         // Prevent duplicates
@@ -77,7 +82,7 @@ export const CommentSection = ({
     }) => {
       if (payload.questionId !== questionId) return;
 
-      queryClient.setQueryData(["comments", questionId], (old: any) => {
+      queryClient.setQueryData(["comments", questionId], (old: CommentsResponse | undefined) => {
         if (!old?.data) return old;
 
         return {
@@ -95,7 +100,7 @@ export const CommentSection = ({
     }) => {
       if (payload.questionId !== questionId) return;
 
-      queryClient.setQueryData(["comments", questionId], (old: any) => {
+      queryClient.setQueryData(["comments", questionId], (old: CommentsResponse | undefined) => {
         if (!old?.data) return old;
 
         return {
@@ -114,7 +119,7 @@ export const CommentSection = ({
     }) => {
       if (payload.questionId !== questionId) return;
 
-      queryClient.setQueryData(["comments", questionId], (old: any) => {
+      queryClient.setQueryData(["comments", questionId], (old: CommentsResponse | undefined) => {
         if (!old?.data) return old;
 
         return {
@@ -129,9 +134,9 @@ export const CommentSection = ({
               userVote:
                 payload.userId === currentUserId
                   ? payload.action === "upvote"
-                    ? "up"
+                    ? "upvote"
                     : payload.action === "downvote"
-                      ? "down"
+                      ? "downvote"
                       : null
                   : c.userVote,
             };
@@ -151,7 +156,7 @@ export const CommentSection = ({
       socket.off("comment:deleted", handleCommentDeleted);
       socket.off("comment:voted", handleCommentVoted);
     };
-  }, [socket, questionId, queryClient]);
+  }, [socket, questionId, queryClient, currentUserId]);
 
   const handleCreateComment = () => {
     if (!currentUserId) {

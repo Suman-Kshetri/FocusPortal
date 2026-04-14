@@ -22,7 +22,7 @@ export const useChangePassword = () => {
       });
       return response.data;
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Error changing password:", error);
     },
   });

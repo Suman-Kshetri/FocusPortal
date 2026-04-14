@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   User,
   Mail,
@@ -23,13 +22,7 @@ export const Profile = () => {
     topContributors,
     isLoading: statsLoading,
   } = useGetDetailedStats();
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    if (userData) {
-      setUser(userData.data);
-    }
-  }, [userData]);
+  const user = userData?.data;
 
   if (isLoading)
     return (
@@ -90,7 +83,9 @@ export const Profile = () => {
 
   const getUserRank = () => {
     if (!topContributors || topContributors.length === 0) return "N/A";
-    const rank = topContributors.findIndex((c: any) => c._id === user._id);
+    const rank = topContributors.findIndex(
+      (c: { _id: string }) => c._id === user._id,
+    );
     return rank !== -1 ? `#${rank + 1}` : "Unranked";
   };
 
@@ -294,7 +289,14 @@ export const Profile = () => {
   );
 };
 
-const StatCard = ({ icon, color, label, value }: any) => (
+interface StatCardProps {
+  icon: React.ReactNode;
+  color: string;
+  label: string;
+  value: React.ReactNode;
+}
+
+const StatCard = ({ icon, color, label, value }: StatCardProps) => (
   <div
     className={`flex items-start gap-4 rounded-xl px-4 py-3 ${color} flex-nowrap transition-all duration-200 hover:scale-105`}
   >
@@ -308,7 +310,7 @@ const StatCard = ({ icon, color, label, value }: any) => (
   </div>
 );
 
-const PlatformStatCard = ({ icon, color, label, value }: any) => (
+const PlatformStatCard = ({ icon, color, label, value }: StatCardProps) => (
   <div
     className={`rounded-xl ${color} p-6 text-center transition-all duration-200 hover:scale-105`}
   >

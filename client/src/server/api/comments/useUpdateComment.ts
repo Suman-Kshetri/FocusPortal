@@ -20,7 +20,7 @@ export const useUpdateComment = () => {
       toast.success("Comment updated successfully");
     },
 
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to update comment";
       toast.error(errorMessage);

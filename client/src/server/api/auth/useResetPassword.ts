@@ -19,7 +19,7 @@ const resetPasswordSchema = z
 
 export type resetPasswordType = z.infer<typeof resetPasswordSchema>;
 
-export const resetPassword = () => {
+export const useResetPassword = () => {
   const navigate = useNavigate();
   const form = useForm<resetPasswordType>({
     resolver: zodResolver(resetPasswordSchema),

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { questionApis } from "./hooks";
+import type { AxiosError } from "axios";
 
 
 
@@ -13,7 +14,7 @@ export const useUpdateQuestion = () => {
       queryClient.invalidateQueries({ queryKey: ["questions"] });
       toast.success("Question updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to update question");
     },
   });

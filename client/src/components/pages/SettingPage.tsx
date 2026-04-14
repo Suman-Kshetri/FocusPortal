@@ -9,9 +9,11 @@ import {
   Key,
   CheckCircle,
 } from "lucide-react";
+import axios from "axios";
 import { useChangePassword } from "@/server/api/users/useChangePassword";
 import { useDeleteAccount } from "@/server/api/users/useDeleteAccount";
 import { userApi } from "@/server/api/users/hooks";
+import type { User } from "@/types/userType";
 
 export const SettingsPage = () => {
   // Change Password State
@@ -25,7 +27,7 @@ export const SettingsPage = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User["data"] | null>(null);
 
   const { mutateAsync: changePassword, isPending: isChangingPassword } =
     useChangePassword();
@@ -37,7 +39,7 @@ export const SettingsPage = () => {
     const fetchUser = async () => {
       try {
         const response = await userApi.getUserData();
-        setCurrentUser(response.data);
+        setCurrentUser(response.data.data);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -72,10 +74,11 @@ export const SettingsPage = () => {
       setNewPassword("");
       setConfirmPassword("");
       setTimeout(() => setPasswordSuccess(false), 5000);
-    } catch (error: any) {
-      setPasswordError(
-        error.response?.data?.message || "Failed to change password",
-      );
+    } catch (error) {
+      const message = axios.isAxiosError<{ message?: string }>(error)
+        ? error.response?.data?.message
+        : undefined;
+      setPasswordError(message || "Failed to change password");
     }
   };
 
@@ -86,7 +89,7 @@ export const SettingsPage = () => {
 
     try {
       await deleteAccount({ confirmation: confirmationText });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Delete error:", error);
     }
   };
@@ -157,7 +160,7 @@ export const SettingsPage = () => {
                 </div>
                 <input
                   type={showOldPassword ? "text" : "password"}
-                  value=""
+                  value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Enter current password"

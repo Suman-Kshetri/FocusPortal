@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/config/api/axios.config";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 export const useDownloadFile = () => {
   const mutation = useMutation({
@@ -55,7 +56,7 @@ export const useDownloadFile = () => {
     onSuccess: () => {
       toast.success("File downloaded successfully");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       console.error("Download mutation error:", error);
       const errorMessage =
         error.response?.data?.message ||

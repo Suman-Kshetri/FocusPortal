@@ -2,12 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { folderApi } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
+import type { folderCreationType } from "@/types/folderTypes";
 
 export const useFolderCreation = () => {
   const queryClient = useQueryClient();
 
   const useFolderCreationMutation = useMutation({
-    mutationFn: (data: any) => folderApi.createFolder(data),
+    mutationFn: (data: folderCreationType) => folderApi.createFolder(data),
     onSuccess: (response, variables) => {
       toast.success(response.data.message || "Folder created successfully");
       queryClient.invalidateQueries({
@@ -25,7 +26,7 @@ export const useFolderCreation = () => {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: folderCreationType) => {
     useFolderCreationMutation.mutate(data);
   };
 

@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { userApi } from "./hooks";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
+import type { UpdateUserProfileData } from "@/types/userType";
 
 export const useUserUpdateProfile = () => {
   const useUserUpdateMutation = useMutation({
@@ -18,7 +19,7 @@ export const useUserUpdateProfile = () => {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: UpdateUserProfileData) => {
     useUserUpdateMutation.mutate(data);
   };
 

@@ -16,11 +16,12 @@ import {
   Cloud,
 } from "lucide-react";
 import { getTimeAgo } from "@/utils/timeUtils";
+import type { FileItem } from "@/types/fileType";
 
 export const Dashboard = () => {
   // Get recent files
   const { data: filesData } = useGetFiles(null);
-  const files = filesData?.data?.files || [];
+  const files: FileItem[] = filesData?.data?.files || [];
   const recentFiles = files.slice(0, 5);
 
   // Calculate stats
@@ -267,7 +268,7 @@ export const Dashboard = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {recentFiles.map((file: any, index: number) => {
+                {recentFiles.map((file: FileItem, index: number) => {
                   const FileIcon = getFileIcon(file.type);
                   return (
                     <Link

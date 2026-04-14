@@ -21,7 +21,7 @@ export function AdminLayout({ children }: Props) {
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, []);
+  }, [isDarkMode]);
 
   const toggleTheme = () => {
     const newTheme = !isDarkMode;

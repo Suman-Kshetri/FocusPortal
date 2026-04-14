@@ -30,6 +30,7 @@ import { useReadFileContent } from "@/server/api/files/useReadFileContent";
 import { useEditFile } from "@/server/api/files/useEditFile";
 import { MarkdownEditor } from "../notes/MarkdownEditor";
 import { DocxEditor } from "../notes/DocXEditor";
+import type { FileItem } from "@/types/fileType";
 
 const FolderFileDashboard = () => {
   // Folder states
@@ -74,6 +75,7 @@ const FolderFileDashboard = () => {
   const { mutateAsync: editFile } = useEditFile();
 
   const breadcrumbPath = pathData?.data || [];
+  const files: FileItem[] = filesData?.data?.files || [];
 
   const handleFolderClick = (folderId: string) => {
     setCurrentFolderId(folderId);
@@ -145,7 +147,7 @@ const FolderFileDashboard = () => {
   };
 
   const handleFileClick = async (fileId: string) => {
-    const file = filesData?.data?.files?.find((f: any) => f._id === fileId);
+    const file = files.find((f) => f._id === fileId);
     if (!file) return;
 
     if (file.type === "image" && file.cloudinaryPublicId) {
@@ -250,9 +252,7 @@ const FolderFileDashboard = () => {
   };
 
   const handleFileView = async () => {
-    const targetFile = filesData?.data?.files?.find(
-      (f: any) => f._id === fileContextMenu.fileId,
-    );
+    const targetFile = files.find((f) => f._id === fileContextMenu.fileId);
 
     if (!targetFile) {
       console.error("File not found");
@@ -317,9 +317,7 @@ const FolderFileDashboard = () => {
   };
 
   const handleFileEdit = async () => {
-    const targetFile = filesData?.data?.files?.find(
-      (f: any) => f._id === fileContextMenu.fileId,
-    );
+    const targetFile = files.find((f) => f._id === fileContextMenu.fileId);
 
     if (!targetFile) {
       closeFileContextMenu();
@@ -339,9 +337,7 @@ const FolderFileDashboard = () => {
   };
 
   const handleFileDownload = async () => {
-    const targetFile = filesData?.data?.files?.find(
-      (f: any) => f._id === fileContextMenu.fileId,
-    );
+    const targetFile = files.find((f) => f._id === fileContextMenu.fileId);
 
     if (!targetFile) {
       console.error("File not found");
@@ -388,9 +384,7 @@ const FolderFileDashboard = () => {
     refetchFiles();
   };
 
-  const currentFile = filesData?.data?.files?.find(
-    (f: any) => f._id === selectedFileId,
-  );
+  const currentFile = files.find((f) => f._id === selectedFileId);
 
   // If editor is open, show the appropriate editor
   if (editorOpen && selectedFileId && currentFile) {

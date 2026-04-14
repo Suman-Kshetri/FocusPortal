@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { questionApis } from "./hooks";
+import type { AxiosError } from "axios";
 
 export const useDeleteQuestion = () => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useDeleteQuestion = () => {
       queryClient.invalidateQueries({ queryKey: ["stats"] });
       toast.success("Question deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to delete question");
     },
   });

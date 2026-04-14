@@ -13,7 +13,7 @@ export const useVoteComment = () => {
     mutationFn: (params: VoteParams) =>
       commentApis.voteComment(params.commentId, { type: params.type }),
 
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage = error.response?.data?.message || "Failed to vote";
       toast.error(errorMessage);
     },
@@ -22,7 +22,7 @@ export const useVoteComment = () => {
   const removeVoteMutation = useMutation({
     mutationFn: (commentId: string) => commentApis.removeVote(commentId),
 
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to remove vote";
       toast.error(errorMessage);

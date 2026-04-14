@@ -33,8 +33,8 @@ const EditProfileDialog = () => {
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    if (userData.data) {
+  const openDialog = () => {
+    if (userData?.data) {
       setFormData({
         fullName: userData.data.fullName ?? "",
         username: userData.data.username ?? "",
@@ -43,9 +43,6 @@ const EditProfileDialog = () => {
         subjects: userData.data.subjects?.join(", ") ?? "None",
       });
     }
-  }, [userData?.data]);
-
-  const openDialog = () => {
     setIsOpen(true);
   };
 

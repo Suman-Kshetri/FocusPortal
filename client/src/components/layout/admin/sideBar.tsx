@@ -1,7 +1,17 @@
 import { Home, Inbox, Calendar, Search, Settings } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
-export const SidebarApp = ({ isOpen, selectedItem, onSelectItem }:any) => {
+interface SidebarAppProps {
+  isOpen: boolean;
+  selectedItem: string;
+  onSelectItem: (item: string) => void;
+}
+
+export const SidebarApp = ({
+  isOpen,
+  selectedItem,
+  onSelectItem,
+}: SidebarAppProps) => {
   const items = [
     { title: "Dashboard", url: "#", icon: Home },
     { title: "Inbox", url: "#", icon: Inbox },

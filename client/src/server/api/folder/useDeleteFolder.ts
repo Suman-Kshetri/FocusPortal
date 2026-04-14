@@ -14,7 +14,7 @@ export const useDeleteFolder = () => {
       queryClient.invalidateQueries({ queryKey: ["allFoldersWithPaths"] });
       toast.success("Folder deleted successfully");
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       // console.log($&)
       const errorMessage =
         error.response?.data?.message || "Failed to rename Folder";

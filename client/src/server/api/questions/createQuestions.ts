@@ -14,7 +14,7 @@ export const useCreateQuestion = () => {
 
       queryClient.invalidateQueries({ queryKey: ["questions"] });
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       console.error("Create question error:", error);
       const errorMessage =
         error.response?.data?.message ||

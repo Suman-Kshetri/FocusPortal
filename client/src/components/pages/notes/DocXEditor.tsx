@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Save, X, FileText, Loader2 } from "lucide-react";
 
@@ -22,7 +22,6 @@ export const DocxEditor = ({
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
-  const editorRef = useRef<any>(null);
 
   useEffect(() => {
     setContent(initialContent);
@@ -112,8 +111,7 @@ export const DocxEditor = ({
       <div className="flex-1 overflow-hidden bg-card">
         <Editor
           apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-          onInit={(editor) => {
-            editorRef.current = editor;
+          onInit={() => {
             setEditorLoaded(true);
           }}
           value={content}

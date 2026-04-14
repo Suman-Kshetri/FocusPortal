@@ -1,6 +1,6 @@
 import { useGetFolderContents } from "@/server/api/folder/useGetFolderContent";
 import { useRenameFolder } from "@/server/api/folder/useRenameFolder";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface RenameFolderDialogProps {
   folderId: string;
@@ -13,15 +13,13 @@ export const RenameFolderDialog = ({
 }: RenameFolderDialogProps) => {
   const { onSubmit, isLoading } = useRenameFolder();
   const { data } = useGetFolderContents(folderId || "root");
-  const [folderName, setFolderName] = useState("");
+  const [editedName, setEditedName] = useState<string | null>(null);
+  const folderName =
+    editedName ?? data?.data?.data?.folder?.folderName ?? "";
 
   if (!folderId || folderId === "root") {
     return null;
   }
-  useEffect(() => {
-    const fetchedName = data?.data?.data?.folder?.folderName || "";
-    setFolderName(fetchedName);
-  }, [data]);
 
   const handleFolderRename = () => {
     if (!folderName.trim()) return;
@@ -52,7 +50,7 @@ export const RenameFolderDialog = ({
             <input
               type="text"
               value={folderName}
-              onChange={(e) => setFolderName(e.target.value)}
+              onChange={(e) => setEditedName(e.target.value)}
               placeholder="Enter folder name"
               className="
                 w-full px-4 py-2.5

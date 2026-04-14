@@ -43,3 +43,11 @@ export interface NotificationSettings {
   followers: boolean;
   system: boolean;
 }
+
+export interface UpdateUserProfileData {
+  fullName: string;
+  username: string;
+  bio: string;
+  educationLevel: string;
+  subjects: string[];
+}

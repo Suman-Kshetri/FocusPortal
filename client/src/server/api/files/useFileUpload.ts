@@ -25,7 +25,7 @@ export const useFileUpload = () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["folders"] });
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       // console.log($&)
       const errorMessage =
         error.response?.data?.message || "Failed to upload files";

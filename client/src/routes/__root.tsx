@@ -6,7 +6,7 @@ import { Toaster, toast } from "sonner";
 
 export const Route = createRootRoute({
   component: RootComponent,
-  notFoundComponent: (props: any) => <NotFound {...props} />,
+  notFoundComponent: () => <NotFound />,
 });
 
 function RootComponent() {

@@ -16,7 +16,7 @@ function RouteComponent() {
     if (isPending) return;
     if (error || !response?.role) navigate({ to: "/auth/login" });
     if (response?.role === "user") navigate({ to: "/" });
-  }, [isPending, response, error]);
+  }, [isPending, response, error, navigate]);
 
   if (isPending) {
     return (

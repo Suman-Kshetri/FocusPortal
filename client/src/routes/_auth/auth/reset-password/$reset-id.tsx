@@ -1,4 +1,4 @@
-import { resetPassword } from '@/server/api/auth/useResetPassword';
+import { useResetPassword } from '@/server/api/auth/useResetPassword';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth/auth/reset-password/$reset-id')({
@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_auth/auth/reset-password/$reset-id')({
 
 function RouteComponent() {
   const { "reset-id": resetId } = Route.useParams();
-  const { form, onSubmit } = resetPassword();
+  const { form, onSubmit } = useResetPassword();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

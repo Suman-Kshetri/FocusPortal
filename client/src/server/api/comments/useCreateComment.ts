@@ -22,7 +22,7 @@ export const useCreateComment = () => {
       queryClient.invalidateQueries({ queryKey: ["comments", questionId] });
     },
 
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to post comment";
       toast.error(errorMessage);

@@ -18,7 +18,7 @@ export const useRenameFolder = () => {
       queryClient.invalidateQueries({ queryKey: ["folderPath"] });
       toast.success("Folder renamed");
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       // console.log($&)
       const errorMessage =
         error.response?.data?.message || "Failed to rename Folder";

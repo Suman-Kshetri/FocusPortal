@@ -1,11 +1,18 @@
 import { useNavigate } from "@tanstack/react-router";
 
+export interface NotFoundProps {
+  errorCode?: string;
+  title?: string;
+  message?: string;
+  buttonText?: string;
+}
+
 export default function NotFound({
   errorCode = "404",
   title = "Oops! Page Not Found",
   message = "Looks like you've taken a wrong turn in your study journey!",
   buttonText = "Back to Home",
-}) {
+}: NotFoundProps) {
   const navigate = useNavigate()
   const handleClick = () => {
     navigate({ to: "/" })

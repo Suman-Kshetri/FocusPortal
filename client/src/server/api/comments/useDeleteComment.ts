@@ -11,7 +11,7 @@ export const useDeleteComment = () => {
       toast.success("Comment deleted successfully");
     },
 
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to delete comment";
       toast.error(errorMessage);

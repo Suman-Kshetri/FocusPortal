@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { filesApi } from "./hooks";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 export const useMoveFile = () => {
   const queryClient = useQueryClient();
@@ -17,7 +18,7 @@ export const useMoveFile = () => {
       toast.success("File moved successfully");
       queryClient.invalidateQueries({ queryKey: ["files"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to move file");
     },
   });

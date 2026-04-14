@@ -23,7 +23,7 @@ export const useDeleteAccount = () => {
       localStorage.removeItem("token");
       navigate({ to: "/auth/login" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Error deleting account:", error);
     },
   });

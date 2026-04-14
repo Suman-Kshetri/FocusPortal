@@ -2,6 +2,7 @@
 import { useGetFiles } from "@/server/api/files/useGetFolderFiles";
 import { Loader2 } from "lucide-react";
 import { FileCard } from "../file-card/FileCard";
+import type { FileItem } from "@/types/fileType";
 
 interface FileListProps {
   folderId: string | null;
@@ -32,7 +33,7 @@ const FileList = ({
     );
   }
 
-  const files = data?.data?.files || [];
+  const files: FileItem[] = data?.data?.files || [];
 
   if (files.length === 0) {
     return null;
@@ -40,7 +41,7 @@ const FileList = ({
 
   return (
     <>
-      {files.map((file: any) => (
+      {files.map((file) => (
         <FileCard
           key={file._id}
           id={file._id}
