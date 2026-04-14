@@ -71,7 +71,7 @@ const RegisterFormStep2 = ({
         <FormField
           control={form.control}
           name="profilePicture"
-          render={({ field: { onChange, value, ref, name, onBlur } }) => (
+          render={({ field: { onChange, ref, name, onBlur } }) => (
             <FormItem>
               <FormLabel>Profile Picture</FormLabel>
               <FormControl>
