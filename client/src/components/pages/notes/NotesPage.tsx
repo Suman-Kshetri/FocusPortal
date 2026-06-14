@@ -167,19 +167,19 @@ export const NotesPage = () => {
   // Otherwise show the notes list
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gradient-primary mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gradient-primary mb-1 sm:mb-2">
             Study Notes
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Create and manage your markdown notes
           </p>
         </div>
 
         {/* Search and Create Bar */}
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
@@ -207,29 +207,31 @@ export const NotesPage = () => {
           <button
             onClick={() => setCreateDialogOpen(true)}
             className="
-              px-6 py-3 rounded-lg
+              px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg
               bg-primary text-primary-foreground
               hover:bg-primary/90
               transition-all duration-200
-              flex items-center gap-2
+              flex items-center justify-center sm:justify-start gap-2
               font-medium
               shadow-lg hover:shadow-xl
               hover-lift
+              text-sm sm:text-base
+              whitespace-nowrap
             "
           >
-            <Plus className="w-5 h-5" />
-            New Note
+            <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
+            <span>New Note</span>
           </button>
         </div>
 
         {/* Notes Grid */}
         {filteredFiles.length === 0 ? (
-          <div className="text-center py-20">
-            <FileText className="w-20 h-20 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+          <div className="text-center py-12 sm:py-20">
+            <FileText className="w-16 sm:w-20 h-16 sm:h-20 text-muted-foreground mx-auto mb-3 sm:mb-4 opacity-50" />
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">
               {searchQuery ? "No notes found" : "No notes yet"}
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
               {searchQuery
                 ? "Try adjusting your search query"
                 : "Create your first note to get started"}
@@ -238,11 +240,12 @@ export const NotesPage = () => {
               <button
                 onClick={() => setCreateDialogOpen(true)}
                 className="
-                  px-6 py-3 rounded-lg
+                  px-4 sm:px-6 py-2 sm:py-3 rounded-lg
                   bg-primary text-primary-foreground
                   hover:bg-primary/90
                   transition-all
                   inline-flex items-center gap-2
+                  text-sm sm:text-base
                 "
               >
                 <Plus className="w-5 h-5" />

@@ -422,14 +422,14 @@ const FolderFileDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 animate-fade-in">
-          <h1 className="text-4xl font-bold text-gradient-primary mb-2">
+        <div className="mb-4 sm:mb-6 animate-fade-in">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient-primary mb-1 sm:mb-2">
             My Folders
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Organize and manage your files efficiently
           </p>
         </div>
@@ -439,8 +439,8 @@ const FolderFileDashboard = () => {
           <button
             onClick={handleBackNavigation}
             className="
-              inline-flex items-center gap-2 px-4 py-2 mb-4
-              text-sm font-medium text-foreground
+              inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-3 sm:mb-4
+              text-xs sm:text-sm font-medium text-foreground
               bg-card border border-border rounded-lg
               hover:bg-accent hover:text-accent-foreground
               transition-all duration-200
@@ -461,7 +461,7 @@ const FolderFileDashboard = () => {
         />
 
         {/* Folder & File Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 animate-fade-in">
           <FolderCreationUI onClick={() => setCreateOpen(true)} />
           <FileUploadUI onClick={handleFileUploadClick} />
           <FolderList

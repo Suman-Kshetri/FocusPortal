@@ -38,24 +38,24 @@ const LandingPage = () => {
       <div className="pointer-events-none fixed inset-0 opacity-[0.03] bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] [background-size:18px_18px]" />
 
       {/* NAV */}
-      <nav className="fixed top-0 w-full z-50 px-6 py-4">
+      <nav className="fixed top-0 w-full z-50 px-4 sm:px-6 py-3 sm:py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
 
           {/* LOGO */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg overflow-hidden border border-border">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg overflow-hidden border border-border flex-shrink-0">
               <img
                 src="https://res.cloudinary.com/dhhoe8u50/image/upload/f_png/v1754997321/focusportal"
                 alt="Focus Portal"
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="font-semibold tracking-tight">
+            <span className="text-sm sm:text-base font-semibold tracking-tight hidden sm:inline">
               Focus Portal
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
 
             <button
               onClick={toggleTheme}
@@ -68,13 +68,13 @@ const LandingPage = () => {
               )}
             </button>
 
-            <Link className="text-sm hover:opacity-70" to="/auth/login">
+            <Link className="text-xs sm:text-sm hover:opacity-70" to="/auth/login">
               Sign in
             </Link>
 
             <Link
               to="/auth/register"
-              className="text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              className="text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap"
             >
               Get Started
             </Link>
@@ -204,8 +204,8 @@ const LandingPage = () => {
       </section>
 
       {/* TIMELINE */}
-      <section className="mt-40 px-6">
-        <div className="max-w-3xl mx-auto border-l border-border pl-8 space-y-16">
+      <section className="mt-24 sm:mt-32 md:mt-40 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto border-l border-border pl-4 sm:pl-8 space-y-8 sm:space-y-16">
 
           {[
             {

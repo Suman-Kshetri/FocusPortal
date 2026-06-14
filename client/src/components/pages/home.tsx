@@ -116,14 +116,14 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-background p-4 sm:p-6 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="animate-fade-in">
-          <h1 className="text-4xl font-bold text-gradient-primary mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient-primary mb-1 sm:mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
             Here's what's happening with your workspace today
           </p>
         </div>

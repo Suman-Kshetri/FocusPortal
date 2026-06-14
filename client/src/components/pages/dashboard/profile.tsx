@@ -98,28 +98,28 @@ export const Profile = () => {
     <div className="min-h-screen bg-background py-8 px-4 relative">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Profile Card */}
-        <div className="bg-card border border-border rounded-3xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
-          <div className="h-40 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/70 relative">
+        <div className="bg-card border border-border rounded-2xl sm:rounded-3xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+          <div className="h-24 sm:h-32 md:h-40 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/70 relative">
             <div className="absolute inset-0 bg-black/10"></div>
           </div>
-          <div className="px-8 pb-8">
-            <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-20">
+          <div className="px-4 sm:px-6 md:px-8 pb-4 sm:pb-6 md:pb-8">
+            <div className="flex flex-col md:flex-row items-start md:items-end gap-3 sm:gap-4 md:gap-6 -mt-12 sm:-mt-16 md:-mt-20">
               {/* Avatar */}
-              <div className="w-32 h-32 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden">
+              <div className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden flex-shrink-0">
                 <AvatarUpload src={user.avatar} alt={user.fullName} />
               </div>
               <div className="flex-1">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4">
                   <div>
-                    <h1 className="text-4xl font-bold text-foreground mb-2">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1 sm:mb-2">
                       {user.fullName}
                     </h1>
-                    <p className="text-xl text-muted-foreground mb-2">
+                    <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-1 sm:mb-2">
                       @{user.username}
                     </p>
-                    <div className="flex items-center gap-2 mb-3 text-muted-foreground">
-                      <Mail className="w-5 h-5" />
-                      <span className="text-sm">{user.email}</span>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3 text-muted-foreground">
+                      <Mail className="w-4 sm:w-5 h-4 sm:h-5" />
+                      <span className="text-xs sm:text-sm">{user.email}</span>
                     </div>
 
                     {/* Rank Badge */}
@@ -139,9 +139,9 @@ export const Profile = () => {
             </div>
 
             {badges.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-border">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Award className="w-5 h-5" />
+              <div className="mt-4 sm:mt-6 md:mt-8 pt-4 sm:pt-6 border-t border-border">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+                  <Award className="w-4 sm:w-5 h-4 sm:h-5" />
                   Achievements
                 </h3>
                 <div className="flex flex-wrap gap-3">
