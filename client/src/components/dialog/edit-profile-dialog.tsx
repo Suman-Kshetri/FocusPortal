@@ -66,6 +66,8 @@ const EditProfileDialog = () => {
   };
 
   const handleSave = () => {
+    if (isLoading) return;
+
     const payload = {
       fullName: formData.fullName,
       username: formData.username,
@@ -200,12 +202,14 @@ const EditProfileDialog = () => {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={closeDialog}
+                disabled={isLoading}
                 className="px-4 py-2 text-foreground bg-secondary rounded-lg hover:bg-accent/80 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
+                disabled={isLoading}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition cursor-pointer"
               >
                 {isLoading ? "Saving..." : "Save Changes"}

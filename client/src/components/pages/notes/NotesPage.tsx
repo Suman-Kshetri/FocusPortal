@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Plus, FileText, Clock, Search, X } from "lucide-react";
+import { toast } from "sonner";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { useGetFiles } from "@/server/api/files/useGetFolderFiles";
 import { useEditFile } from "@/server/api/files/useEditFile";
@@ -28,6 +29,8 @@ export const NotesPage = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newFileName, setNewFileName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isCreatingNote, setIsCreatingNote] = useState(false);
+  const createNoteLockRef = useRef(false);
 
   // API hooks
   const { data: filesData, refetch: refetchFiles } = useGetFiles(null);
@@ -45,26 +48,55 @@ export const NotesPage = () => {
     file.fileName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const normalizeNoteName = (name: string) =>
+    name.trim().replace(/\.md$/i, "").trim().toLowerCase();
+
   const handleCreateNote = async () => {
-    if (!newFileName.trim()) {
-      alert("Please enter a file name");
+    if (createNoteLockRef.current) {
       return;
     }
 
+    const trimmedName = newFileName.trim();
+    const normalizedNewName = normalizeNoteName(trimmedName);
+
+    if (!normalizedNewName) {
+      toast.error("Please enter a file name");
+      return;
+    }
+
+    const duplicateNote = markdownFiles.some(
+      (file) => normalizeNoteName(file.fileName) === normalizedNewName,
+    );
+
+    if (duplicateNote) {
+      toast.error("A note with this name already exists");
+      return;
+    }
+
+    createNoteLockRef.current = true;
+    setIsCreatingNote(true);
+
     try {
       await createFile({
-        fileName: newFileName,
+        fileName: trimmedName,
         type: "md",
-        content: "# " + newFileName + "\n\nStart writing your notes here...",
+        content:
+          "# " + trimmedName.replace(/\.md$/i, "") + "\n\nStart writing your notes here...",
         folder: null,
       });
 
       setNewFileName("");
       setCreateDialogOpen(false);
       refetchFiles();
+      toast.success("Note created successfully");
     } catch (error) {
       console.error("Error creating note:", error);
-      alert("Failed to create note");
+      const message =
+        error instanceof Error ? error.message : "Failed to create note";
+      toast.error(message);
+    } finally {
+      createNoteLockRef.current = false;
+      setIsCreatingNote(false);
     }
   };
 
@@ -75,7 +107,7 @@ export const NotesPage = () => {
       setSelectedFileId(fileId);
     } catch (error) {
       console.error("Error reading note:", error);
-      alert("Failed to open note");
+      toast.error("Failed to open note");
     }
   };
 
@@ -273,7 +305,7 @@ export const NotesPage = () => {
                 value={newFileName}
                 onChange={(e) => setNewFileName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && !isCreatingNote) {
                     handleCreateNote();
                   }
                 }}
@@ -299,7 +331,7 @@ export const NotesPage = () => {
               </button>
               <button
                 onClick={handleCreateNote}
-                disabled={!newFileName.trim()}
+                disabled={!newFileName.trim() || isCreatingNote}
                 className="
                   px-6 py-2 text-sm font-medium
                   bg-primary text-primary-foreground
@@ -308,7 +340,7 @@ export const NotesPage = () => {
                   disabled:opacity-50 disabled:cursor-not-allowed
                 "
               >
-                Create
+                {isCreatingNote ? "Creating..." : "Create"}
               </button>
             </div>
           </div>

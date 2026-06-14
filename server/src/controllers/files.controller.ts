@@ -135,9 +135,24 @@ export const createFile = asyncHandler(async (req, res) => {
          throw new ApiError(404, "Folder not found");
       }
    }
+
+   const normalizedFileName = fileName.trim().replace(/\.(md|xlsx)$/i, "");
    const extension = type === "md" ? "md" : "xlsx";
+   const finalFileName = `${normalizedFileName}.${extension}`;
+
+   const existingFile = await File.findOne({
+      fileName: finalFileName,
+      type,
+      folder: folder || null,
+      owner: req.user._id,
+   });
+
+   if (existingFile) {
+      throw new ApiError(409, "A note with this name already exists");
+   }
+
    const timestamp = Date.now();
-   const uniqueFileName = `${timestamp}-${fileName}.${extension}`;
+   const uniqueFileName = `${timestamp}-${normalizedFileName}.${extension}`;
    const docsDir = path.join(process.cwd(), "public", "temp", "docs");
    const filePath = path.join(docsDir, uniqueFileName);
 
@@ -148,7 +163,7 @@ export const createFile = asyncHandler(async (req, res) => {
    const fileSize = Buffer.byteLength(content || "", "utf-8");
 
    const file = await File.create({
-      fileName: `${fileName}.${extension}`,
+      fileName: finalFileName,
       type,
       source: "created",
       path: filePath,

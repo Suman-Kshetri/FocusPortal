@@ -7,6 +7,7 @@ export const VerifyEmail = () => {
   const { onSubmit, isLoading } = useVerify();
 
   const handleOtpComplete = async (otp: string) => {
+    if (isLoading) return;
     onSubmit(otp);
   };
 
@@ -32,10 +33,10 @@ export const VerifyEmail = () => {
 
         <button
           onClick={() => handleOtpComplete(otpValue)}
-          disabled={otpValue.length !== 6}
+          disabled={otpValue.length !== 6 || isLoading}
           className={`mt-6 w-full px-4 py-2 rounded-lg font-medium transition-colors
         ${
-          otpValue.length === 6
+          otpValue.length === 6 && !isLoading
             ? "bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-md"
             : "bg-muted text-muted-foreground cursor-not-allowed"
         }

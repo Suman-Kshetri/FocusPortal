@@ -137,6 +137,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
             variant="outline"
             className="flex-1 cursor-pointer"
             type="button"
+            disabled={isLoading}
           >
             Back
           </Button>
@@ -145,6 +146,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
             onClick={form.handleSubmit(onSubmit)}
             className="flex-1 cursor-pointer"
             type="button"
+            disabled={isLoading}
           >
             {isLoading ? "Registering.." : "Register"}
           </Button>
