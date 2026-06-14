@@ -83,7 +83,7 @@ export const QuestionsAnswers = () => {
                   Questions
                 </span>
                 <span className="hover:text-foreground transition-colors cursor-default">
-                  <strong className="text-green-400">
+                  <strong className="text-chart-3">
                     {statsData.data.activeUsers?.toString() ?? 0}
                   </strong>{" "}
                   Active Users

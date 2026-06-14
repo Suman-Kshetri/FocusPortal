@@ -59,7 +59,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
                         <img
                           src={previewUrl}
                           alt="Preview"
-                          className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
+                          className="w-32 h-32 rounded-full object-cover border-4 border-primary"
                         />
                         <Button
                           type="button"
@@ -71,17 +71,17 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="text-sm text-gray-600 truncate max-w-full px-4">
+                      <p className="text-sm text-muted-foreground truncate max-w-full px-4">
                         {fileName}
                       </p>
                       <Label htmlFor="file-upload" className="cursor-pointer">
-                        <span className="inline-block px-6 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition">
+                        <span className="inline-block px-6 py-2 text-sm font-medium text-primary border border-primary rounded-md hover:bg-primary/10 transition">
                           Change Photo
                         </span>
                       </Label>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed border-border rounded-lg bg-background hover:border-blue-500 transition-colors">
+                    <div className="flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed border-border rounded-lg bg-background hover:border-primary transition-colors">
                       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-background/40 text-foreground">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +109,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
                       </div>
 
                       <Label htmlFor="file-upload" className="cursor-pointer">
-                        <span className="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition">
+                        <span className="inline-block px-6 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition">
                           Choose File
                         </span>
                       </Label>
@@ -143,7 +143,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
 
           <Button
             onClick={form.handleSubmit(onSubmit)}
-            className="flex-1 bg-green-600 hover:bg-green-700 cursor-pointer"
+            className="flex-1 cursor-pointer"
             type="button"
           >
             {isLoading ? "Registering.." : "Register"}

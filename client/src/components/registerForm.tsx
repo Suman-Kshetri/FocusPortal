@@ -40,12 +40,12 @@ const RegisterForm = ({
         <div className="flex items-center justify-center gap-2 mb-6">
           <div
             className={`h-2 w-2 rounded-full transition-colors ${
-              step === 1 ? "bg-blue-600" : "bg-gray-300"
+              step === 1 ? "bg-primary" : "bg-muted"
             }`}
           />
           <div
             className={`h-2 w-2 rounded-full transition-colors ${
-              step === 2 ? "bg-blue-600" : "bg-gray-300"
+              step === 2 ? "bg-primary" : "bg-muted"
             }`}
           />
         </div>
@@ -74,11 +74,11 @@ const RegisterForm = ({
       </CardContent>
 
       <CardFooter className="flex justify-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
             to="/auth/login"
-            className="text-blue-600 hover:underline font-medium"
+            className="text-primary hover:underline font-medium"
           >
             Login
           </Link>

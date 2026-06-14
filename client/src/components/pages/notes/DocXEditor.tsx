@@ -56,15 +56,15 @@ export const DocxEditor = ({
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="flex items-center gap-4">
-          <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-            <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div className="p-2 rounded-lg bg-primary/10">
+            <FileText className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h2 className="text-xl font-semibold text-foreground">
               {fileName}
             </h2>
             {hasChanges && (
-              <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+              <span className="text-xs text-chart-2 font-medium">
                 • Unsaved changes
               </span>
             )}
@@ -76,8 +76,8 @@ export const DocxEditor = ({
             disabled={!hasChanges || isSaving}
             className="
               px-4 py-2 rounded-lg text-sm font-medium
-              bg-blue-600 text-white
-              hover:bg-blue-700
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
               disabled:opacity-50 disabled:cursor-not-allowed
               transition-all duration-200
               flex items-center gap-2
@@ -109,7 +109,7 @@ export const DocxEditor = ({
           </button>
         </div>
       </div>
-      <div className="flex-1 overflow-hidden bg-white dark:bg-gray-900">
+      <div className="flex-1 overflow-hidden bg-card">
         <Editor
           apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
           onInit={(editor) => {
@@ -191,7 +191,7 @@ export const DocxEditor = ({
       {isLoading && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-card p-6 rounded-xl shadow-2xl flex items-center gap-4">
-            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="text-foreground font-medium">
               Loading document...
             </span>

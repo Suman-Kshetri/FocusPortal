@@ -12,7 +12,7 @@ export const SidebarApp = ({ isOpen, selectedItem, onSelectItem }:any) => {
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-[calc(100vh)] bg-background border-r border-sidebar-border transition-[width,opacity] duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 h-[calc(100vh)] bg-sidebar border-r border-sidebar-border transition-[width,opacity] duration-300 ease-in-out ${
         isOpen ? "w-50" : "w-16"
       }`}
       aria-label="Sidebar"

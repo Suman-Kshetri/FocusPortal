@@ -36,7 +36,7 @@ export const SidebarApp = ({ isOpen }: { isOpen: boolean }) => {
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-screen border-r bg-background transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-screen border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 ${
         isOpen ? "w-64" : "w-16"
       }`}
     >
@@ -49,10 +49,10 @@ export const SidebarApp = ({ isOpen }: { isOpen: boolean }) => {
               <li key={item.title}>
                 <Link
                   to={item.url}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                     active
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-accent/50"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -63,7 +63,7 @@ export const SidebarApp = ({ isOpen }: { isOpen: boolean }) => {
           })}
         </ul>
 
-        <ul className="p-2 border-t">
+        <ul className="p-2 border-t border-sidebar-border">
           {footerItems.map((item) => {
             const active = isActive(item.url);
 
@@ -71,10 +71,10 @@ export const SidebarApp = ({ isOpen }: { isOpen: boolean }) => {
               <li key={item.title}>
                 <Link
                   to={item.url}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                     active
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-accent/50"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
                   }`}
                 >
                   <item.icon className="w-5 h-5" />

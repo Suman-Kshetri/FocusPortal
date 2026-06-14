@@ -70,7 +70,7 @@ const LoginForm = ({ form, onSubmit, isLoading }: LoginFormProps) => {
                     <FormLabel>Password</FormLabel>
                     <Link
                       to="/auth/forgot-password"
-                      className="text-sm text-blue-600 hover:underline"
+                      className="text-sm text-primary hover:underline"
                     >
                       Forgot Password?
                     </Link>
@@ -86,7 +86,7 @@ const LoginForm = ({ form, onSubmit, isLoading }: LoginFormProps) => {
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer p-1"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none cursor-pointer p-1"
                         disabled={isLoading}
                         aria-label={
                           showPassword ? "Hide password" : "Show password"
@@ -113,11 +113,11 @@ const LoginForm = ({ form, onSubmit, isLoading }: LoginFormProps) => {
       </CardContent>
 
       <CardFooter className="flex justify-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Don't have an account?{" "}
           <Link
             to="/auth/register"
-            className="text-blue-600 hover:underline font-medium"
+            className="text-primary hover:underline font-medium"
           >
             Sign up
           </Link>

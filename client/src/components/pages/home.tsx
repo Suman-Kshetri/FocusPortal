@@ -42,64 +42,63 @@ export const Dashboard = () => {
       description: "Start writing a new markdown note",
       icon: FileText,
       link: "/dashboard/notes",
-      color: "bg-blue-500",
-      hoverColor: "hover:bg-blue-600",
+      color: "bg-primary",
+      hoverColor: "hover:bg-primary/90",
     },
     {
       title: "Upload Files",
       description: "Upload documents and resources",
       icon: Upload,
       link: "/dashboard/resources",
-      color: "bg-green-500",
-      hoverColor: "hover:bg-green-600",
+      color: "bg-chart-3",
+      hoverColor: "hover:bg-chart-3/90",
     },
     {
       title: "Ask Question",
       description: "Get help from the community",
       icon: MessageSquare,
       link: "/dashboard/questions",
-      color: "bg-purple-500",
-      hoverColor: "hover:bg-purple-600",
+      color: "bg-chart-2",
+      hoverColor: "hover:bg-chart-2/90",
     },
     {
       title: "Browse Folders",
       description: "Organize your resources",
       icon: FolderOpen,
       link: "/dashboard/resources",
-      color: "bg-orange-500",
-      hoverColor: "hover:bg-orange-600",
+      color: "bg-chart-5",
+      hoverColor: "hover:bg-chart-5/90",
     },
   ];
 
-  // Stats cards
   const stats = [
     {
       label: "Total Files",
       value: totalFiles,
       icon: FileEdit,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900/30",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
     },
     {
       label: "Markdown Notes",
       value: markdownFiles,
       icon: FileText,
-      color: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/30",
+      color: "text-chart-3",
+      bgColor: "bg-chart-3/10",
     },
     {
       label: "Documents",
       value: docxFiles,
       icon: FileEdit,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900/30",
+      color: "text-chart-2",
+      bgColor: "bg-chart-2/10",
     },
     {
       label: "PDFs",
       value: pdfFiles,
       icon: Cloud,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100 dark:bg-orange-900/30",
+      color: "text-chart-5",
+      bgColor: "bg-chart-5/10",
     },
   ];
 
@@ -163,8 +162,8 @@ export const Dashboard = () => {
                   {stat.label}
                 </h2>
 
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">
-                  <TrendingUp className="w-3 h-3 text-green-500" />
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-chart-3/10 border border-chart-3/20">
+                  <TrendingUp className="w-3 h-3 text-chart-3" />
                 </div>
               </div>
 
@@ -210,13 +209,13 @@ export const Dashboard = () => {
                 >
                   <action.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                   {action.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   {action.description}
                 </p>
-                <div className="flex items-center text-sm text-blue-600 font-medium">
+                <div className="flex items-center text-sm text-primary font-medium">
                   <span>Get started</span>
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -235,7 +234,7 @@ export const Dashboard = () => {
               </h2>
               <Link
                 to="/dashboard/resources"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
               >
                 View all
                 <ArrowRight className="w-4 h-4" />
@@ -254,7 +253,7 @@ export const Dashboard = () => {
                 <div className="flex gap-3 justify-center">
                   <Link
                     to="/dashboard/notes"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Create Note
                   </Link>
@@ -283,11 +282,11 @@ export const Dashboard = () => {
                       "
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
-                      <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                        <FileIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                        <FileIcon className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-foreground truncate group-hover:text-blue-600 transition-colors">
+                        <h4 className="font-medium text-foreground truncate group-hover:text-primary transition-colors">
                           {file.fileName}
                         </h4>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -297,7 +296,7 @@ export const Dashboard = () => {
                           <span className="uppercase text-xs">{file.type}</span>
                         </div>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                     </Link>
                   );
                 })}
@@ -319,10 +318,10 @@ export const Dashboard = () => {
                   transition-colors group
                 "
               >
-                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                  <FileText className="w-4 h-4 text-blue-600" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <FileText className="w-4 h-4 text-primary" />
                 </div>
-                <span className="flex-1 font-medium text-foreground group-hover:text-blue-600 transition-colors">
+                <span className="flex-1 font-medium text-foreground group-hover:text-primary transition-colors">
                   Study Notes
                 </span>
                 <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -336,10 +335,10 @@ export const Dashboard = () => {
                   transition-colors group
                 "
               >
-                <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-                  <FolderOpen className="w-4 h-4 text-green-600" />
+                <div className="p-2 rounded-lg bg-chart-3/10">
+                  <FolderOpen className="w-4 h-4 text-chart-3" />
                 </div>
-                <span className="flex-1 font-medium text-foreground group-hover:text-green-600 transition-colors">
+                <span className="flex-1 font-medium text-foreground group-hover:text-chart-3 transition-colors">
                   Resources
                 </span>
                 <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -353,10 +352,10 @@ export const Dashboard = () => {
                   transition-colors group
                 "
               >
-                <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                  <MessageSquare className="w-4 h-4 text-purple-600" />
+                <div className="p-2 rounded-lg bg-chart-2/10">
+                  <MessageSquare className="w-4 h-4 text-chart-2" />
                 </div>
-                <span className="flex-1 font-medium text-foreground group-hover:text-purple-600 transition-colors">
+                <span className="flex-1 font-medium text-foreground group-hover:text-chart-2 transition-colors">
                   Q&A Forum
                 </span>
                 <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -370,10 +369,10 @@ export const Dashboard = () => {
                   transition-colors group
                 "
               >
-                <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                  <User className="w-4 h-4 text-orange-600" />
+                <div className="p-2 rounded-lg bg-chart-5/10">
+                  <User className="w-4 h-4 text-chart-5" />
                 </div>
-                <span className="flex-1 font-medium text-foreground group-hover:text-orange-600 transition-colors">
+                <span className="flex-1 font-medium text-foreground group-hover:text-chart-5 transition-colors">
                   My Profile
                 </span>
                 <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -387,10 +386,10 @@ export const Dashboard = () => {
                   transition-colors group
                 "
               >
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900/30">
-                  <Settings className="w-4 h-4 text-gray-600" />
+                <div className="p-2 rounded-lg bg-muted">
+                  <Settings className="w-4 h-4 text-muted-foreground" />
                 </div>
-                <span className="flex-1 font-medium text-foreground group-hover:text-gray-600 transition-colors">
+                <span className="flex-1 font-medium text-foreground group-hover:text-foreground transition-colors">
                   Settings
                 </span>
                 <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -400,10 +399,10 @@ export const Dashboard = () => {
         </div>
 
         {/* Tips Section */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 animate-fade-in">
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 animate-fade-in">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-blue-600 rounded-lg">
-              <Star className="w-6 h-6 text-white" />
+            <div className="p-3 bg-primary rounded-lg">
+              <Star className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -417,7 +416,7 @@ export const Dashboard = () => {
               </p>
               <Link
                 to="/dashboard/resources"
-                className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 text-primary font-medium hover:text-primary/80 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Start Organizing

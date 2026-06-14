@@ -18,6 +18,8 @@ export function UserLayout({ children }: Props) {
 
   const routeTitleMap: Record<string, string> = {
     "/dashboard": "Dashboard",
+    "/dashboard/notes": "Notes",
+    "/dashboard/resources": "Resources",
     "/dashboard/questions": "Q&A",
     "/dashboard/profile": "My Profile",
     "/dashboard/settings": "Settings",

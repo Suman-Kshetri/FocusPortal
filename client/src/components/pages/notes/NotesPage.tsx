@@ -159,7 +159,7 @@ export const NotesPage = () => {
                 w-full pl-10 pr-10 py-3
                 bg-card border border-border rounded-lg
                 text-foreground placeholder:text-muted-foreground
-                focus:outline-none focus:ring-2 focus:ring-blue-500
+                focus:outline-none focus:ring-2 focus:ring-ring
                 transition-all
               "
             />
@@ -176,8 +176,8 @@ export const NotesPage = () => {
             onClick={() => setCreateDialogOpen(true)}
             className="
               px-6 py-3 rounded-lg
-              bg-blue-600 text-white
-              hover:bg-blue-700
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
               transition-all duration-200
               flex items-center gap-2
               font-medium
@@ -207,8 +207,8 @@ export const NotesPage = () => {
                 onClick={() => setCreateDialogOpen(true)}
                 className="
                   px-6 py-3 rounded-lg
-                  bg-blue-600 text-white
-                  hover:bg-blue-700
+                  bg-primary text-primary-foreground
+                  hover:bg-primary/90
                   transition-all
                   inline-flex items-center gap-2
                 "
@@ -227,7 +227,7 @@ export const NotesPage = () => {
                 className="
                   p-6 rounded-xl
                   bg-card border border-border
-                  hover:border-blue-500 hover:shadow-lg
+                  hover:border-primary hover:shadow-lg
                   transition-all duration-200
                   text-left
                   group
@@ -235,11 +235,11 @@ export const NotesPage = () => {
                 "
               >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                    <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                    <FileText className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <h3 className="font-semibold text-foreground mb-1 truncate group-hover:text-primary transition-colors">
                       {file.fileName.replace(/\.md$/, "")}
                     </h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -282,7 +282,7 @@ export const NotesPage = () => {
                   w-full px-4 py-3
                   bg-background border border-border rounded-lg
                   text-foreground placeholder:text-muted-foreground
-                  focus:outline-none focus:ring-2 focus:ring-blue-500
+                  focus:outline-none focus:ring-2 focus:ring-ring
                 "
                 autoFocus
               />
@@ -302,8 +302,8 @@ export const NotesPage = () => {
                 disabled={!newFileName.trim()}
                 className="
                   px-6 py-2 text-sm font-medium
-                  bg-blue-600 text-white
-                  hover:bg-blue-700
+                  bg-primary text-primary-foreground
+                  hover:bg-primary/90
                   rounded-lg transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed
                 "

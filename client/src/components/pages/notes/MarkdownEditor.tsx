@@ -202,7 +202,7 @@ export const MarkdownEditor = ({
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-semibold text-foreground">{fileName}</h2>
           {hasChanges && (
-            <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+            <span className="text-xs text-chart-2 font-medium">
               • Unsaved changes
             </span>
           )}
@@ -216,7 +216,7 @@ export const MarkdownEditor = ({
               flex items-center gap-2
               ${
                 isPreview
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                  ? "bg-primary/10 text-primary"
                   : "bg-accent text-accent-foreground hover:bg-accent/80"
               }
             `}
@@ -238,8 +238,8 @@ export const MarkdownEditor = ({
             disabled={!hasChanges || isSaving}
             className="
               px-4 py-2 rounded-lg text-sm font-medium
-              bg-blue-600 text-white
-              hover:bg-blue-700
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
               disabled:opacity-50 disabled:cursor-not-allowed
               transition-all duration-200
               flex items-center gap-2

@@ -41,11 +41,11 @@ export const ForgotPasswordPage = () => {
               placeholder="you@example.com"
               {...register("email")}
               className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary ${
-                errors.email ? "border-red-500" : ""
+                errors.email ? "border-destructive" : "border-border"
               }`}
             />
             {errors.email && (
-              <p className="text-xs text-red-500">
+              <p className="text-xs text-destructive">
                 {errors.email.message}
               </p>
             )}

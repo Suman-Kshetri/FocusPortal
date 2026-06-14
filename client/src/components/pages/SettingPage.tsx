@@ -106,8 +106,8 @@ export const SettingsPage = () => {
         {/* Change Password Section */}
         <div className="bg-card border border-border rounded-xl p-6 animate-scale-in">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Lock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="p-3 bg-primary/10 rounded-lg">
+              <Lock className="w-6 h-6 text-primary" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-foreground">
@@ -121,13 +121,13 @@ export const SettingsPage = () => {
 
           {/* Success Message */}
           {passwordSuccess && (
-            <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+            <div className="mb-6 p-4 bg-chart-3/10 border border-chart-3/20 rounded-lg flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-chart-3 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                <p className="text-sm font-medium text-foreground">
                   Password changed successfully!
                 </p>
-                <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Your password has been updated. Please use your new password
                   for future logins.
                 </p>
@@ -137,9 +137,9 @@ export const SettingsPage = () => {
 
           {/* Error Message */}
           {passwordError && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-900 dark:text-red-100">
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-destructive">
                 {passwordError}
               </p>
             </div>
@@ -159,7 +159,7 @@ export const SettingsPage = () => {
                   type={showOldPassword ? "text" : "password"}
                   value=""
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Enter current password"
                 />
                 <button
@@ -189,7 +189,7 @@ export const SettingsPage = () => {
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Enter new password (min 6 characters)"
                 />
                 <button
@@ -205,7 +205,7 @@ export const SettingsPage = () => {
                 </button>
               </div>
               {newPassword && newPassword.length < 6 && (
-                <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">
+                <p className="text-sm text-chart-2 mt-1">
                   Password must be at least 6 characters
                 </p>
               )}
@@ -224,7 +224,7 @@ export const SettingsPage = () => {
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Confirm new password"
                 />
                 <button
@@ -242,7 +242,7 @@ export const SettingsPage = () => {
               {confirmPassword &&
                 newPassword &&
                 confirmPassword !== newPassword && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                  <p className="text-sm text-destructive mt-1">
                     Passwords do not match
                   </p>
                 )}
@@ -258,7 +258,7 @@ export const SettingsPage = () => {
                 newPassword !== confirmPassword ||
                 newPassword.length < 6
               }
-              className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
+              className="w-full py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
             >
               {isChangingPassword ? (
                 <>
@@ -276,10 +276,10 @@ export const SettingsPage = () => {
         </div>
 
         {/* Delete Account Section */}
-        <div className="bg-card border border-red-200 dark:border-red-800 rounded-xl p-6 animate-scale-in">
+        <div className="bg-card border border-destructive/30 rounded-xl p-6 animate-scale-in">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
-              <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <div className="p-3 bg-destructive/10 rounded-lg">
+              <Trash2 className="w-6 h-6 text-destructive" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-foreground">
@@ -292,14 +292,14 @@ export const SettingsPage = () => {
           </div>
 
           {/* Warning */}
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-red-900 dark:text-red-100 mb-2">
+                <p className="text-sm font-semibold text-destructive mb-2">
                   Warning: This action cannot be undone
                 </p>
-                <ul className="text-sm text-red-800 dark:text-red-200 space-y-1">
+                <ul className="text-sm text-destructive/80 space-y-1">
                   <li>• All your files will be permanently deleted</li>
                   <li>• Your folders and organization will be lost</li>
                   <li>• All questions and answers will be removed</li>
@@ -312,7 +312,7 @@ export const SettingsPage = () => {
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center justify-center gap-2"
+              className="w-full py-3 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors font-medium flex items-center justify-center gap-2"
             >
               <Trash2 className="w-5 h-5" />I Want to Delete My Account
             </button>
@@ -330,12 +330,12 @@ export const SettingsPage = () => {
                   type="text"
                   value={confirmationText}
                   onChange={(e) => setConfirmationText(e.target.value)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-destructive"
                   placeholder={expectedConfirmation}
                 />
                 {confirmationText &&
                   confirmationText !== expectedConfirmation && (
-                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    <p className="text-sm text-destructive mt-1">
                       Confirmation text doesn't match
                     </p>
                   )}
@@ -358,7 +358,7 @@ export const SettingsPage = () => {
                     isDeletingAccount ||
                     confirmationText !== expectedConfirmation
                   }
-                  className="flex-1 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   {isDeletingAccount ? (
                     <>

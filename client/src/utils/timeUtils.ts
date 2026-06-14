@@ -18,10 +18,10 @@ export const getStatusColor = (
 ): string => {
   switch (status) {
     case "answered":
-      return "bg-green-500/10 text-green-600 border-green-500/20";
+      return "bg-chart-3/10 text-chart-3 border-chart-3/20";
     case "closed":
-      return "bg-red-500/10 text-red-600 border-red-500/20";
+      return "bg-destructive/10 text-destructive border-destructive/20";
     default:
-      return "bg-blue-500/10 text-blue-600 border-blue-500/20";
+      return "bg-primary/10 text-primary border-primary/20";
   }
 };

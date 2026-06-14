@@ -126,7 +126,7 @@ export const CommentVoteButtons = ({
           text-xs font-medium transition-all
           ${
             upvoted
-              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              ? "bg-chart-3/10 text-chart-3"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           }
           disabled:opacity-50 disabled:cursor-not-allowed
@@ -146,7 +146,7 @@ export const CommentVoteButtons = ({
           text-xs font-medium transition-all
           ${
             downvoted
-              ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+              ? "bg-destructive/10 text-destructive"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           }
           disabled:opacity-50 disabled:cursor-not-allowed

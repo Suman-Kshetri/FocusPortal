@@ -50,25 +50,25 @@ export const Profile = () => {
       badges.push({
         name: "Curious Mind",
         icon: "🤔",
-        color: "bg-blue-100 text-blue-800",
+        color: "bg-primary/10 text-primary",
       });
     if (user.answersGiven >= 50)
       badges.push({
         name: "Helpful Expert",
         icon: "🎓",
-        color: "bg-green-100 text-green-800",
+        color: "bg-chart-3/10 text-chart-3",
       });
     if (user.resourcesUploaded >= 20)
       badges.push({
         name: "Content Creator",
         icon: "📚",
-        color: "bg-purple-100 text-purple-800",
+        color: "bg-chart-2/10 text-chart-2",
       });
     if (user.points >= 1000)
       badges.push({
         name: "Super Student",
         icon: "⭐",
-        color: "bg-yellow-100 text-yellow-800",
+        color: "bg-chart-5/10 text-chart-5",
       });
     return badges;
   };
@@ -226,19 +226,19 @@ export const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <PlatformStatCard
                     icon={<MessageSquare className="w-6 h-6" />}
-                    color="bg-blue-100"
+                    color="bg-primary/10"
                     label="Total Questions"
                     value={stats.overview.questions ?? 0}
                   />
                   <PlatformStatCard
                     icon={<Users className="w-6 h-6" />}
-                    color="bg-purple-100"
+                    color="bg-chart-2/10"
                     label="Active Users"
                     value={stats.overview.activeUsers ?? 0}
                   />
                   <PlatformStatCard
                     icon={<Users className="w-6 h-6" />}
-                    color="bg-yellow-100"
+                    color="bg-chart-5/10"
                     label="Total Members"
                     value={stats.overview.totalUsers ?? 0}
                   />
@@ -260,20 +260,20 @@ export const Profile = () => {
 
               <div className="space-y-4">
                 <StatCard
-                  icon={<Award className="w-5 h-5 text-yellow-600" />}
-                  color="bg-yellow-100"
+                  icon={<Award className="w-5 h-5 text-chart-5" />}
+                  color="bg-chart-5/10"
                   label="Total Points"
                   value={user.points}
                 />
                 <StatCard
-                  icon={<MessageSquare className="w-5 h-5 text-blue-600" />}
-                  color="bg-blue-100"
+                  icon={<MessageSquare className="w-5 h-5 text-primary" />}
+                  color="bg-primary/10"
                   label="Questions Asked"
                   value={user.questionsAsked}
                 />
                 <StatCard
-                  icon={<Upload className="w-5 h-5 text-purple-600" />}
-                  color="bg-purple-100"
+                  icon={<Upload className="w-5 h-5 text-chart-2" />}
+                  color="bg-chart-2/10"
                   label="Resources Shared"
                   value={user.resourcesUploaded}
                 />
@@ -302,8 +302,8 @@ const StatCard = ({ icon, color, label, value }: any) => (
       {icon}
     </div>
     <div>
-      <p className="text-xs text-gray-700 font-medium">{label}</p>
-      <p className="text-gray-800 text-lg font-bold">{value}</p>
+      <p className="text-xs text-muted-foreground font-medium">{label}</p>
+      <p className="text-foreground text-lg font-bold">{value}</p>
     </div>
   </div>
 );
@@ -312,8 +312,8 @@ const PlatformStatCard = ({ icon, color, label, value }: any) => (
   <div
     className={`rounded-xl ${color} p-6 text-center transition-all duration-200 hover:scale-105`}
   >
-    <div className="flex justify-center mb-3 text-gray-700">{icon}</div>
-    <p className="text-sm text-gray-600 mb-2 font-medium">{label}</p>
-    <p className="text-2xl font-bold text-gray-800">{value}</p>
+    <div className="flex justify-center mb-3 text-foreground">{icon}</div>
+    <p className="text-sm text-muted-foreground mb-2 font-medium">{label}</p>
+    <p className="text-2xl font-bold text-foreground">{value}</p>
   </div>
 );

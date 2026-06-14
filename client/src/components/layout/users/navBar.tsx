@@ -59,7 +59,7 @@ export const Navbar = ({
   }, [isDropdownOpen]);
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-background border-b border-border">
+    <nav className="fixed top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border">
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <h1 className="text-lg font-semibold">Focus Portal</h1>
