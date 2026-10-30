@@ -77,7 +77,24 @@ export const Navbar = ({
         <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={onToggleTheme}
+            aria-label="Toggle theme"
             className="p-1.5 sm:p-2 rounded-lg hover:bg-accent shrink-0"
+          >
+            {isDarkMode ? (
+              <Sun className="w-4 sm:w-5 h-4 sm:h-5" />
+            ) : (
+              <Moon className="w-4 sm:w-5 h-4 sm:h-5" />
+            )}
+          </button>
+
+          {user?.data && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen((open) => !open)}
+                aria-haspopup="menu"
+                aria-expanded={isDropdownOpen}
+                aria-label="Open user menu"
+                className="rounded-full shrink-0"
               >
                 <img
                   src={user.data.avatar}

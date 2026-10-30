@@ -1,8 +1,10 @@
 import { CreateQuestions } from "@/components/dialog/create-question-dialog";
 import { Award, RotateCw } from "lucide-react";
 import { StatsSkeleton } from "@/components/skeleton/StatsSkeleton";
-import { useGetStats } from "@/server/api/stats/useGetStats";
-import { useGetDetailedStats } from "@/server/api/stats/useGetStats";
+import {
+  useGetStats,
+  useGetDetailedStats,
+} from "@/server/api/stats/useGetStats";
 import { QuestionsFeed } from "./questions/questionFeed";
 import TypingCatGif from "@/components/TypingGif";
 import { useState } from "react";
@@ -131,44 +133,56 @@ export const QuestionsAnswers = () => {
               </h3>
 
               {contributorsLoading ? (
-                <p className="text-sm text-muted-foreground flex items-center justify-center">
+                <div className="text-sm text-muted-foreground flex items-center justify-center">
                   <LoadingAnimation />
-                </p>
+                </div>
               ) : !topContributors || topContributors.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   No contributors yet
                 </p>
               ) : (
                 <div className="space-y-2 sm:space-y-3">
-                  {topContributors.slice(0, 5).map((user: any, idx: number) => (
-                    <div
-                      key={user._id}
-                      className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
-                    >
-                      <div className=\"w-8 sm:w-10 h-8 sm:h-10 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden shrink-0\">
-                        <img src={user.avatar} alt={user.fullName} />
-                      </div>
+                  {topContributors
+                    .slice(0, 5)
+                    .map(
+                      (
+                        user: {
+                          _id: string;
+                          avatar: string;
+                          fullName: string;
+                          points: number;
+                        },
+                        idx: number,
+                      ) => (
+                        <div
+                          key={user._id}
+                          className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                        >
+                          <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden shrink-0">
+                            <img src={user.avatar} alt={user.fullName} />
+                          </div>
 
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs sm:text-sm truncate">
-                          {user.fullName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {user.points?.toString() ?? 0} points
-                        </p>
-                      </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-xs sm:text-sm truncate">
+                              {user.fullName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {user.points?.toString() ?? 0} points
+                            </p>
+                          </div>
 
-                      <div className="text-xl">
-                        {idx === 0
-                          ? "🥇"
-                          : idx === 1
-                            ? "🥈"
-                            : idx === 2
-                              ? "🥉"
-                              : "⭐"}
-                      </div>
-                    </div>
-                  ))}
+                          <div className="text-xl">
+                            {idx === 0
+                              ? "🥇"
+                              : idx === 1
+                                ? "🥈"
+                                : idx === 2
+                                  ? "🥉"
+                                  : "⭐"}
+                          </div>
+                        </div>
+                      ),
+                    )}
                 </div>
               )}
             </div>
@@ -192,7 +206,7 @@ export const QuestionsAnswers = () => {
                   <span>•</span> Add appropriate tags
                 </li>
                 <li className="flex gap-2">
-                  <span>•</span> Show what you've tried
+                  <span>•</span> Show what you&apos;ve tried
                 </li>
               </ul>
             </div>
