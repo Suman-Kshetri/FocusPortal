@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,35 +11,58 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { X } from "lucide-react";
-import type {RegisterFormStep2Props} from "@/types/formType";
+import type { RegisterFormStep2Props } from "@/types/formType";
 
+const MAX_SIZE = 2 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/png", "image/jpeg"];
 
-const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormStep2Props) => {
+const RegisterFormStep2 = ({
+  form,
+  onSubmit,
+  onBack,
+  isLoading,
+}: RegisterFormStep2Props) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
+  // Revokes the previous object URL whenever it changes, and on unmount.
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   const handleFileChange = (
-    files: FileList | null,
+    e: React.ChangeEvent<HTMLInputElement>,
     onChange: (files: FileList | null) => void
   ) => {
-    if (files && files.length > 0) {
-      const file = files[0];
-      setFileName(file.name);
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-
-      onChange(files);
+    const file = files[0];
+    if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_SIZE) {
+      e.target.value = "";
+      form.setError("profilePicture", {
+        type: "manual",
+        message: "Only PNG/JPG files up to 2MB are allowed",
+      });
+      return;
     }
+
+    form.clearErrors("profilePicture");
+    setFileName(file.name);
+    setPreviewUrl(URL.createObjectURL(file));
+    onChange(files);
   };
 
   const clearFile = (onChange: (files: FileList | null) => void) => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
     setPreviewUrl(null);
     setFileName(null);
     onChange(null);
+    const input = document.getElementById(
+      "file-upload"
+    ) as HTMLInputElement | null;
+    if (input) input.value = "";
   };
 
   return (
@@ -48,7 +71,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
         <FormField
           control={form.control}
           name="profilePicture"
-          render={({ field: { onChange, value, ...field } }) => (
+          render={({ field: { onChange, value, ref, name, onBlur } }) => (
             <FormItem>
               <FormLabel>Profile Picture</FormLabel>
               <FormControl>
@@ -116,13 +139,16 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
                     </div>
                   )}
 
+                  {/* Uncontrolled on purpose: a file input must never receive `value` */}
                   <Input
                     id="file-upload"
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg"
                     className="hidden"
-                    {...field}
-                    onChange={(e) => handleFileChange(e.target.files, onChange)}
+                    ref={ref}
+                    name={name}
+                    onBlur={onBlur}
+                    onChange={(e) => handleFileChange(e, onChange)}
                   />
                 </div>
               </FormControl>
@@ -148,7 +174,7 @@ const RegisterFormStep2 = ({ form, onSubmit, onBack, isLoading }: RegisterFormSt
             type="button"
             disabled={isLoading}
           >
-            {isLoading ? "Registering.." : "Register"}
+            {isLoading ? "Registering..." : "Register"}
           </Button>
         </div>
       </div>
