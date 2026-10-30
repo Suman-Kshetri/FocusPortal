@@ -31,7 +31,7 @@ export const QuestionsAnswers = () => {
               Get help from the community, share your knowledge
             </p>
           </div>
-          <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 items-center justify-center sm:justify-start">
+          <div className="flex flex-row flex-wrap gap-2 sm:gap-3 items-center justify-center sm:justify-start">
             <button
               onClick={() => setActiveTab("all")}
               className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap ${
@@ -42,6 +42,7 @@ export const QuestionsAnswers = () => {
             >
               All Questions
             </button>
+
             <button
               onClick={() => setActiveTab("my")}
               className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap ${
@@ -52,9 +53,11 @@ export const QuestionsAnswers = () => {
             >
               My Questions
             </button>
-            <div className="relative flex-1 w-full">
-              <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2"></div>
+
+            <div className="relative flex-1 min-w-0">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2"></div>
             </div>
+
             <CreateQuestions />
           </div>
         </div>
@@ -142,47 +145,45 @@ export const QuestionsAnswers = () => {
                 </p>
               ) : (
                 <div className="space-y-2 sm:space-y-3">
-                  {topContributors
-                    .slice(0, 5)
-                    .map(
-                      (
-                        user: {
-                          _id: string;
-                          avatar: string;
-                          fullName: string;
-                          points: number;
-                        },
-                        idx: number,
-                      ) => (
-                        <div
-                          key={user._id}
-                          className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
-                        >
-                          <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden shrink-0">
-                            <img src={user.avatar} alt={user.fullName} />
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-xs sm:text-sm truncate">
-                              {user.fullName}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {user.points?.toString() ?? 0} points
-                            </p>
-                          </div>
-
-                          <div className="text-xl">
-                            {idx === 0
-                              ? "🥇"
-                              : idx === 1
-                                ? "🥈"
-                                : idx === 2
-                                  ? "🥉"
-                                  : "⭐"}
-                          </div>
+                  {topContributors.slice(0, 5).map(
+                    (
+                      user: {
+                        _id: string;
+                        avatar: string;
+                        fullName: string;
+                        points: number;
+                      },
+                      idx: number,
+                    ) => (
+                      <div
+                        key={user._id}
+                        className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                      >
+                        <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full border-2 border-card shadow-xl bg-card overflow-hidden shrink-0">
+                          <img src={user.avatar} alt={user.fullName} />
                         </div>
-                      ),
-                    )}
+
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-xs sm:text-sm truncate">
+                            {user.fullName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {user.points?.toString() ?? 0} points
+                          </p>
+                        </div>
+
+                        <div className="text-xl">
+                          {idx === 0
+                            ? "🥇"
+                            : idx === 1
+                              ? "🥈"
+                              : idx === 2
+                                ? "🥉"
+                                : "⭐"}
+                        </div>
+                      </div>
+                    ),
+                  )}
                 </div>
               )}
             </div>
